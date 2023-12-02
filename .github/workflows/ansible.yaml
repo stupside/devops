@@ -1,0 +1,48 @@
+name: "Ansible"
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - "./ansible"
+      
+  pull_request:
+    branches: [ main ]
+    paths:
+      - "./ansible"
+
+permissions:
+  contents: read
+
+jobs:
+  ansible:
+    name: 'Ansible'
+    runs-on: ubuntu-latest
+    environment: production
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:    
+        shell: bash
+        working-directory: "./ansible"
+
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    # Install the latest version of Ansible CLI
+    - name: Setup Ansible
+      run: |
+        sudo apt update
+        sudo apt install software-properties-common
+        sudo apt-add-repository --yes --update ppa:ansible/ansible
+        sudo apt install ansible
+
+    # Install the latest version of Ansible CLI
+    - name: Ansible Ping
+      run: ansible all -i ./inventory -m ping
+
+    # Install the latest version of Ansible CLI
+    - name: Ansible Playbook
+      run: ansible-playbook playbook.yaml -i ./inventory

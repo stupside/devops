@@ -1,0 +1,7 @@
+k3s_install_script_url: "https://get.k3s.io"
+
+k3s_local_kubeconfig_path: ".kube/config"
+k3s_remote_kubeconfig_path: "/etc/rancher/k3s/k3s.yaml"
+
+helm_stable_repo_url: "https://charts.helm.sh/stable"
+helm_script_url: "https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3"

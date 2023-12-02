@@ -1,0 +1,14 @@
+spec:
+  destination:
+    name: in-cluster
+    namespace: argocd
+
+  source:
+    path: kubernetes/argocd/apps
+    repoURL: https://github.com/stupside/devops.git
+    targetRevision: HEAD
+  
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

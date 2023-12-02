@@ -1,0 +1,40 @@
+---
+- name: Get k3s version
+  shell: k3s --version
+  ignore_errors: true
+  register: k3s_version
+  changed_when: false
+  tags: get_k3s_version
+
+- name: Show k3s version
+  debug:
+    var: k3s_version
+  tags: show_k3s_version
+
+- set_fact:
+    k3s_installed: "{{ k3s_version.rc == 0 }}"
+  tags: set_k3s_installed
+
+- block:
+    - include_tasks: k3s.yaml
+      when: not k3s_installed
+
+- name: Get helm version
+  shell: helm version
+  ignore_errors: true
+  register: helm_version
+  changed_when: false
+  tags: get_helm_version
+
+- name: Show Helm version
+  debug:
+    var: helm_version
+  tags: show_helm_version
+
+- set_fact:
+    helm_installed: "{{ helm_version.rc == 0 }}"
+  tags: set_helm_installed
+
+- include_tasks: helm.yaml
+  when: k3s_installed and not helm_installed
+

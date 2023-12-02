@@ -1,0 +1,10 @@
+argocd_namespace: "argocd"
+argocd_chart_version: "5.53.7"
+argocd_helm_repo_url: "https://argoproj.github.io/argo-helm"
+
+cloudflare_domain: xonery.dev
+devops_repository_argocd_path: kubernetes/argocd
+devops_repository: https://github.com/stupside/devops
+
+github_client_id: "your-github-client-id"
+github_client_secret: "your-github-client-secret"
