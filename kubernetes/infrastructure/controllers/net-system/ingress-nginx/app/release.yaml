@@ -1,0 +1,48 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: ingress-nginx
+  namespace: net-system
+spec:
+  interval: 30m
+  chart:
+    spec:
+      interval: 12h
+      version: "4.10.0"
+      chart: ingress-nginx
+      sourceRef:
+        kind: HelmRepository
+        name: ingress-nginx
+        namespace: flux-system
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    ingressClass:
+      create: true
+      setAsDefaultIngress: true
+    controller:
+      replicaCount: 1
+      admissionWebhooks:
+        certManager:
+          enabled: true
+      allowSnippetAnnotations: true
+      config:
+        use-forwarded-headers: true
+      metrics:
+        enabled: true
+        serviceMonitor:
+          enabled: true
+          namespace: net-system
+      resources:
+          requests:
+            cpu: 10m
+            memory: 250Mi
+          limits:
+            memory: 500Mi

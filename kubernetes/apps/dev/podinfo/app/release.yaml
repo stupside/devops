@@ -1,0 +1,23 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: podinfo
+  namespace: apps-podinfo
+spec:
+  releaseName: podinfo
+  chart:
+    spec:
+      chart: podinfo
+      version: ">=1.0.0"
+      sourceRef:
+        kind: HelmRepository
+        name: flux-system
+  interval: 30m
+  install:
+    remediation:
+      retries: 3
+  values:
+    tls:
+      enabled: false
+    ingress: 
+      enabled: false

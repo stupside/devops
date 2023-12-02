@@ -1,0 +1,5 @@
+k3s_install_script_url: "https://get.k3s.io"
+
+k3s_install_script_args: "--disable=traefik --write-kubeconfig-mode=644"
+
+k3s_remote_kubeconfig_path: "/etc/rancher/k3s/k3s.yaml"

@@ -1,0 +1,20 @@
+---
+- name: Download k3s install script
+  get_url:
+    url: "{{ k3s_install_script_url }}"
+    dest: "/tmp/k3s.sh"
+    mode: "0700"
+  tags:
+    - download_k3s_script
+
+- name: Install k3s
+  shell: "/tmp/k3s.sh {{ k3s_install_script_args }}"
+  tags:
+    - install_k3s
+
+- name: Copy k3s kubectl config
+  copy:
+    src: /etc/rancher/k3s/k3s.yaml
+    dest: ~/.kube/config
+  tags:
+    - copy_k3s_kubeconfig

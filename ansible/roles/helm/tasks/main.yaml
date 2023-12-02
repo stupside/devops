@@ -1,0 +1,26 @@
+---
+- name: Prepare Helm installation
+  import_tasks: prepare.yaml
+  tags:
+    - prepare_helm
+
+- name: Download Helm script
+  get_url:
+    url: "{{ helm_script_url }}"
+    dest: "/tmp/helm.sh"
+    mode: "0700"
+  tags:
+    - download_helm_script
+
+- name: Install Helm
+  shell: "/tmp/helm.sh"
+  tags:
+    - install_helm
+  register: install_helm_result
+
+- name: Add Helm repository
+  kubernetes.core.helm_repository:
+    name: stable
+    repo_url: "{{ helm_stable_repo_url }}"
+  tags:
+    - add_helm_repo

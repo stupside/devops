@@ -1,0 +1,32 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: net-system-cert-manager
+  namespace: flux-system
+spec:
+  path: ./kubernetes/infrastructure/controllers/net-system/cert-manager
+  sourceRef:
+    kind: GitRepository
+    name: my-repositories
+  wait: true
+  prune: true
+  timeout: 5m
+  interval: 30m
+  retryInterval: 1m
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+metadata:
+  name: net-system-ingress-nginx
+  namespace: flux-system
+spec:
+  path: ./kubernetes/infrastructure/controllers/net-system/ingress-nginx
+  sourceRef:
+    kind: GitRepository
+    name: my-repositories
+  wait: true
+  prune: true
+  timeout: 5m
+  interval: 30m
+  retryInterval: 1m
