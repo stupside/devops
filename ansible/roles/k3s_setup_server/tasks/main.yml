@@ -1,0 +1,45 @@
+- name: Run k3s install script
+  become: true
+  ansible.builtin.shell: "{{ k3s_installer }}"
+  environment:
+    # Server configuration
+    K3S_NODE_NAME: "{{ inventory_hostname }}"
+    # K3S_AGENT_TOKEN: "{{ k3s_agent_token }}"
+    K3S_CLUSTER_INIT: "true"
+    # k3s configuration
+    INSTALL_K3S_EXEC: "server --tls-san={{ inventory_hostname }} {{ k3s_server_install_arguments | join(' ') }}"
+    INSTALL_K3S_VERSION: "{{ k3s_version }}"
+  changed_when: true
+
+- name: Setup k3s main server
+  block:
+    - name: Wait for k3s to be ready
+      ansible.builtin.wait_for:
+        port: 6443
+        host: "{{ ansible_host }}"
+        delay: 10
+        timeout: 300
+        state: started
+
+    # - name: Copy k3s server kubeconfig to user home
+    #   ansible.builtin.copy:
+    #     src: /etc/rancher/k3s/k3s.yaml
+    #     dest: "/home/{{ ansible_user }}/.kube/config"
+    #     owner: "{{ ansible_user }}"
+    #     group: "{{ ansible_user }}"
+    #     mode: 0600
+
+- name: Setup k9s
+  block:
+    - name: Check whether k9s is installed
+      ansible.builtin.command: "k9s version"
+      register: k9s_installed
+      become: false
+      ignore_errors: true
+      changed_when: false
+
+    - name: Install k9s
+      when: k9s_installed.rc != 0
+      ansible.builtin.shell: "curl -sS {{ k9s_install_script }} | bash"
+      args:
+        creates: /usr/local/bin/k9s

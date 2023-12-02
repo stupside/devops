@@ -1,0 +1,28 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: cert-manager
+  namespace: flux-system
+spec:
+  interval: 30m
+  targetNamespace: flux-system
+  serviceAccountName: kustomize-controller
+  chart:
+    spec:
+      interval: 12h
+      version: "1.x"
+      chart: cert-manager
+      sourceRef:
+        name: jetstack
+        kind: HelmRepository
+        namespace: flux-system
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+      strategy: rollback
+  values:
+    installCRDs: true

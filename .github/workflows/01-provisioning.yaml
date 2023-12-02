@@ -1,0 +1,42 @@
+name: "Provisioning"
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "./provisioning/ansible"
+
+  pull_request:
+    branches: [main]
+    paths:
+      - "./provisioning/ansible"
+
+permissions:
+  contents: read
+
+jobs:
+  ansible:
+    name: "Ansible"
+    runs-on: ubuntu-latest
+    environment: production
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: "./provisioning/ansible"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install python3
+        run: |
+          sudo apt install -y python3-pip
+
+      - name: Install ansible
+        run: |
+          pip3 install ansible
+
+      - name: Run ansible-playbook
+        run: |
+          ansible-playbook ${GITHUB_WORKSPACE}/ansible/site.yml

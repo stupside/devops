@@ -1,0 +1,18 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: dev-tns
+  namespace: flux-system
+spec:
+  path: ./kubernetes/tenants/dev
+  interval: 10m0s
+  serviceAccountName: kustomize-controller
+  dependsOn:
+    - name: controllers
+  sourceRef:
+    name: flux-system
+    kind: GitRepository
+  wait: true
+  prune: true
+  timeout: 5m0s

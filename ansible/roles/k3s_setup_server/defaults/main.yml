@@ -1,0 +1,10 @@
+---
+k9s_install_script: https://webinstall.dev/k9s
+
+k8s_server_config: ~/.kube/config
+
+k3s_server_config: /etc/rancher/k3s/k3s.yaml
+
+k3s_server_install_arguments:
+  - "--disable=traefik"
+  - "--write-kubeconfig-mode=644"

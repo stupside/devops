@@ -1,0 +1,54 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: configs
+  namespace: flux-system
+spec:
+  path: ./kubernetes/platform/configs
+  timeout: 10m0s
+  interval: 5m0s
+  serviceAccountName: kustomize-controller
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  wait: true
+  prune: true
+
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: repositories
+  namespace: flux-system
+spec:
+  path: ./kubernetes/platform/repositories
+  timeout: 10m0s
+  interval: 5m0s
+  serviceAccountName: kustomize-controller
+  dependsOn:
+    - name: configs
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  wait: true
+  prune: true
+
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: controllers
+  namespace: flux-system
+spec:
+  path: ./kubernetes/platform/controllers
+  timeout: 10m0s
+  interval: 5m0s
+  serviceAccountName: kustomize-controller
+  dependsOn:
+    - name: repositories
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  wait: true
+  prune: true
