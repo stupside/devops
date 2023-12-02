@@ -1,0 +1,40 @@
+version: '3'
+
+vars:
+  CLUSTER: devops
+  GITHUB_USER: stupside
+  GITHUB_REPO: devops
+
+tasks:
+  default:
+    cmds:
+      - task: cluster
+      - task: cilium
+      - task: flux
+
+  cluster:
+    desc: Create kind cluster
+    cmds:
+      - kind create cluster --config kind.yaml --name {{.CLUSTER}}
+
+  cilium:
+    desc: Install Cilium CNI
+    cmds:
+      - cilium install --version 1.16.4 --set kubeProxyReplacement=true --set gatewayAPI.enabled=true --set l2announcements.enabled=true
+      - cilium status --wait
+
+  flux:
+    desc: Bootstrap Flux
+    cmds:
+      - flux bootstrap github --personal --owner={{.GITHUB_USER}} --repository={{.GITHUB_REPO}} --path=cluster/kubernetes
+
+  down:
+    desc: Delete cluster
+    cmds:
+      - kind delete cluster --name {{.CLUSTER}}
+
+  reset:
+    desc: Reset cluster
+    cmds:
+      - task: down
+      - task: default

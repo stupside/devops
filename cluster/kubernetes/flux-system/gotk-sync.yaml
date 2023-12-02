@@ -1,0 +1,29 @@
+# Flux 2.7+ GitOps Sync Configuration
+# SOPS decryption is configured globally via kustomize-controller --sops-age-secret flag
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: flux-system
+  namespace: flux-system
+spec:
+  interval: 1m
+  ref:
+    branch: main
+  secretRef:
+    name: flux-system
+  url: ssh://git@github.com/stupside/devops.git
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: flux-system
+  namespace: flux-system
+spec:
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ./cluster/kubernetes
+  interval: 1h
+  prune: true
+  wait: true

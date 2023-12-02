@@ -1,0 +1,29 @@
+# Tenant: xonery
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: tenant-xonery
+  namespace: flux-system
+spec:
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ./tenants/base
+  interval: 30m
+  retryInterval: 2m
+  timeout: 5m
+  prune: true
+  wait: true
+  postBuild:
+    substitute:
+      TENANT: xonery
+      DOMAIN: xonery.local
+      REPO: https://github.com/stupside/xonery-apps
+    substituteFrom:
+      - kind: ConfigMap
+        name: tenant-defaults
+  commonMetadata:
+    labels:
+      app.kubernetes.io/part-of: xonery
+      capsule.clastix.io/tenant: developers

@@ -1,0 +1,35 @@
+# Network resources for tenant
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: ReferenceGrant
+metadata:
+  name: gateway
+  namespace: ${TENANT}
+spec:
+  from:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      namespace: ${GATEWAY_NS}
+    - group: gateway.networking.k8s.io
+      kind: GRPCRoute
+      namespace: ${GATEWAY_NS}
+  to:
+    - group: ""
+      kind: Service
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: tls
+  namespace: ${TENANT}
+spec:
+  secretName: tls
+  issuerRef:
+    name: ${ISSUER}
+    kind: ClusterIssuer
+  dnsNames:
+    - "*.${DOMAIN}"
+    - "${DOMAIN}"
+  privateKey:
+    algorithm: ECDSA
+    size: 256
