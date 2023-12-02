@@ -1,0 +1,16 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: {{ .Values.tenant.name }}
+  namespace: {{ .Values.tenant.namespace }}
+spec:
+  timeout: {{ .Values.repository.reconciliation.timeout }}
+  interval: {{ .Values.repository.reconciliation.interval }}
+  ref:
+    branch: {{ .Values.repository.branch }}
+  url: {{ .Values.repository.url }}
+  {{- if .Values.repository.credentials.secretName }}
+  secretRef:
+    name: {{ .Values.repository.credentials.secretName }}
+  {{- end }}

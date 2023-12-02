@@ -1,0 +1,13 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+# name: devops
+nodes:
+  - role: control-plane
+    extraPortMappings:
+    - hostPort: 80
+      containerPort: 30_080
+    - hostPort: 443
+      containerPort: 30_443
+  - role: worker
+  - role: worker
+  - role: worker

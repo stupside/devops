@@ -1,0 +1,11 @@
+---
+k8s_server_config: ~/.kube/config
+
+k8s_masters_config: /etc/rancher/k3s/k3s.yaml
+
+k8s_masters_install_arguments:
+  - "--disable=traefik"
+  - "--disable=servicelb"
+  - "--write-kubeconfig-mode=644"
+  - "--kube-proxy-arg=proxy-mode=ipvs"
+  - "--kube-proxy-arg=ipvs-strict-arp=true"

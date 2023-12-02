@@ -1,0 +1,41 @@
+- name: Extract server token
+  block:
+    - name: Wait for master token to be available
+      ansible.builtin.wait_for:
+        path: /var/lib/rancher/k3s/server/node-token
+        state: present
+        timeout: 300
+        sleep: 5
+      delegate_to: "{{ groups['k8s_masters'][0] }}"
+      become: true
+
+    - name: Retrieve master token
+      ansible.builtin.slurp:
+        src: /var/lib/rancher/k3s/server/node-token
+      register: k8s_masters_token
+      delegate_to: "{{ groups['k8s_masters'][0] }}"
+      become: true
+
+    - name: Decode master token
+      ansible.builtin.set_fact:
+        k3s_token: "{{ k8s_masters_token.content | b64decode }}"
+      delegate_to: localhost
+  run_once: true
+
+- name: Run k3s install script
+  ansible.builtin.command: "{{ k3s_installer_path }}"
+  args:
+    creates: /etc/systemd/system/k3s-agent.service
+  environment:
+    K3S_URL: "https://{{ groups['k8s_masters'][0] }}:6443"
+    K3S_TOKEN: "{{ k3s_token }}"
+    K3S_NODE_NAME: "{{ inventory_hostname }}"
+    INSTALL_K3S_EXEC: "agent {{ k3s_agent_install_arguments | join(' ') }}"
+    INSTALL_K3S_VERSION: "{{ k3s_version }}"
+  become: true
+
+- name: Verify k3s installation
+  ansible.builtin.command: k3s --version
+  register: k3s_version_output
+  changed_when: false
+  failed_when: k3s_version_output.rc != 0

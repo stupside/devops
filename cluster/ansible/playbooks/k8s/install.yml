@@ -1,0 +1,26 @@
+---
+- name: Initialize k8s cluster
+  hosts: k8s_cluster
+  vars:
+    k3s_installer_link: https://get.k3s.io/
+    k3s_installer_path: /tmp/k3s_install.sh
+  roles:
+    - k8s/init
+    - k8s/tooling
+
+- name: Setup k8s masters
+  hosts: k8s_masters
+  roles:
+    - k8s/tooling
+    - k8s/setup/master
+  vars:
+    k3s_version: v1.31.1+k3s1
+    k3s_installer_path: /tmp/k3s_install.sh
+
+- name: Setup k8s workers
+  hosts: k8s_workers
+  roles:
+    - k8s/setup/worker
+  vars:
+    k3s_version: v1.31.1+k3s1
+    k3s_installer_path: /tmp/k3s_install.sh

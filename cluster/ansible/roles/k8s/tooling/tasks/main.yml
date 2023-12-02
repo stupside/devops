@@ -1,0 +1,8 @@
+---
+- name: Setup k9s
+  block:
+    - name: Install k9s
+      become: true
+      ansible.builtin.shell: "curl -sS {{ k9s_installer_link }} | bash"
+      args:
+        creates: /usr/local/bin/k9s

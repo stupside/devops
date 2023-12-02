@@ -1,0 +1,34 @@
+---
+- name: Init Flux
+  become: true
+  block:
+    - name: Check if Flux is installed
+      ansible.builtin.command: flux --version
+      register: flux_version
+      changed_when: false
+      failed_when: false
+
+    - name: Set Flux installed status
+      ansible.builtin.set_fact:
+        flux_is_installed: "{{ flux_version.rc == 0 }}"
+      changed_when: false
+
+    - name: Get installed Flux version
+      ansible.builtin.set_fact:
+        installed_flux_version: "{{ flux_version.stdout | regex_replace('^flux version: v?', '') | trim() }}"
+      when: flux_is_installed
+      changed_when: false
+
+    - name: Install Flux CLI
+      ansible.builtin.shell: curl -s {{ flux_installer_link }} | FLUX_VERSION={{ flux_installer_version }} bash
+      when: not flux_is_installed or installed_flux_version != flux_installer_version
+
+    - name: Verify Flux installation
+      ansible.builtin.command: flux --version
+      register: verify_flux_version
+      changed_when: false
+      failed_when: verify_flux_version.rc != 0
+
+    - name: Print Flux version
+      ansible.builtin.debug:
+        msg: "{{ verify_flux_version.stdout }}"

@@ -1,0 +1,33 @@
+version: '3'
+
+vars:
+  GITHUB_USER: "stupside"
+  CLUSTER_NAME: "devops"
+  GITHUB_BRANCH: "main" 
+  KUBERNETES_PATH: "./cluster/kubernetes"
+  GITHUB_REPOSITORY: "devops"
+
+tasks:
+  default:
+    deps: [down, up, bootstrap]
+
+  up:
+    desc: Create Kind cluster
+    cmds:
+      - kind create cluster --config kind.yaml --name={{.CLUSTER_NAME}}
+
+  down:
+    desc: Delete Kind cluster
+    cmds:
+      - kind delete cluster --name={{.CLUSTER_NAME}}
+
+  bootstrap:
+    desc: Bootstrap Flux with GitHub
+    cmds:
+      - |
+        flux bootstrap github \
+          --path={{.KUBERNETES_PATH}} \
+          --owner={{.GITHUB_USER}} \
+          --branch={{.GITHUB_BRANCH}} \
+          --repository={{.GITHUB_REPOSITORY}} \
+          --personal

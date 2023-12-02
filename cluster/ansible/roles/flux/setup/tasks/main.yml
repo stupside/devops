@@ -1,0 +1,17 @@
+---
+- name: Setup Flux
+  block:
+    - name: Bootstrap Flux
+      ansible.builtin.shell: |
+        {{ flux_git_token_name }}={{ flux_git_token_value }} \
+        flux bootstrap {{ flux_git_provider }} \
+          --personal \
+          --path={{ flux_git_repository_path }} \
+          --owner={{ flux_git_repository_owner }} \
+          --branch={{ flux_git_repository_branch }} \
+          --repository={{ flux_git_repository_name }}
+      register: flux_bootstrap
+      failed_when:
+        - flux_bootstrap.rc != 0
+        - "'namespace/flux-system' not in flux_bootstrap.stdout"
+      changed_when: "'namespace/flux-system created' in flux_bootstrap.stdout"

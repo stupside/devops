@@ -1,0 +1,17 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: {{ .Values.tenant.name }}
+  namespace: {{ .Values.tenant.namespace }}
+spec:
+  path: {{ .Values.repository.path }}
+  timeout: {{ .Values.repository.release.timeout }}
+  interval: {{ .Values.repository.release.interval }}
+  serviceAccountName: {{ .Values.rbac.serviceAccount.name }}
+  sourceRef:
+    kind: GitRepository
+    name: {{ .Values.tenant.name }}
+    namespace: {{ .Values.tenant.namespace }}
+  wait: true
+  prune: true

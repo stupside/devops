@@ -1,0 +1,36 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: system-core-configs
+  namespace: flux-system
+spec:
+  path: ./system/configs/core
+  interval: 5m0s
+  serviceAccountName: kustomize-controller
+  dependsOn:
+    - name: system-core-controllers
+  sourceRef:
+    name: flux-system
+    kind: GitRepository
+  wait: true
+  prune: true
+  timeout: 5m0s
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: system-network-configs
+  namespace: flux-system
+spec:
+  path: ./system/configs/network
+  interval: 5m0s
+  serviceAccountName: kustomize-controller
+  dependsOn:
+    - name: system-network-controllers
+  sourceRef:
+    name: flux-system
+    kind: GitRepository
+  wait: true
+  prune: true
+  timeout: 5m0s

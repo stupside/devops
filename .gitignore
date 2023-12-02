@@ -1,0 +1,6 @@
+.vscode
+.github
+
+.DS_Store
+
+./cluster/ansible/inventory/*.yml

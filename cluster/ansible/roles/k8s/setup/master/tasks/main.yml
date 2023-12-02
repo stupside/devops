@@ -1,0 +1,52 @@
+---
+- name: Run k3s installer
+  become: true
+  ansible.builtin.command: bash {{ k3s_installer_path }}
+  args:
+    creates: /etc/systemd/system/k3s.service
+  environment:
+    K3S_NODE_NAME: "{{ inventory_hostname }}"
+    K3S_CLUSTER_INIT: "true"
+    INSTALL_K3S_EXEC: "server {{ k8s_masters_install_arguments | join(' ') }}"
+    INSTALL_K3S_VERSION: "{{ k3s_version }}"
+
+- name: Wait for k3s to be ready
+  ansible.builtin.wait_for:
+    port: 6443
+    host: "{{ ansible_host }}"
+    delay: 10
+    timeout: 300
+    state: started
+
+- name: Verify k3s installation
+  ansible.builtin.command: k3s --version
+  register: k3s_version
+  changed_when: false
+  failed_when: k3s_version.rc != 0
+
+- name: Configure kubeconfig
+  block:
+    - name: Create .kube directory
+      ansible.builtin.file:
+        path: "{{ ansible_env.HOME }}/.kube"
+        state: directory
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: "0755"
+
+    - name: Copy k3s kubeconfig
+      ansible.builtin.copy:
+        src: "/etc/rancher/k3s/k3s.yaml"
+        dest: "{{ ansible_env.HOME }}/.kube/config"
+        remote_src: true
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: "0600"
+      become: true
+
+    - name: Update kubeconfig server address
+      ansible.builtin.replace:
+        path: "{{ ansible_env.HOME }}/.kube/config"
+        regexp: 'https://127\.0\.0\.1:6443'
+        replace: "https://{{ ansible_host }}:6443"
+      become: true

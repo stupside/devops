@@ -1,0 +1,53 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: cert-manager
+  namespace: flux-system
+spec:
+  timeout: 5m0s
+  interval: 30m0s
+  targetNamespace: cert-manager
+  serviceAccountName: kustomize-controller
+  dependsOn:
+    - name: ingress-nginx
+  chart:
+    spec:
+      interval: 12h
+      version: "1.x"
+      chart: cert-manager
+      sourceRef:
+        name: jetstack
+        kind: HelmRepository
+        namespace: flux-system
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+      strategy: rollback
+  values:
+    replicaCount: 1
+    crds:
+      enabled: true
+    global:
+      logLevel: 2
+    prometheus:
+      enabled: true
+      servicemonitor:
+        enabled: false
+    webhook:
+      replicaCount: 1
+      timeoutSeconds: 10
+    extraArgs:
+      - --dns01-recursive-nameservers-only
+      - --dns01-recursive-nameservers=1.1.1.1:53,9.9.9.9:53
+    resources:
+      requests:
+        cpu: 10m
+        memory: 32Mi
+      limits:
+        cpu: 100m
+        memory: 100Mi
