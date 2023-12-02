@@ -1,0 +1,21 @@
+tenant:
+  name: ""  # Required: tenant name
+  namespace: ""  # Required: tenant namespace
+
+repository:
+  url: ""  # Required: Git repository URL
+  branch: "main"
+  path: ""  # Required: Path to tenant manifests
+  credentials:
+    secretName: ""  # Optional: Secret name for private repos
+  reconciliation:
+    timeout: "5m"
+    interval: "5m"
+  release:
+    timeout: "5m"
+    interval: "5m"
+
+rbac:
+  additionalRules: []  # Optional: Additional RBAC rules
+  serviceAccount:
+    annotations: {}  # Optional: ServiceAccount annotations

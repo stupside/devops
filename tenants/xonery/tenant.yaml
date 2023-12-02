@@ -1,0 +1,45 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: xonery-tenant
+  labels:
+    toolkit.fluxcd.io/tenant: xonery
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: xonery-tenant
+  namespace: flux-system
+spec:
+  timeout: 1m0s
+  interval: 5m0s
+  serviceAccountName: kustomize-controller
+  chart:
+    spec:
+      interval: 10m0s
+      chart: ./charts/templates/tenant
+      sourceRef:
+        kind: GitRepository
+        name: flux-system
+        namespace: flux-system
+  install:
+    remediation:
+      retries: 3
+      remediateLastFailure: true
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+      strategy: rollback
+  values:
+    tenant:
+      name: xonery
+      namespace: xonery-tenant
+    rbac:
+      serviceAccount:
+        name: xonery-tenant
+    repository:
+      url: https://github.com/stupside/devops.git
+      path: ./apps/xonery
+      branch: main

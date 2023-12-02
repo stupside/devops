@@ -1,0 +1,37 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: prometheus
+  namespace: monitoring
+  labels:
+    app: prometheus
+  annotations:
+    # Rate limiting
+    nginx.ingress.kubernetes.io/limit-rps: "10"
+    # Performance optimizations
+    nginx.ingress.kubernetes.io/proxy-buffer-size: "128k"
+    nginx.ingress.kubernetes.io/proxy-buffers-number: "4"
+    nginx.ingress.kubernetes.io/enable-compression: "true"
+    # Existing annotations
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    # SSL configuration
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - prometheus.xonery.dev
+      secretName: prometheus-tls
+  rules:
+    - host: prometheus.xonery.dev
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: monitoring-prometheus-server
+                port:
+                  number: 80

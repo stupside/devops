@@ -1,0 +1,9 @@
+---
+- name: Undo cluster setup
+  hosts: k8s_cluster
+  become: true
+  tasks:
+    - name: Uninstall k3s
+      ansible.builtin.command:
+        cmd: k3s-uninstall.sh
+        removes: /var/lib/rancher/k3s/*

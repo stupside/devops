@@ -1,0 +1,19 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: system-monitoring
+  namespace: flux-system
+spec:
+  path: ./system/monitoring
+  interval: 5m0s
+  serviceAccountName: kustomize-controller
+  dependsOn: 
+    - name: system-core-configs
+    - name: system-network-configs
+  sourceRef:
+    name: flux-system
+    kind: GitRepository
+  wait: true
+  prune: true
+  timeout: 5m0s

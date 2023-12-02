@@ -1,0 +1,34 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: podinfo
+  namespace: xonery-tenant
+spec:
+  timeout: 5m
+  interval: 30m
+  releaseName: podinfo
+  serviceAccountName: xonery-tenant
+  chart:
+    spec:
+      interval: 1h0m0s
+      chart: podinfo
+      version: ">=1.0.0"
+      sourceRef:
+        name: podinfo
+        kind: HelmRepository
+        namespace: xonery-tenant
+  install:
+    remediation:
+      retries: 3
+      remediateLastFailure: true
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+      strategy: rollback
+  values:
+    tls:
+      enabled: false
+    ingress:
+      enabled: false

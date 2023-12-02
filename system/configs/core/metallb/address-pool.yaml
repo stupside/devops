@@ -1,0 +1,11 @@
+---
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: nginx-pool
+  namespace: metallb-system
+spec:
+  autoAssign: true
+  addresses:
+    - 12.10.0.10-12.10.0.20
+  avoidBuggyIPs: true

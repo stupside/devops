@@ -1,0 +1,6 @@
+---
+- name: Initialize flux on k8s masters
+  hosts: k8s_masters
+  roles:
+    - flux/init
+    - flux/setup

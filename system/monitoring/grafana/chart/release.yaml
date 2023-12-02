@@ -1,0 +1,97 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: grafana
+  namespace: flux-system
+spec:
+  timeout: 5m0s
+  interval: 30m0s
+  targetNamespace: monitoring
+  serviceAccountName: kustomize-controller
+  chart:
+    spec:
+      chart: grafana
+      interval: 1h0m0s
+      version: ">=8.6.0"
+      sourceRef:
+        name: grafana
+        kind: HelmRepository
+        namespace: flux-system
+  dependsOn:
+    - name: local-path-provisioner
+      namespace: local-path-storage
+  install:
+    remediation:
+      retries: 3
+      remediateLastFailure: true
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+      strategy: rollback
+  values:
+    datasources:
+      datasources.yaml:
+        apiVersion: 1
+        datasources:
+        - name: Prometheus
+          url: http://prometheus.xonery.dev
+          type: prometheus
+          access: proxy
+          isDefault: true
+    dashboardProviders:
+      dashboardproviders.yaml:
+        apiVersion: 1
+        providers:
+        - name: 'flux'
+          type: file
+          orgId: 1
+          folder: Flux
+          allowUiUpdates: false
+          disableDeletion: true
+          updateIntervalSeconds: 10
+          options:
+            path: /var/lib/grafana/dashboards
+            foldersFromFilesStructure: true
+    dashboards:
+      flux: 
+        logs:
+          file: ../configs/dashboards/flux/logs.json
+          datasource: Prometheus
+        cluster: 
+          file: ../configs/dashboards/flux/cluster.json
+          datasource: Prometheus
+        control-plane:
+          file: ../configs/dashboards/flux/control-plane.json
+          datasource: Prometheus
+# ---
+# apiVersion: helm.toolkit.fluxcd.io/v2beta2
+# kind: HelmRelease
+# metadata:
+#   name: loki
+#   namespace: flux-system
+# spec:
+#   timeout: 5m0s
+#   interval: 30m0s
+#   targetNamespace: monitoring
+#   serviceAccountName: kustomize-controller
+#   chart:
+#     spec:
+#       chart: lokie
+#       interval: 1h0m0s
+#       version: ">=6.21.0"
+#       sourceRef:
+#         name: grafana
+#         kind: HelmRepository
+#         namespace: flux-system
+#   install:
+#     remediation:
+#       retries: 3
+#       remediateLastFailure: true
+#   upgrade:
+#     cleanupOnFail: true
+#     remediation:
+#       retries: 3
+#       strategy: rollback
+#   values:

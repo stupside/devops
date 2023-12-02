@@ -1,0 +1,66 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: ingress-nginx
+  namespace: flux-system
+spec:
+  timeout: 5m0s
+  interval: 30m0s
+  targetNamespace: ingress-nginx
+  serviceAccountName: kustomize-controller
+  chart:
+    spec:
+      version: "4.7.x"
+      interval: 12h
+      chart: ingress-nginx
+      sourceRef:
+        name: ingress-nginx
+        kind: HelmRepository
+        namespace: flux-system
+  install:
+    remediation:
+      retries: 3
+      remediateLastFailure: true
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+      strategy: rollback
+  values:
+    controller:
+      replicaCount: 1
+      autoscaling:
+        enabled: true
+        minReplicas: 1
+        maxReplicas: 3
+        targetCPUUtilizationPercentage: 80
+      resources:
+        requests:
+          cpu: 200m
+          memory: 256Mi
+        limits:
+          cpu: 1000m
+          memory: 256Mi
+      metrics:
+        enabled: false
+        serviceMonitor:
+          enabled: false
+      dnsPolicy: ClusterFirstWithHostNet
+      publishService:
+        enabled: true
+      service:
+        enabled: true
+        type: LoadBalancer
+        externalTrafficPolicy: Local
+        annotations:
+          metallb.universe.tf/address: "12.10.0.10"
+      admissionWebhooks:
+        enabled: true
+        failurePolicy: Fail
+      allowSnippetAnnotations: true
+      config:
+        enable-real-ip: "true"
+        use-forwarded-headers: "true"
+        compute-full-forwarded-for: "true"
+        forwarded-for-header: "X-Forwarded-For"

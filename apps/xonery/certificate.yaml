@@ -1,0 +1,16 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: xonery-tls
+  namespace: xonery-tenant
+spec:
+  secretName: xonery-tls
+  issuerRef:
+    name: letsencrypt-staging
+    kind: ClusterIssuer
+  commonName: xonery.dev
+  dnsNames:
+    - xonery.dev
+    # Subdomains
+    - podinfo.xonery.dev

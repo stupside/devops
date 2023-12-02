@@ -1,0 +1,10 @@
+---
+flux_git_provider: "github"
+
+flux_git_repository_branch: "main"
+flux_git_repository_owner: "stupside"
+
+flux_git_repository_name: "cluster"
+flux_git_repository_path: "/cluster/kubernetes"
+
+flux_git_token_name: "GITHUB_TOKEN"
