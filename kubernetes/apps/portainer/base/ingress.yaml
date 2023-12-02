@@ -1,0 +1,56 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+
+metadata:
+  namespace: portainer
+  name: portainer-ingress
+  annotations:
+    cert-manager.io/issuer: cert-manager-issuer
+
+    # Ssl
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+
+    # Cloudflare
+    whitelist-source-range: |
+      173.245.48.0/20,
+      103.21.244.0/22,
+      103.22.200.0/22,
+      103.31.4.0/22,
+      141.101.64.0/18,
+      108.162.192.0/18,
+      190.93.240.0/20,
+      188.114.96.0/20,
+      197.234.240.0/22, 
+      198.41.128.0/17,
+      162.158.0.0/15,
+      104.16.0.0/13,
+      104.24.0.0/14,
+      172.64.0.0/13,
+      131.0.72.0/22
+
+    # Rate limiting
+    limit-connections: "2"
+    limit-rps: "5" # req/sec
+    limit-rpm: "60" # req/min
+
+    # Security
+    enable-modsecurity: "true"
+    enable-owasp-modsecurity-crs: "true"
+
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - portainer.xonery.dev
+      secretName: portainer-tls
+  rules:
+    - host: portainer.xonery.dev
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: portainer-service
+                port:
+                  name: https

@@ -1,0 +1,28 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+
+metadata:
+  name: cert-manager-issuer
+
+spec:
+  acme:
+    email: me@xonery.dev
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: cert-manager-issuer-secret
+    solvers:
+      - http01:
+          ingress:
+            ingressClassName: nginx
+        selector:
+          matchLabels:
+            "use-http01-solver": "true"
+      - dns01:
+          cloudflare:
+            apiTokenSecretRef:
+              name: cert-manager-secret
+              key: cloudflare-api-token
+        selector:
+          dnsZones:
+            - "xonery.dev"
+            - "*.xonery.dev"
