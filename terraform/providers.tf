@@ -2,23 +2,23 @@ terraform {
 
   // https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/tunnel
 
-    required_version = "=> 0.12.29"
+    required_version = ">= 0.13.0"
 
     required_providers {
 
       kubernetes = {
         source  = "hashicorp/kubernetes"
-        version = ">= 2.0.3"
+        version = ">= 1.11.3"
       }
 
       helm = {
         source = "hashicorp/helm"
-        version = ">=2.4.1"
+        version = ">= 1.3.2"
       }
 
       cloudflare = {
         source = "cloudflare/cloudflare"
-        version = ">= 4.9.0"
+        version = ">= 2.0.0"
       }
 
       random = {
