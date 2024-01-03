@@ -8,17 +8,17 @@ terraform {
 
       kubernetes = {
         source  = "hashicorp/kubernetes"
-        version = ">= 1.11.3"
+        version = ">= 2.24.0"
       }
 
       helm = {
         source = "hashicorp/helm"
-        version = ">= 1.3.2"
+        version = ">= 2.12.1"
       }
 
       cloudflare = {
         source = "cloudflare/cloudflare"
-        version = ">= 2.0.0"
+        version = "=> 4.0.0"
       }
 
       random = {
