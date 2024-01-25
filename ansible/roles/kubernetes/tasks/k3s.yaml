@@ -7,14 +7,7 @@
   tags: download_k3s_script
 
 - name: Install k3s
-  shell: "/tmp/k3s.sh"
+  command: "/tmp/k3s.sh | INSTALL_K3S_EXEC='{{ k3s_install_script_args }}' sh -"
+  args:
+    executable: /bin/bash
   tags: install_k3s
-
-- name: Manage k3s configuration
-  block:
-    - name: Fetch k3s config
-      fetch:
-        src: {{ k3s_remote_kubeconfig_path }}
-        dest: {{ k3s_local_kubeconfig_path }}
-        flat: yes
-      tags: fetch_k3s_config

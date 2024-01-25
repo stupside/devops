@@ -3,7 +3,6 @@
   kubernetes.core.helm_repository:
     name: argocd
     repo_url: "{{ argocd_helm_repo_url }}"
-    kubeconfig: "{{ k3s_local_kubeconfig_path }}"
   tags: add_argocd_helm_repo
 
 - name: Create namespace for ArgoCD
@@ -12,7 +11,7 @@
     api_version: v1
     kind: Namespace
     name: "{{ argocd_namespace }}"
-    kubeconfig: "{{ k3s_local_kubeconfig_path }}"
+    kubeconfig: "{{ k3s_remote_kubeconfig_path }}"
   tags: create_argocd_namespace
 
 - name: Install ArgoCD using Helm
@@ -22,31 +21,19 @@
     release_namespace: "{{ argocd_namespace }}"
     chart_version: "{{ argocd_chart_version }}"
     values:
-      ingress:
-        enabled: true
-        path: /
-        hosts:
-          - argocd.{{ cloudflare_domain }}
-        annotations:
-          kubernetes.io/ingress.class: nginx
-          kubernetes.io/tls-acme: "true"
-    kubeconfig: "{{ k3s_local_kubeconfig_path }}"
+      dex:
+        enabled: false
+      notifications:
+        enabled: false
+      applicationSet:
+        enabled: false
+      server:
+        extraArgs:
+          - --insecure
+    kubeconfig: "{{ k3s_remote_kubeconfig_path }}"
   tags: install_argocd
 
 - name: Add ArgoCD App of Apps
-  kubernetes.core.helm:
-    name: applications
-    release_namespace: "{{ argocd_namespace }}"
-    chart_ref: "{{ devops_repository }}/{{ devops_repository_argocd_path }}"
-    values:
-      dex.config: |
-        connectors:
-          - type: github
-            id: github
-            name: GitHub
-            config:
-              clientID: "{{ github_client_id }}"
-              clientSecret: "{{ github_client_secret }}"
-
-    kubeconfig: "{{ k3s_local_kubeconfig_path }}"
-  tags: add_argocd_app_of_apps
+  k8s:
+    kubeconfig: "{{ k3s_remote_kubeconfig_path }}"
+    definition: "{{ lookup('file', '/testing/deployment.yml') | from_yaml_all }}"
