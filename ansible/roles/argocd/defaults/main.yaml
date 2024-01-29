@@ -4,5 +4,5 @@ argocd_helm_repo_url: "https://argoproj.github.io/argo-helm"
 
 cloudflare_domain: "xonery.dev"
 
-devops_repository: "https://github.com/stupside/devops.git"
 devops_repository_argocd: "kubernetes/argocd"
+devops_repository_argocd_templates: "https://github.com/stupside/devops.git"

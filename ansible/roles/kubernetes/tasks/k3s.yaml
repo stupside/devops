@@ -7,7 +7,5 @@
   tags: download_k3s_script
 
 - name: Install k3s
-  command: "/tmp/k3s.sh | INSTALL_K3S_EXEC='{{ k3s_install_script_args }}' sh -"
-  args:
-    executable: /bin/bash
+  shell: "INSTALL_K3S_EXEC='{{ k3s_install_script_args }}' | /tmp/k3s.sh"
   tags: install_k3s

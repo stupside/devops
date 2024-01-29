@@ -25,6 +25,12 @@
 
 - name: Install kubernetes python module with pip
   pip:
-    name:
-      - kubernetes
-  tag: install_kubernetes_python_module
+    name: kubernetes
+    state: latest
+  tags: install_kubernetes_python_module
+
+- name: Install openshift python module with pip
+  pip:
+    name: openshift
+    state: latest
+  tags: install_openshift_python_module

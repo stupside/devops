@@ -33,7 +33,7 @@
     kubeconfig: "{{ k3s_remote_kubeconfig_path }}"
   tags: install_argocd
 
-- name: Add ArgoCD App of Apps
-  k8s:
-    kubeconfig: "{{ k3s_remote_kubeconfig_path }}"
-    definition: "{{ lookup('file', '/testing/deployment.yml') | from_yaml_all }}"
+# - name: Add ArgoCD App of Apps
+#   k8s:
+#     kubeconfig: "{{ k3s_remote_kubeconfig_path }}"
+#     definition: "{{ lookup('templates', 'application.yaml.j2') | from_yaml_all }}"
