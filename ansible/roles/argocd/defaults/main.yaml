@@ -1,8 +1,0 @@
-argocd_namespace: "argocd"
-argocd_chart_version: "5.53.7"
-argocd_helm_repo_url: "https://argoproj.github.io/argo-helm"
-
-cloudflare_domain: "xonery.dev"
-
-devops_repository_argocd: "kubernetes/argocd"
-devops_repository_argocd_templates: "https://github.com/stupside/devops.git"

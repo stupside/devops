@@ -4,8 +4,10 @@
     url: "{{ k3s_install_script_url }}"
     dest: "/tmp/k3s.sh"
     mode: "0700"
-  tags: download_k3s_script
+  tags: 
+    - download_k3s_script
 
 - name: Install k3s
-  shell: "INSTALL_K3S_EXEC='{{ k3s_install_script_args }}' | /tmp/k3s.sh"
-  tags: install_k3s
+  shell: "/tmp/k3s.sh {{ k3s_install_script_args }}"
+  tags: 
+    - install_k3s

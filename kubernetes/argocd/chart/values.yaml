@@ -1,0 +1,26 @@
+configs:
+  params:
+    server.insecure: true
+
+dex:
+  enabled: false
+notifications:
+  enabled: false
+applicationSet:
+  enabled: false
+
+server: 
+  ingress:
+    enabled: true
+
+    controller: generic
+
+    ingressClassName: "traefik"
+
+    hostname: argocd.xonery.dev
+
+    annotations: 
+      cert-manager.io/cluster-issuer: "letsencrypt-issuer"
+
+      nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
