@@ -1,0 +1,11 @@
+services:
+  ubuntu:
+    restart: always
+    image: ubuntu:latest
+    container_name: ubuntu
+    ports:
+      - "22:22"
+      - "80:80"
+      - "443:443"
+    # volumes:
+    # - /etc/ssh:/etc/ssh

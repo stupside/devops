@@ -2,5 +2,6 @@ spec:
   destination:
     server: https://kubernetes.default.svc
   source:
+    path: kubernetes/argocd/pattern
     repoURL: https://github.com/stupside/devops.git
     targetRevision: HEAD
