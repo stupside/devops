@@ -7,7 +7,7 @@ metadata:
 spec:
   path: ./kubernetes/infrastructure/controllers/net-system/ingress-nginx
   sourceRef:
-    name: devops-repo
+    name: flux-system
     kind: GitRepository
   wait: true
   prune: true

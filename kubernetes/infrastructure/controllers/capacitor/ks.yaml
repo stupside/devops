@@ -7,5 +7,5 @@ metadata:
 spec:
   path: ./kubernetes/infrastructure/controllers/capacitor
   sourceRef:
-    name: devops-repo
+    name: flux-system
     kind: GitRepository
