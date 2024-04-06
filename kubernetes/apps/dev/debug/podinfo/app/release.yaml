@@ -9,8 +9,8 @@ spec:
       chart: podinfo
       version: ">=1.0.0"
       sourceRef:
-        name: flux-system
         kind: HelmRepository
+        name: external-repositories
   interval: 30m
   install:
     remediation:

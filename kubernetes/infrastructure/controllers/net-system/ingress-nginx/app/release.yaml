@@ -11,9 +11,9 @@ spec:
       version: "4.10.0"
       chart: ingress-nginx
       sourceRef:
-        kind: HelmRepository
         name: ingress-nginx
-        namespace: flux-system
+        kind: HelmRepository
+        namespace: infrastructure-repositories
   install:
     remediation:
       retries: 3

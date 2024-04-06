@@ -4,12 +4,13 @@ metadata:
   name: capacitor
   namespace: flux-system
 spec:
+  path: "./"
+  wait: true
+  prune: true
   timeout: 5m
   interval: 1h
   retryInterval: 2m
-  wait: true
-  prune: true
-  path: "./"
   sourceRef:
     name: capacitor
     kind: OCIRepository
+    namespace: infrastructure-repositories
