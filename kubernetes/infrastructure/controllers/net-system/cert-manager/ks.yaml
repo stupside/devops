@@ -2,13 +2,13 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: net-system-cert-manager
+  name: cert-manager
   namespace: flux-system
 spec:
   path: ./kubernetes/infrastructure/controllers/net-system/cert-manager
   sourceRef:
+    name: devops-repo
     kind: GitRepository
-    name: flux-system
   wait: true
   prune: true
   timeout: 5m
