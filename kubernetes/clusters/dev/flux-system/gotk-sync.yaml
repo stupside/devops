@@ -3,7 +3,7 @@
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
 metadata:
-  name: devops-repo
+  name: flux-system
   namespace: flux-system
 spec:
   interval: 30s
@@ -19,7 +19,7 @@ metadata:
   name: flux-system
   namespace: flux-system
 spec:
-  interval: 5m0s
+  interval: 10m0s
   path: ./kubernetes/clusters/dev
   prune: true
   sourceRef:
