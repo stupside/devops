@@ -26,11 +26,6 @@ spec:
     controller:
       config:
         use-forwarded-headers: true
-      metrics:
-        enabled: true
-        serviceMonitor:
-          enabled: true
-          namespace: net-system
       resources:
           requests:
             cpu: 10m
