@@ -7,7 +7,7 @@ spec:
   interval: 30m
   chart:
     spec:
-      version: "*"
+      version: "4.x"
       interval: 12h
       chart: ingress-nginx
       sourceRef:
