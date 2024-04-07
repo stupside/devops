@@ -17,6 +17,7 @@ curl -s https://fluxcd.io/install.sh | sudo bash
 flux bootstrap github --owner=stupside --repository=devops --branch=main --path=/kubernetes/clusters/dev --interval=30s
 
 flux get kustomizations --watch
+flux get helmreleases --all-namespaces
 ```
 
 # K9S

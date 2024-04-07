@@ -3,13 +3,13 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: podinfo
-  namespace: apps
+  namespace: flux-system
 spec:
   path: ./kubernetes/apps/dev/debug/podinfo
   sourceRef:
     name: flux-system
     kind: GitRepository
-  wait: true
+  wait: false
   prune: true
   timeout: 5m
   interval: 30m
