@@ -3,5 +3,7 @@ kind: Kustomization
 resources:
   - ./net-system/namespace.yaml
 
+  - ./capacitor/ks.yaml
+
   - ./net-system/cert-manager/ks.yaml
   - ./net-system/ingress-nginx/ks.yaml

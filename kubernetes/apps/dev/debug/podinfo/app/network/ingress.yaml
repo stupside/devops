@@ -2,7 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: podinfo
-  namespace: apps
+  namespace: flux-apps
   labels:
     app: podinfo
   annotations:
