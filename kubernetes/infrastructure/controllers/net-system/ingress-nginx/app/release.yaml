@@ -7,8 +7,8 @@ spec:
   interval: 30m
   chart:
     spec:
+      version: "*"
       interval: 12h
-      version: "4.10.0"
       chart: ingress-nginx
       sourceRef:
         name: ingress-nginx
@@ -24,15 +24,7 @@ spec:
   uninstall:
     keepHistory: false
   values:
-    ingressClass:
-      create: true
-      setAsDefaultIngress: true
     controller:
-      replicaCount: 1
-      admissionWebhooks:
-        certManager:
-          enabled: true
-      allowSnippetAnnotations: true
       config:
         use-forwarded-headers: true
       metrics:
