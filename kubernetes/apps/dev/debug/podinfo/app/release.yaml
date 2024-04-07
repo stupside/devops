@@ -2,15 +2,15 @@ apiVersion: helm.toolkit.fluxcd.io/v2beta2
 kind: HelmRelease
 metadata:
   name: podinfo
-  namespace: apps-debug
+  namespace: apps
 spec:
   chart:
     spec:
       chart: podinfo
       version: ">=1.0.0"
       sourceRef:
+        name: flux-system
         kind: HelmRepository
-        name: external-repositories
   interval: 30m
   install:
     remediation:

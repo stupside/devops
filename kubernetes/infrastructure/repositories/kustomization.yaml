@@ -3,7 +3,8 @@ kind: Kustomization
 resources:
   - ./namespace.yaml
 
+  - ./oci/capacitor.yaml
+  
   - ./helm/jetstack.yaml
   - ./helm/kubernetes.yaml
 
-  - ./oci/capacitor.yaml
