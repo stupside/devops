@@ -19,6 +19,8 @@ flux bootstrap github --owner=stupside --repository=devops --branch=main --path=
 flux get kustomizations --watch
 flux get all --all-namespaces
 flux logs --follow --level=error --all-namespaces
+
+kubectl -n flux-system get receiver/flux-system
 ```
 
 # K9S
