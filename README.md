@@ -14,7 +14,7 @@ export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
 export FLUX_VERSION=2.2.3
 curl -s https://fluxcd.io/install.sh | sudo bash
 
-flux bootstrap github --owner=stupside --repository=devops --branch=main --path=/kubernetes/clusters/dev --interval=30s
+flux bootstrap github --owner=stupside --repository=devops --branch=main --path=/kubernetes/clusters/dev
 
 flux get kustomizations --watch
 flux get all --all-namespaces
