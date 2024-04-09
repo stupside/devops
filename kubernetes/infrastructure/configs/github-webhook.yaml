@@ -5,7 +5,7 @@ metadata:
   name: github-webhook-token
   namespace: flux-system
 type: Opaque
-stringData:
+data:
   token: 4a59b5ae2bff9b3cc371e1ed44bb341432d56ca6
 ---
 apiVersion: notification.toolkit.fluxcd.io/v1
