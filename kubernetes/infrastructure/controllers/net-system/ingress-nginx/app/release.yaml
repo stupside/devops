@@ -24,8 +24,6 @@ spec:
       strategy: rollback
   values:
     controller:
-      service:
-        type: "NodePort"
       config:
         use-forwarded-headers: true
       resources:
