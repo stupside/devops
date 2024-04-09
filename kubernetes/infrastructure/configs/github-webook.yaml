@@ -1,0 +1,25 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: github-webook-token
+  namespace: flux-system
+type: Opaque
+stringData:
+  token: 4a59b5ae2bff9b3cc371e1ed44bb341432d56ca6
+---
+apiVersion: notification.toolkit.fluxcd.io/v1
+kind: Receiver
+metadata:
+  name: flux-system-webhook
+  namespace: flux-system
+spec:
+  type: github
+  events:
+    - "ping"
+    - "push"
+  secretRef:
+    name: github-webook-token
+  resources:
+    - kind: GitRepository
+      name: flux-system
