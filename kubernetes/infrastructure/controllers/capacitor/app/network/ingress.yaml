@@ -6,11 +6,8 @@ metadata:
   labels:
     app: capacitor
   annotations:
-  
     cert-manager.io/cluster-issuer: "letsencrypt"
-    cert-manager.io/issue-temporary-certificate: "true"
-    acme.cert-manager.io/http01-edit-in-place: "true"
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
 spec:
   ingressClassName: nginx
   tls:
