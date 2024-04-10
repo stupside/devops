@@ -3,7 +3,7 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: cert-manager
-  namespace: net-system
+  namespace: flux-system
 spec:
   path: ./kubernetes/infrastructure/controllers/net-system/cert-manager
   sourceRef:
