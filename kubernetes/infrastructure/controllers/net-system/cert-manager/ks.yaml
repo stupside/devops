@@ -5,7 +5,6 @@ metadata:
   name: cert-manager
   namespace: net-system
 spec:
-  targetNamespace: net-system
   path: ./kubernetes/infrastructure/controllers/net-system/cert-manager
   sourceRef:
     name: flux-system
