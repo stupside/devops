@@ -14,8 +14,8 @@ spec:
   dependsOn:
     - name: infrastructure-controllers
   sourceRef:
-    kind: GitRepository
     name: flux-system
+    kind: GitRepository
   path: ./kubernetes/apps/dev
   wait: true
   prune: true

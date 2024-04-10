@@ -45,7 +45,7 @@ spec:
   retryInterval: 1m
   timeout: 5m
   sourceRef:
-    kind: GitRepository
     name: flux-system
+    kind: GitRepository
   path: ./kubernetes/infrastructure/configs
   prune: true
