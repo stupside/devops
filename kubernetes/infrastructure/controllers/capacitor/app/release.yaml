@@ -5,13 +5,13 @@ metadata:
   name: capacitor
   namespace: flux-system
 spec:
+  targetNamespace: flux-system
+  sourceRef:
+    name: capacitor
+    kind: OCIRepository
   path: "./"
   wait: true
   prune: true
   timeout: 5m
   interval: 1h
   retryInterval: 2m
-  sourceRef:
-    name: capacitor
-    kind: OCIRepository
-  targetNamespace: flux-system

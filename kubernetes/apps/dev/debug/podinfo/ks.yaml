@@ -3,8 +3,9 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: podinfo
-  namespace: flux-system
+  namespace: apps
 spec:
+  targetNamespace: apps
   path: ./kubernetes/apps/dev/debug/podinfo
   sourceRef:
     name: flux-system
