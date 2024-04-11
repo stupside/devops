@@ -8,7 +8,7 @@ spec:
   path: ./kubernetes/apps/dev/admin/capacitor
   sourceRef:
     name: flux-system
-    kind: OCIRepository
+    kind: GitRepository
   wait: false
   prune: true
   timeout: 5m

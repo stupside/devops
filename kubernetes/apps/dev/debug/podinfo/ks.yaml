@@ -8,7 +8,7 @@ spec:
   path: ./kubernetes/apps/dev/debug/podinfo
   sourceRef:
     name: flux-system
-    kind: OCIRepository
+    kind: GitRepository
   wait: false
   prune: true
   timeout: 5m
