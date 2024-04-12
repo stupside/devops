@@ -9,6 +9,7 @@ spec:
   sourceRef:
     name: flux-system
     kind: GitRepository
+    namespace: flux-system
   wait: false
   prune: true
   timeout: 5m
