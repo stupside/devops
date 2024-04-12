@@ -9,6 +9,7 @@ spec:
   sourceRef:
     name: capacitor
     kind: OCIRepository
+    namespace: flux-system
   path: "./"
   wait: true
   prune: true
