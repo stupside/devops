@@ -12,6 +12,7 @@ spec:
       sourceRef:
         name: podinfo
         kind: HelmRepository
+        namespace: flux-system
   interval: 30m
   install:
     remediation:
