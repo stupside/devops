@@ -4,6 +4,7 @@ metadata:
   name: capacitor
   namespace: apps
 spec:
+  targetNamespace: apps
   sourceRef:
     name: capacitor
     kind: OCIRepository
