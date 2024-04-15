@@ -2,9 +2,9 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: capacitor
-  namespace: apps
+  namespace: flux-system
   labels:
-    app: capacitor
+    app: podinfo
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt
 spec:
