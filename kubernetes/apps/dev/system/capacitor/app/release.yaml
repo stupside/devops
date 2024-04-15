@@ -4,7 +4,6 @@ metadata:
   name: capacitor
   namespace: flux-system
 spec:
-  targetNamespace: flux-system
   sourceRef:
     name: capacitor
     kind: OCIRepository

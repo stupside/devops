@@ -10,7 +10,7 @@ spec:
       chart: podinfo
       version: ">=1.0.0"
       sourceRef:
-        name: flux-system
+        name: podinfo
         kind: HelmRepository
   interval: 30m
   install:
@@ -19,5 +19,5 @@ spec:
   values:
     tls:
       enabled: false
-    ingress: 
+    ingress:
       enabled: false
