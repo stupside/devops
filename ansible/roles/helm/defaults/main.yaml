@@ -1,3 +1,0 @@
-helm_stable_repo_url: "https://charts.helm.sh/stable"
-
-helm_script_url: "https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3"

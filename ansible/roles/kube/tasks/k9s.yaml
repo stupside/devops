@@ -1,6 +1,6 @@
 ---
 - name: Install k9s
-  shell: curl -sS https://webinstall.dev/k9s | bash
+  shell: "curl -sS {{ k9s.install_url }} | bash"
   args:
     creates: /usr/local/bin/k9s
   tags:

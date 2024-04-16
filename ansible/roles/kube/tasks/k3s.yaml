@@ -1,13 +1,5 @@
 ---
-- name: Download k3s install script
-  get_url:
-    url: "{{ k3s_install_script_url }}"
-    dest: "/tmp/k3s.sh"
-    mode: "0700"
-  tags:
-    - download_k3s_script
-
 - name: Install k3s
-  shell: "/tmp/k3s.sh {{ k3s_install_script_args }}"
+  shell: "curl -sfL {{ k8s.install.script_url }} | sh -s - {{ k8s.install.script_args | join(' ') }}"
   tags:
     - install_k3s
