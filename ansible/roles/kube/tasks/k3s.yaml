@@ -11,10 +11,3 @@
   shell: "/tmp/k3s.sh {{ k3s_install_script_args }}"
   tags:
     - install_k3s
-
-- name: Copy k3s kubectl config
-  copy:
-    src: /etc/rancher/k3s/k3s.yaml
-    dest: ~/.kube/config
-  tags:
-    - copy_k3s_kubeconfig
