@@ -24,9 +24,19 @@ spec:
       strategy: rollback
   values:
     service:
+      enableHttp: true
+      enableHttps: true
       type: LoadBalancer
+      ports:
+        http: 80
+        https: 443
+      targetPorts:
+        http: 80
+        https: 443
+      nodePorts:
+        http: 80
+        https: 443
+
     controller:
       admissionWebhooks:
         enabled: true
-      config:
-        use-forwarded-headers: true
