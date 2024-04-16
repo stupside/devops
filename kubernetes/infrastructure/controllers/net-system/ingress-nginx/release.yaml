@@ -40,3 +40,10 @@ spec:
     controller:
       admissionWebhooks:
         enabled: true
+      allowSnippetAnnotations: true
+      config:
+        enable-real-ip: "true"
+        use-forwarded-headers: "true"
+        proxy-real-ip-cidr: "0.0.0.0/0"
+        compute-full-forwarded-for: "true"
+        forwarded-for-header: "X-Forwarded-For"
