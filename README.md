@@ -3,7 +3,7 @@
 ```
 python3 -m pip install --user ansible
 
-python3 -m ansible playbook ansible/playbook/site.yml -i ansible/inventory/config.yml
+python3 -m ansible playbook ansible/playbook/site.yaml -i ansible/inventory/config.yaml
 ```
 
 # K9S
