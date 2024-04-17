@@ -1,4 +1,3 @@
----
 k3s_cluster:
   children:
     server:

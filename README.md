@@ -3,19 +3,16 @@
 ```
 python3 -m pip install --user ansible
 
-ansible-playbook ansible/playbook/site.yaml -i ansible/inventory.yaml
-```
+cd ansible
 
-# K9S
-
-```
-k9s
+ansible-playbook playbook/site.yaml -i inventory.yaml
 ```
 
 # Flux
 
 ```
 export FLUX_VERSION=2.2.3
+
 curl -s https://fluxcd.io/install.sh | sudo bash
 
 flux bootstrap github --owner=stupside --repository=devops --branch=main --path=/kubernetes/clusters/dev
