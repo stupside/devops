@@ -1,5 +1,0 @@
----
-- name: Install k3s
-  shell: "curl -sfL {{ k8s.install.script_url }} | sh -s - {{ k8s.install.script_args | join(' ') }}"
-  tags:
-    - install_k3s

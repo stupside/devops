@@ -1,21 +1,15 @@
-all:
-  hosts:
-    master:
-      ansible_user: ubuntu
-      ansible_host: localhost
-      ansible_connection: ssh
-      ansible_python_interpreter: /usr/bin/python3
-      ansible_ssh_private_key_file: ~/.ssh/id_rsa
-
+k3s_cluster:
+  children:
+    server:
+      hosts:
+        ansible_connection: ssh
+        ansible_host: 158.178.195.110
+        ansible_ssh_private_key_file: ~/.ssh/bigboy.key
+    agent:
+      hosts:
   vars:
-    k8s:
-      remote_config: /etc/rancher/k3s/k3s.yaml
-      install:
-        script_url: https://get.k3s.io
-        script_args:
-          - "--disable=traefik"
-          - "--write-kubeconfig-mode=644"
-          - "--tls-san={{ ansible_host }}"
+    ansible_port: 22
+    ansible_user: ubuntu
+    ansible_connection: ssh
 
-    k9s:
-      install_url: "https://webinstall.dev/k9s"
+    k3s_version: v1.26.9+k3s1

@@ -1,0 +1,6 @@
+---
+- name: Upgrade K3S server
+  hosts: server
+  become: true
+  roles:
+    - role: k3s_upgrade
