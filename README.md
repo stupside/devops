@@ -12,6 +12,15 @@ export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
 
 ```
 k9s --kubeconfig /etc/rancher/k3s/k3s.yaml
+
+sudo iptables -F
+
+sudo iptables -I INPUT -p tcp -m tcp --dport 6443 -j ACCEPT
+
+sudo iptables -t nat -A PREROUTING -d 10.0.0.239 -p tcp --dport 80 -j DNAT --to-destination 10.0.0.240:80
+sudo iptables -t nat -A PREROUTING -d 10.0.0.239 -p tcp --dport 443 -j DNAT --to-destination 10.0.0.240:443
+
+sudo iptables-save
 ```
 
 # Flux
@@ -23,7 +32,7 @@ curl -s https://fluxcd.io/install.sh | sudo bash
 flux bootstrap github --owner=stupside --repository=devops --branch=main --path=/kubernetes/clusters/dev
 ```
 
-## Usefull command to debug flux
+## Debug
 
 ```
 flux get kustomizations --watch
