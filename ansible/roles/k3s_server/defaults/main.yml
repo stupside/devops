@@ -5,6 +5,7 @@ k3s_server_config: /etc/rancher/k3s/k3s.yaml
 
 k3s_server_install_arguments:
   - "--disable=traefik"
+  # - "--disable-network-policy"
   - "--write-kubeconfig-mode=644"
-  - "--tls-san={{ ansible_host }}"
-  - "--node-external-ip={{ ansible_host }}"
+  # - "--disable-cloud-controller"
+  # - "--kubelet-arg cloud-provider=external"
