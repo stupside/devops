@@ -7,5 +7,6 @@ k3s_server_install_arguments:
   - "--disable=traefik"
   # - "--disable-network-policy"
   - "--write-kubeconfig-mode=644"
+  - "--tls-san={{ ansible_host }}"
   # - "--disable-cloud-controller"
   # - "--kubelet-arg cloud-provider=external"
