@@ -3,4 +3,4 @@
   become: true
   hosts: server
   roles:
-    - role: k3s_server
+    - k3s_server

@@ -11,13 +11,13 @@
 - name: Update node only if needed
   when: installed_k3s_version is version(k3s_version, '<')
   block:
-    - name: Find K3s service files
+    - name: Find k3s service files
       ansible.builtin.find:
         paths: "{{ systemd_dir }}"
         patterns: "k3s*.service"
       register: k3s_service_files
 
-    - name: Save current K3s service
+    - name: Save current k3s service
       ansible.builtin.copy:
         src: "{{ item.path }}"
         dest: "{{ item.path }}.bak"
@@ -26,7 +26,7 @@
         force: true
       loop: "{{ k3s_service_files.files }}"
 
-    - name: Install new K3s Version
+    - name: Install new k3s Version
       ansible.builtin.command:
         cmd: /usr/local/bin/k3s-install.sh
       environment:
@@ -34,7 +34,7 @@
         INSTALL_K3S_VERSION: "{{ k3s_version }}"
       changed_when: true
 
-    - name: Restore K3s service
+    - name: Restore k3s service
       ansible.builtin.copy:
         src: "{{ item.path }}.bak"
         dest: "{{ item.path }}"
@@ -43,22 +43,15 @@
         force: true
       loop: "{{ k3s_service_files.files }}"
 
-    - name: Clean up temporary K3s service backups
+    - name: Clean up temporary k3s service backups
       ansible.builtin.file:
         path: "{{ item.path }}.bak"
         state: absent
       loop: "{{ k3s_service_files.files }}"
 
-    - name: Restart K3s service [server]
+    - name: Restart k3s service
       when: "'server' in group_names"
       ansible.builtin.systemd:
         state: restarted
         daemon_reload: true
         name: k3s
-
-    - name: Restart K3s service [agent]
-      when: "'agent' in group_names"
-      ansible.builtin.systemd:
-        state: restarted
-        daemon_reload: true
-        name: k3s-agent

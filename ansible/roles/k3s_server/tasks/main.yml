@@ -1,0 +1,63 @@
+---
+- name: Get k3s installed version
+  ansible.builtin.command: k3s --version
+  changed_when: false
+  ignore_errors: true
+  register: k3s_version_output
+
+- name: Set k3s installed version
+  when: k3s_version_output.rc == 0
+  ansible.builtin.set_fact:
+    installed_k3s_version: "{{ k3s_version_output.stdout_lines[0].split(' ')[2] }}"
+
+- name: Setup k3s version artifact
+  when: k3s_version_output.rc != 0 or installed_k3s_version is version(k3s_version, '<')
+  block:
+    - name: Download k3s install script
+      ansible.builtin.get_url:
+        mode: 0755
+        owner: root
+        group: root
+        timeout: 120
+        url: https://get.k3s.io/
+        dest: /usr/local/bin/k3s-install.sh
+
+    - name: Run k3s install script
+      ansible.builtin.command:
+        cmd: /usr/local/bin/k3s-install.sh
+      environment:
+        INSTALL_K3S_VERSION: "{{ k3s_version }}"
+        INSTALL_K3S_EXEC: "{{ k3s_server_install_arguments | join(' ') }}"
+      changed_when: true
+
+- name: Setup kubectl
+  # when: inventory_hostname == groups['server'][0]
+  block:   
+
+    - name: Check whether kubectl is installed
+      ansible.builtin.command: 'kubectl'
+      delegate_to: 127.0.0.1
+      register: kubectl_installed
+      become: false
+      ignore_errors: true
+      changed_when: false
+
+    - name: Copy k3s config to k8s config
+      when: kubectl_installed.rc == 0
+      ansible.builtin.fetch:
+        flat: true
+        src: /etc/rancher/k3s/k3s.yaml
+        dest: "{{ k8s_server_config }}"
+
+- name: Enhance kubectl experience
+  block:
+    - name: Configure kubectl autocomplete
+      ansible.builtin.lineinfile:
+        path: ~{{ ansible_user }}/.bashrc
+        regexp: '\.\s+<\(kubectl completion bash\)'
+        line: ". <(kubectl completion bash)  # Added by k3s-ansible"
+
+    - name: Install K9s
+      shell: "curl -sS https://webinstall.dev/k9s | bash"
+      args:
+        creates: /usr/local/bin/k9s

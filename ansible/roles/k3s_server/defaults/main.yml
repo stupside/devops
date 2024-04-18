@@ -1,6 +1,10 @@
 ---
+k8s_server_config: ~/.kube/config
+
 k3s_server_config: /etc/rancher/k3s/k3s.yaml
-k3s_server_arguments:
+
+k3s_server_install_arguments:
   - "--disable=traefik"
   - "--write-kubeconfig-mode=644"
   - "--tls-san={{ ansible_host }}"
+  - "--node-external-ip={{ ansible_host }}"
