@@ -2,12 +2,17 @@ k3s_cluster:
   children:
     server:
       hosts:
-        bigboy:
+        master1:
           ansible_connection: ssh
           ansible_host: 158.178.195.110
-          ansible_ssh_private_key_file: ~/.ssh/bigboy.key
+          ansible_ssh_private_key_file: ~/.ssh/master1.key
     agent:
       hosts:
+        # agent1:
+        #   ansible_connection: ssh
+        #   ansible_host: 158.178.195.110
+        #   ansible_ssh_private_key_file: ~/.ssh/agent1.key
+          
   vars:
     ansible_port: 22
     ansible_user: ubuntu

@@ -1,3 +1,7 @@
-curl -s https://fluxcd.io/install.sh | FLUX_VERSION=2.2.3 sudo bash
+# curl -s https://fluxcd.io/install.sh | FLUX_VERSION=2.2.3 bash
 
-flux bootstrap github --owner=stupside --repository=devops --branch=main --path=/kubernetes/clusters/dev
+flux bootstrap github --personal --token-auth $GIT_REPO_TOKEN \
+    --owner=$GIT_REPO_OWNER \
+    --repository=$GIT_REPO_NAME \
+    --branch=main \
+    --path=/kubernetes/clusters/$CLUSTER \
