@@ -13,25 +13,14 @@ resource "oci_identity_compartment" "k3s_compartment" {
   description    = "Compartment for k3s resources"
 }
 
-resource "oci_budget_budget" "k3s_budget" {
+module "budget" {
+  source = "./modules/budget"
+
   compartment_id = oci_identity_compartment.k3s_compartment.id
 
-  display_name = "k3s-budget"
+  k3s_budget_amount    = 0
+  k3s_budget_amout_max = 1
 
-  amount = 0
-
-  reset_period = "MONTHLY"
-}
-
-resource "oci_budget_alert_rule" "k3s_budget_alert" {
-  budget_id = oci_budget_budget.k3s_budget.id
-
-  threshold      = 1
-  threshold_type = "ABSOLUTE"
-
-  type = "FORECASTED"
-
-  message = "Budget for k3s has been exceeded"
 }
 
 module "compute" {
