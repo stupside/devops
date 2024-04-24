@@ -20,7 +20,6 @@ module "budget" {
 
   k3s_budget_amount    = 0
   k3s_budget_amout_max = 1
-
 }
 
 module "compute" {
