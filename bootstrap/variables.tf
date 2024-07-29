@@ -8,11 +8,6 @@ variable "compartment_ocid" {
   type        = string
 }
 
-variable "private_key" {
-  description = "The private key used for authentication."
-  type        = string
-}
-
 variable "availability_domain" {
   description = "The availability domain to create resources in."
   type        = string

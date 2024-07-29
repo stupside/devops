@@ -1,6 +1,4 @@
 provider "oci" {
-  private_key = var.private_key
-
   tenancy_ocid = var.tenancy_ocid
 }
 
@@ -9,15 +7,6 @@ resource "oci_identity_compartment" "cmpt" {
   description    = "Compartment for k3s resources"
 
   compartment_id = var.compartment_ocid
-}
-
-module "budget" {
-  source = "./modules/budget"
-
-  budget_amount    = 0
-  budget_amout_max = 1
-
-  compartment_id = oci_identity_compartment.cmpt.id
 }
 
 module "compute" {
