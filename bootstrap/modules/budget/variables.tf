@@ -6,6 +6,7 @@ variable "compartment_id" {
 variable "budget_name" {
   description = "The name of the budget."
   type = string
+  default = "k3s_budget"
 }
 
 variable "budget_amount" {

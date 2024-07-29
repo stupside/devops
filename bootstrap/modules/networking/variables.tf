@@ -11,11 +11,13 @@ variable "cidr" {
 variable "dns_label" {
   description = "The label for the dns."
   type = string
+  default = "k3s_dns"
 }
 
 variable "security_group_name" {
   description = "The name of the security group."
   type = string
+  default = "k3s_network_secg"
 }
 
 variable "availability_domain" {

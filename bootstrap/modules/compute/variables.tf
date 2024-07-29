@@ -11,6 +11,7 @@ variable "server_shape" {
 variable "server_shape_name" {
   description = "The name of the shape for servers."
   type = string
+  default = "k3s_shape_server"
 }
 
 variable "server_shape_volume_gb" {
@@ -31,4 +32,5 @@ variable "agent_shape_volume_gb" {
 variable "agent_shape_name" {
   description = "The name of the shape for agents."
   type = string
+  default = "k3s_shape_agent"
 }

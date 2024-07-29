@@ -5,7 +5,6 @@ resource "oci_core_vcn" "vcn" {
   display_name = var.dns_label
 
   compartment_id = var.compartment_id
-
 }
 
 resource "oci_core_internet_gateway" "igw" {
