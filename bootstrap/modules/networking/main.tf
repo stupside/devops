@@ -1,5 +1,5 @@
 resource "oci_core_vcn" "vcn" {
-  cidr_blocks = var.cidr
+  cidr_blocks = [var.cidr]
 
   dns_label = var.dns_label
   display_name = var.dns_label
