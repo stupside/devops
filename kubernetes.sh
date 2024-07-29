@@ -3,5 +3,4 @@
 flux bootstrap github --personal --token-auth $GIT_REPO_TOKEN \
     --owner=$GIT_REPO_OWNER \
     --repository=$GIT_REPO_NAME \
-    --branch=main \
     --path=/kubernetes/clusters/$CLUSTER \

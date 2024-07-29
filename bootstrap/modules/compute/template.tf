@@ -1,39 +1,49 @@
 # https://docs.oracle.com/en-us/iaas/Content/Compute/References/computeshapes.htm
 # https://docs.oracle.com/en-us/iaas/tools/terraform-provider-oci/5.38/docs/r/core_instance_configuration.html
 
-resource "oci_core_instance_configuration" "k3s_server" {
+resource "oci_core_instance_configuration" "server_ic" {
   compartment_id = var.compartment_id
 
-  display_name = "k3s-server"
+  display_name = var.server_shape_name
 
   instance_details {
     instance_type = "compute"
 
     launch_details {
-      shape = var.k3s_server_shape
+      shape = var.server_shape
 
       shape_config {
         ocpus         = 1
         memory_in_gbs = 2
       }
+
+      source_details {
+        source_type = "image"
+        boot_volume_size_in_gbs = var.agent_shape_volume_gb
+      }
     }
   }
 }
 
-resource "oci_core_instance_configuration" "k3s_agent" {
+resource "oci_core_instance_configuration" "agent_ic" {
   compartment_id = var.compartment_id
 
-  display_name = "k3s-agent"
+  display_name = var.agent_shape_name
 
   instance_details {
     instance_type = "compute"
 
     launch_details {
-      shape = var.k3s_agent_shape
+      shape = var.agent_shape
 
       shape_config {
-        ocpus         = 4
-        memory_in_gbs = 6
+        ocpus         = 2
+        memory_in_gbs = 4
+      }
+
+      source_details {
+        source_type = "image"
+        boot_volume_size_in_gbs = var.agent_shape_volume_gb
       }
     }
   }

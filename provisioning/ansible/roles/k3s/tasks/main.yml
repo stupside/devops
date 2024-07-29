@@ -10,7 +10,7 @@
   ansible.builtin.set_fact:
     installed_k3s_version: "{{ k3s_version_output.stdout_lines[0].split(' ')[2] }}"
 
-- name: Setup k3s version artifact
+- name: Download k3s version artifact
   when: k3s_version_output.rc != 0 or installed_k3s_version is version(k3s_version, '<')
   block:
     - name: Download k3s install script
@@ -21,26 +21,3 @@
         timeout: 120
         url: https://get.k3s.io/
         dest: /usr/local/bin/k3s-install.sh
-
-- name: Setup k9s on main server
-  when: ansible_host == groups['server'][0]
-  block:
-    - name: Check wether k9s is installed
-      ansible.builtin.command: 'k9s'
-      register: k9s_installed
-      become: false
-      ignore_errors: true
-      changed_when: false
-
-    - name: Install K9s
-      when: k9s_installed.rc == 0
-      shell: "curl -sS {{ k9s_install_script }} | bash"
-      args:
-        creates: /usr/local/bin/k9s
-
-- name: Check whether kubectl is installed
-  ansible.builtin.command: 'kubectl'
-  register: kubectl_installed
-  become: false
-  ignore_errors: true
-  changed_when: false

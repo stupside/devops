@@ -5,9 +5,8 @@ metadata:
   name: infrastructure-repositories
   namespace: flux-system
 spec:
-  timeout: 5m
+  timeout: 10m
   interval: 30m
-  retryInterval: 1m
   sourceRef:
     kind: GitRepository
     name: flux-system
@@ -23,9 +22,8 @@ metadata:
 spec:
   dependsOn:
     - name: infrastructure-repositories
-  timeout: 5m
+  timeout: 10m
   interval: 30m
-  retryInterval: 1m
   sourceRef:
     kind: GitRepository
     name: flux-system
@@ -42,8 +40,7 @@ spec:
   dependsOn:
     - name: infrastructure-controllers
   interval: 30m
-  retryInterval: 1m
-  timeout: 5m
+  timeout: 10m
   sourceRef:
     name: flux-system
     kind: GitRepository

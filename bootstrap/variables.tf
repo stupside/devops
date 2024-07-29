@@ -28,18 +28,27 @@ variable "private_key_path" {
   type        = string
 }
 
-variable "k3s_availability_domain" {
+variable "availability_domain" {
   description = "The availability domain to create resources in."
   type        = string
 }
 
-variable "k3s_server_pool_size" {
-  description = "The number of servers in the k3s pool."
-  default     = 1
-  type        = number
+variable "dynamic_group_name" {
+  description = "The name of the dynamic group."
+  type = string
 }
 
-variable "k3s_agent_pool_size" {
+variable "server_pool_name" {
+  description = "The name of the servers pool."
+  type = string
+}
+
+variable "agent_pool_name" {
+  description = "The name of the agents pool."
+  type = string
+}
+
+variable "agent_pool_size" {
   description = "The number of agents in the k3s pool."
   default     = 2
   type        = number

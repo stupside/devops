@@ -1,21 +1,22 @@
-resource "oci_identity_dynamic_group" "k3s_pool" {
+resource "oci_identity_dynamic_group" "dyng" {
   compartment_id = var.compartment_ocid
 
-  name        = "k3s-pool"
-  description = "Dynamic group for k3s pool"
+  name        = var.dynamic_group_name
+  description = var.dynamic_group_name
 
   matching_rule = "ALL {instance.compartment.id = '${var.compartment_ocid}'}"
 }
 
-resource "oci_core_instance_pool" "k3s_server_pool" {
-  display_name = "k3s-pool"
+resource "oci_core_instance_pool" "server_ipool" {
+  display_name = var.server_pool_name
 
-  compartment_id            = var.compartment_ocid
-  instance_configuration_id = module.compute.k3s_server_instance_configuration_id
+  instance_configuration_id = module.compute.server_ic_id
 
-  size = var.k3s_server_pool_size
+  compartment_id            = oci_identity_dynamic_group.dyng.compartment_id
 
-  depends_on = [oci_identity_dynamic_group.k3s_pool]
+  size = 1
+
+  depends_on = [oci_identity_dynamic_group.dyng]
 
   lifecycle {
     create_before_destroy = true
@@ -23,19 +24,20 @@ resource "oci_core_instance_pool" "k3s_server_pool" {
   }
 
   placement_configurations {
-    availability_domain = var.k3s_availability_domain
+    availability_domain = var.availability_domain
 
     primary_subnet_id = module.networking.networking_subnet_id
   }
 }
 
-resource "oci_core_instance_pool" "k3s_agent_pool" {
-  display_name = "k3s-pool"
+resource "oci_core_instance_pool" "agent_ipool" {
+  display_name = var.server_pool_name
 
-  compartment_id            = var.compartment_ocid
-  instance_configuration_id = module.compute.k3s_server_instance_configuration_id
+  instance_configuration_id = module.compute.agent_ic_id
 
-  depends_on = [oci_identity_dynamic_group.k3s_pool]
+  compartment_id            = oci_identity_dynamic_group.dyng.compartment_id
+
+  depends_on = [oci_identity_dynamic_group.dyng]
 
   lifecycle {
     create_before_destroy = true
@@ -43,10 +45,10 @@ resource "oci_core_instance_pool" "k3s_agent_pool" {
   }
 
   placement_configurations {
-    availability_domain = var.k3s_availability_domain
+    availability_domain = var.availability_domain
 
     primary_subnet_id = module.networking.networking_subnet_id
   }
 
-  size = var.k3s_server_pool_size
+  size = var.agent_pool_size
 }

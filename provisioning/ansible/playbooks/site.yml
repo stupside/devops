@@ -7,12 +7,12 @@
 
 - name: Setup k3s servers
   become: true
-  hosts: server
+  hosts: k3s_server
   roles:
     - k3s_server
 
 - name: Setup k3s agents
   become: true
-  hosts: agent
+  hosts: k3s_agents
   roles:
     - k3s_agent

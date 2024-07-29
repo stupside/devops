@@ -1,7 +1,7 @@
-output "k3s_server_instance_configuration_id" {
-  value = oci_core_instance_configuration.k3s_server.id
+output "server_ic_id" {
+  value = oci_core_instance_configuration.server_ic.id
 }
 
-output "k3s_agent_instance_configuration_id" {
-  value = oci_core_instance_configuration.k3s_agent.id
+output "agent_ic_id" {
+  value = oci_core_instance_configuration.agent_ic.id
 }

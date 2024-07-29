@@ -1,5 +1,5 @@
 ---
-- name: Get k3s server token 
+- name: Get k3s server token
   ansible.builtin.wait_for:
     path: /var/lib/rancher/k3s/server/node-token
     state: present
@@ -13,9 +13,9 @@
     cmd: /usr/local/bin/k3s-install.sh
   environment:
     # Agent configuration
-    K3S_TOKEN: "{{ k3s_agent_token.stdout }}"
+    K3S_TOKEN: "{{ k3s_server_token.stdout }}"
     K3S_NODE_NAME: "{{ inventory_hostname  }}"
-    K3S_URL: "https://{{ groups['server'][0] }}:6443"
+    K3S_URL: "https://{{ groups['k3s_server'][0] }}:6443"
     # k3s configuration
     INSTALL_K3S_VERSION: "{{ k3s_version }}"
     INSTALL_K3S_EXEC: "agent {{ k3s_agent_install_arguments | join(' ') }}"

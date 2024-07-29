@@ -1,22 +1,15 @@
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: apps
----
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: apps
+  name: environment
   namespace: flux-system
 spec:
   interval: 5m0s
   dependsOn:
-    - name: infrastructure-controllers
+    - name: kustomize-controller
   sourceRef:
     name: flux-system
     kind: GitRepository
-  path: ./kubernetes/apps/dev
+  path: ./kubernetes/envrionments/dev
   wait: true
   prune: true
-  timeout: 5m0s

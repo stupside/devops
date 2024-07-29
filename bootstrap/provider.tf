@@ -7,34 +7,45 @@ provider "oci" {
   tenancy_ocid = var.tenancy_ocid
 }
 
-resource "oci_identity_compartment" "k3s_compartment" {
-  name           = "k3s"
+resource "oci_identity_compartment" "cmpt" {
+  name           = "k3s_comprtment"
   compartment_id = var.compartment_ocid
-  description    = "Compartment for k3s resources"
+  description    = "Compartment for resources"
 }
 
 module "budget" {
   source = "./modules/budget"
 
-  compartment_id = oci_identity_compartment.k3s_compartment.id
+  budget_name = "k3s_budget"
 
-  k3s_budget_amount    = 0
-  k3s_budget_amout_max = 1
+  budget_amount    = 0
+  budget_amout_max = 1
+
+  compartment_id = oci_identity_compartment.cmpt.id
 }
 
 module "compute" {
   source = "./modules/compute"
 
-  k3s_agent_shape  = "VM.Standard.A1.Flex"
-  k3s_server_shape = "VM.Standard.E2.1.Micro"
+agent_shape_volume_gb = "15"
+  agent_shape_name = "k3s_shape_agent"
+  agent_shape  = "VM.Standard.A1.Flex"
 
-  compartment_id = oci_identity_compartment.k3s_compartment.id
+  server_shape_volume_gb = "15"
+  server_shape_name = "k3s_shape_server"
+  server_shape = "VM.Standard.E2.1.Micro"
+
+  compartment_id = oci_identity_compartment.cmpt.id
 }
 
 module "networking" {
   source = "./modules/networking"
 
-  k3s_subnet_cidr = "192.168.0.0/16"
+  cidr = "10.0.0.0/16"
 
-  compartment_id = oci_identity_compartment.k3s_compartment.id
+  dns_label = "k3s_dns"
+  availability_domain = "1"
+  security_group_name = "k3s_network_secg"
+
+  compartment_id = oci_identity_compartment.cmpt.id
 }

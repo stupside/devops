@@ -3,12 +3,32 @@ variable "compartment_id" {
   type        = string
 }
 
-variable "k3s_server_shape" {
-  description = "The shape for the k3s server."
+variable "server_shape" {
+  description = "The shape for the server."
   type        = string
 }
 
-variable "k3s_agent_shape" {
-  description = "The shape for the k3s agent."
+variable "server_shape_name" {
+  description = "The name of the shape for servers."
+  type = string
+}
+
+variable "server_shape_volume_gb" {
+  description = "The size of the disk in gbs."
+  type = string
+}
+
+variable "agent_shape" {
+  description = "The shape for the agents."
   type        = string
+}
+
+variable "agent_shape_volume_gb" {
+  description = "The size of the disk in gbs."
+  type = string
+}
+
+variable "agent_shape_name" {
+  description = "The name of the shape for agents."
+  type = string
 }

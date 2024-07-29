@@ -1,20 +1,20 @@
-resource "oci_budget_budget" "k3s_budget" {
+resource "oci_budget_budget" "budget" {
   compartment_id = var.compartment_id
 
-  display_name = "k3s-budget"
+  display_name = var.budget_amount
 
-  amount = var.k3s_budget_amount
+  amount = var.budget_amount
 
   reset_period = "MONTHLY"
 }
 
-resource "oci_budget_alert_rule" "k3s_budget_alert" {
-  budget_id = oci_budget_budget.k3s_budget.id
+resource "oci_budget_alert_rule" "budget_alert" {
+  budget_id = oci_budget_budget.budget.id
 
-  threshold      = var.k3s_budget_amout_max
+  threshold      = var.budget_amout_max
   threshold_type = "ABSOLUTE"
 
   type = "FORECASTED"
 
-  message = "Budget for k3s has been exceeded"
+  message = "Budget has exceeded"
 }

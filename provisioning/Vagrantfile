@@ -1,0 +1,67 @@
+k3s_version = "v1.26.9+k3s1"
+
+server = {
+    name => "server"
+}
+
+agent_ids = [
+    {
+        name => "agent1"
+    },
+    {
+        name => "agent2"
+    }
+]
+
+Vagrant.configure("2") do |config|
+
+    config.vm.box = "ubuntu/trusty64"
+
+    config.vm.define "server", primary: true do |machine|
+
+        machine.vm.hostname = machine[:machine]
+
+        machine.vm.network "private_network", type: "dhcp"
+
+        machine.vm.provider "libvirt" do |lv|
+            lv.vm.cpus = 2
+            lv.vm.memory = 2048
+        end
+    end
+
+    agents.each do |agent_id|
+
+        config.define "agent#{agent_id}" do |machine|
+
+            machine.vm.hostname = "agent#{agent_id}"
+
+            machine.vm.network "private_network", type: "dhcp"
+
+            machine.vm.provider "libvirt" do |lv|
+                lv.vm.cpus = 1
+                lv.vm.memory = 1024
+            end
+        end
+    end
+
+    config.vm.provision "ansible" do |ansible|
+
+        ansible.playbook = "ansible/playbooks/site.yml"
+        
+        ansible.inventory = ".vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory"
+
+        ansible.groups = {
+            "k3s_server": ["server"],
+            "k3s_agents", ["agent[1:9999]"],
+            "k3s_cluster:children": [
+                "k3s_server",
+                "k3s_agents"
+            ]
+            "k3s_cluster:vars" => {
+                "k3s_version" => k3s_version
+            }
+        }
+    end
+end
+
+
