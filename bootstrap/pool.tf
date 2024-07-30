@@ -1,10 +1,10 @@
 resource "oci_identity_dynamic_group" "dyng" {
-  compartment_id = var.compartment_ocid
+  compartment_id = var.compartment_id
 
   name        = var.dynamic_group_name
   description = var.dynamic_group_name
 
-  matching_rule = "ALL {instance.compartment.id = '${var.compartment_ocid}'}"
+  matching_rule = "ALL {instance.compartment.id = '${var.compartment_id}'}"
 }
 
 resource "oci_core_instance_pool" "server_ipool" {

@@ -3,9 +3,26 @@ variable "tenancy_ocid" {
   type        = string
 }
 
-variable "compartment_ocid" {
+variable "compartment_id" {
   description = "The OCID of the compartment."
   type        = string
+}
+
+variable "user_ocid" {
+  description = "The OCID of the user."
+  type = string
+}
+
+variable "fingerprint" {
+  description = "The fingerpint."
+  type = string
+  sensitive = true
+}
+
+variable "private_key_path" {
+  description = "The private key path."
+  type = string
+  sensitive = true
 }
 
 variable "availability_domain" {

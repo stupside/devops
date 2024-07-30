@@ -1,12 +1,16 @@
 provider "oci" {
+  user_ocid = var.user_ocid
   tenancy_ocid = var.tenancy_ocid
+
+  fingerprint = var.fingerprint
+  private_key_path = var.private_key_path
 }
 
 resource "oci_identity_compartment" "cmpt" {
   name           = "k3s_comprtment"
   description    = "Compartment for k3s resources"
 
-  compartment_id = var.compartment_ocid
+  compartment_id = var.compartment_id
 }
 
 module "compute" {
