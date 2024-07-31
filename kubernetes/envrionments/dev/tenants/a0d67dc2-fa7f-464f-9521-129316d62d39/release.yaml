@@ -1,0 +1,14 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: a0d67dc2-fa7f-464f-9521-129316d62d39
+  namespace: apps
+spec:
+  interval: 5m
+  serviceAccountName: a0d67dc2-fa7f-464f-9521-129316d62d39
+  path: .
+  sourceRef:
+    name: a0d67dc2-fa7f-464f-9521-129316d62d39
+    kind: GitRepository
+  prune: true

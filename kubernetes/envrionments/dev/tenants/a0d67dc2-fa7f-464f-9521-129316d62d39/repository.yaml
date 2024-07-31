@@ -1,0 +1,11 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: a0d67dc2-fa7f-464f-9521-129316d62d39
+  namespace: apps
+spec:
+  interval: 1m
+  ref:
+    branch: main
+  url: ssh://git@github.com/stupside/devops-apps
