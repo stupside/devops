@@ -8,7 +8,7 @@ resource "oci_identity_dynamic_group" "indentity_dynamic_group" {
 }
 
 resource "oci_core_instance_pool" "instance_pool_server" {
-  display_name = "${var.name}-instance-pool-server"
+  display_name = "${var.name} server instance pool"
 
   instance_configuration_id = module.compute.instance_configuration_server_id
 
@@ -31,7 +31,7 @@ resource "oci_core_instance_pool" "instance_pool_server" {
 }
 
 resource "oci_core_instance_pool" "instance_pool_agent" {
-  display_name = "${var.name}-instance-pool-agent"
+  display_name = "${var.name} agent instance pool"
 
   instance_configuration_id = module.compute.instance_configuration_agent_id
 

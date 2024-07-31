@@ -12,7 +12,7 @@ resource "oci_core_internet_gateway" "internet_gateway" {
 
   compartment_id = oci_core_vcn.vcn.compartment_id
 
-  display_name = "${var.name}-internet-gateway"
+  display_name = "${var.name} internet gateway"
 }
 
 resource "oci_core_route_table" "route_table" {
@@ -20,7 +20,7 @@ resource "oci_core_route_table" "route_table" {
 
   compartment_id = oci_core_vcn.vcn.compartment_id
   
-  display_name = "${var.name}-route-table"
+  display_name = "${var.name} route table"
 
   route_rules {
     destination       = "0.0.0.0/0"
@@ -52,11 +52,11 @@ resource "oci_core_security_list" "security_list" {
 
   compartment_id = oci_core_vcn.vcn.compartment_id
 
-  display_name = "${var.name}-security-list"
+  display_name = "${var.name} security list"
 }
 
 resource "oci_load_balancer" "lb" {
-  display_name = "${var.name}-load-balancer"
+  display_name = "${var.name} load balancer"
 
   shape          = "10Mbps"
   compartment_id = oci_core_vcn.vcn.compartment_id

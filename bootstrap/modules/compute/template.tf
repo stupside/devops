@@ -4,7 +4,7 @@
 resource "oci_core_instance_configuration" "instance_configuration_server" {
   compartment_id = var.compartment_id
 
-  display_name = "${var.name}-instance-configuration-server"
+  display_name = "${var.name} server instance configuration"
 
   instance_details {
     instance_type = "compute"
@@ -28,7 +28,7 @@ resource "oci_core_instance_configuration" "instance_configuration_server" {
 resource "oci_core_instance_configuration" "instance_configuration_agent" {
   compartment_id = var.compartment_id
 
-  display_name = "${var.name}-instance-configuration-agent"
+  display_name = "${var.name} agent instance configuration"
 
   instance_details {
     instance_type = "compute"

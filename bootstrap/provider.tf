@@ -7,7 +7,7 @@ provider "oci" {
 }
 
 resource "oci_identity_compartment" "cmpt" {
-  name           = "${var.name}-compartment"
+  name           = "${var.name} compartment"
   description    = "${var.name} compartment"
 
   compartment_id = var.compartment_id
@@ -30,9 +30,9 @@ module "compute" {
 module "networking" {
   source = "./modules/networking"
 
-  cidr = "10.0.0.0/16"
-
   name = var.name
+
+  cidr = "10.0.0.0/16"
 
   availability_domain = var.availability_domain
 
