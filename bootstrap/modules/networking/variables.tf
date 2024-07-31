@@ -1,3 +1,8 @@
+variable "name" {
+  description = "The name of the vcn."
+  type = string
+}
+
 variable "compartment_id" {
   description = "The OCID of the compartment."
   type        = string
@@ -6,11 +11,6 @@ variable "compartment_id" {
 variable "cidr" {
   description = "The CIDR block for the cluster."
   type        = string
-}
-
-variable "dns_label" {
-  description = "The label for the dns."
-  type = string
 }
 
 variable "availability_domain" {

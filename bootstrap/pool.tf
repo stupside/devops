@@ -1,4 +1,4 @@
-resource "oci_identity_dynamic_group" "dyng" {
+resource "oci_identity_dynamic_group" "indentity_dynamic_group" {
   compartment_id = var.compartment_id
 
   name        = "${var.name}-identity-dynamic-group"
@@ -7,16 +7,14 @@ resource "oci_identity_dynamic_group" "dyng" {
   matching_rule = "ALL {instance.compartment.id = '${var.compartment_id}'}"
 }
 
-resource "oci_core_instance_pool" "server_ipool" {
+resource "oci_core_instance_pool" "instance_pool_server" {
   display_name = "${var.name}-instance-pool-server"
 
   instance_configuration_id = module.compute.instance_configuration_server_id
 
-  compartment_id            = oci_identity_dynamic_group.dyng.compartment_id
+  compartment_id            = oci_identity_dynamic_group.indentity_dynamic_group.compartment_id
 
-  size = var.server_pool_size
-
-  depends_on = [oci_identity_dynamic_group.dyng]
+  depends_on = [oci_identity_dynamic_group.indentity_dynamic_group]
 
   lifecycle {
     create_before_destroy = true
@@ -28,16 +26,18 @@ resource "oci_core_instance_pool" "server_ipool" {
 
     primary_subnet_id = module.networking.networking_subnet_id
   }
+
+  size = var.server_pool_size
 }
 
-resource "oci_core_instance_pool" "agent_ipool" {
+resource "oci_core_instance_pool" "instance_pool_agent" {
   display_name = "${var.name}-instance-pool-agent"
 
   instance_configuration_id = module.compute.instance_configuration_agent_id
 
-  compartment_id            = oci_identity_dynamic_group.dyng.compartment_id
+  compartment_id            = oci_identity_dynamic_group.indentity_dynamic_group.compartment_id
 
-  depends_on = [oci_identity_dynamic_group.dyng]
+  depends_on = [oci_identity_dynamic_group.indentity_dynamic_group]
 
   lifecycle {
     create_before_destroy = true

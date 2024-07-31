@@ -3,14 +3,13 @@ variable "compartment_id" {
   type        = string
 }
 
+variable "name" {
+  description = "The name of the cluster."
+}
+
 variable "server_shape" {
   description = "The shape for the server."
   type        = string
-}
-
-variable "server_instance_config_name" {
-  description = "The name of the instance config for servers."
-  type = string
 }
 
 variable "server_instance_volume" {
@@ -25,10 +24,5 @@ variable "agent_shape" {
 
 variable "agent_instance_volume" {
   description = "The size of the disk in gbs."
-  type = string
-}
-
-variable "agent_instance_config_name" {
-  description = "The name of the instance config for agents."
   type = string
 }

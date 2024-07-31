@@ -3,7 +3,7 @@ resource "oci_core_network_security_group" "network_security_group" {
 
   compartment_id = var.compartment_id
 
-  display_name = "${var.dns_label}-network-security-group"
+  display_name = "${var.name}-network-security-group"
 }
 
 resource "oci_core_network_security_group_security_rule" "http_in" {
