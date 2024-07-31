@@ -1,9 +1,9 @@
 resource "oci_core_network_security_group" "secg" {
-  display_name = var.security_group_name
-
   vcn_id = oci_core_vcn.vcn.id
 
   compartment_id = var.compartment_id
+
+  display_name = "${var.dns_label}-secg"
 }
 
 resource "oci_core_network_security_group_security_rule" "http_in" {

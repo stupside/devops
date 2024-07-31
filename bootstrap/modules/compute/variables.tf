@@ -8,13 +8,12 @@ variable "server_shape" {
   type        = string
 }
 
-variable "server_shape_name" {
-  description = "The name of the shape for servers."
+variable "server_instance_name" {
+  description = "The name of the instance config for servers."
   type = string
-  default = "k3s_shape_server"
 }
 
-variable "server_shape_volume_gb" {
+variable "server_instance_volume" {
   description = "The size of the disk in gbs."
   type = string
 }
@@ -24,13 +23,12 @@ variable "agent_shape" {
   type        = string
 }
 
-variable "agent_shape_volume_gb" {
+variable "agent_instance_volume" {
   description = "The size of the disk in gbs."
   type = string
 }
 
-variable "agent_shape_name" {
-  description = "The name of the shape for agents."
+variable "agent_instance_name" {
+  description = "The name of the instance config for agents."
   type = string
-  default = "k3s_shape_agent"
 }

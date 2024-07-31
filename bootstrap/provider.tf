@@ -7,8 +7,8 @@ provider "oci" {
 }
 
 resource "oci_identity_compartment" "cmpt" {
-  name           = "k3s_comprtment"
-  description    = "Compartment for k3s resources"
+  name           = "${var.name}-compartment"
+  description    = "Compartment for resources"
 
   compartment_id = var.compartment_id
 }
@@ -16,11 +16,13 @@ resource "oci_identity_compartment" "cmpt" {
 module "compute" {
   source = "./modules/compute"
 
-  agent_shape_volume_gb = "15"
+  agent_instance_volume = "15"
   agent_shape  = "VM.Standard.A1.Flex"
+  agent_instance_name = "${var.name}-iconf-agent"
 
-  server_shape_volume_gb = "15"
+  server_instance_volume = "15"
   server_shape = "VM.Standard.E2.1.Micro"
+  server_instance_name = "${var.name}-iconf-server"
 
   compartment_id = oci_identity_compartment.cmpt.id
 }
@@ -29,7 +31,10 @@ module "networking" {
   source = "./modules/networking"
 
   cidr = "10.0.0.0/16"
-  availability_domain = "1"
+
+  dns_label = "${var.name}-dns"
+
+  availability_domain = var.availability_domain
 
   compartment_id = oci_identity_compartment.cmpt.id
 }

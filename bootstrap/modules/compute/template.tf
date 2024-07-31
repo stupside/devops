@@ -4,7 +4,7 @@
 resource "oci_core_instance_configuration" "server_ic" {
   compartment_id = var.compartment_id
 
-  display_name = var.server_shape_name
+  display_name = var.server_instance_name
 
   instance_details {
     instance_type = "compute"
@@ -13,13 +13,13 @@ resource "oci_core_instance_configuration" "server_ic" {
       shape = var.server_shape
 
       shape_config {
-        ocpus         = 1
-        memory_in_gbs = 2
+        ocpus         = 2
+        memory_in_gbs = 4
       }
 
       source_details {
         source_type = "image"
-        boot_volume_size_in_gbs = var.agent_shape_volume_gb
+        boot_volume_size_in_gbs = var.server_instance_volume
       }
     }
   }
@@ -28,7 +28,7 @@ resource "oci_core_instance_configuration" "server_ic" {
 resource "oci_core_instance_configuration" "agent_ic" {
   compartment_id = var.compartment_id
 
-  display_name = var.agent_shape_name
+  display_name = var.agent_instance_name
 
   instance_details {
     instance_type = "compute"
@@ -37,13 +37,13 @@ resource "oci_core_instance_configuration" "agent_ic" {
       shape = var.agent_shape
 
       shape_config {
-        ocpus         = 2
-        memory_in_gbs = 4
+        ocpus         = 1
+        memory_in_gbs = 2
       }
 
       source_details {
         source_type = "image"
-        boot_volume_size_in_gbs = var.agent_shape_volume_gb
+        boot_volume_size_in_gbs = var.agent_instance_volume
       }
     }
   }

@@ -31,22 +31,16 @@ variable "availability_domain" {
   default = "3"
 }
 
-variable "dynamic_group_name" {
-  description = "The name of the dynamic group."
+variable "name" {
+  description = "The name of the terraform application."
   type = string
-  default = "k3s_dyng"
+  default = "k3s"
 }
 
-variable "server_pool_name" {
-  description = "The name of the servers pool."
-  type = string
-  default = "k3s_server_pool"
-}
-
-variable "agent_pool_name" {
-  description = "The name of the agents pool."
-  type = string
-  default = "k3s_agent_pool"
+variable "server_pool_size" {
+  description = "The number of servers in the k3s pool."
+  type        = number
+  default     = 1
 }
 
 variable "agent_pool_size" {

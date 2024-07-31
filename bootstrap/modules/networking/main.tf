@@ -12,13 +12,13 @@ resource "oci_core_internet_gateway" "igw" {
 
   compartment_id = oci_core_vcn.vcn.compartment_id
 
-  display_name = "${oci_core_vcn.vcn.dns_label}_igw"
+  display_name = "${oci_core_vcn.vcn.dns_label}-igw"
 }
 
 resource "oci_core_route_table" "rt" {
   vcn_id = oci_core_vcn.vcn.id
 
-  display_name = "${oci_core_vcn.vcn.dns_label}_rt"
+  display_name = "${oci_core_vcn.vcn.dns_label}-rt"
   
   compartment_id = oci_core_vcn.vcn.compartment_id
 
@@ -39,7 +39,7 @@ resource "oci_core_subnet" "subnet" {
 
   compartment_id = oci_core_vcn.vcn.compartment_id
   
-  display_name = "${oci_core_vcn.vcn.dns_label}_sn"
+  display_name = "${oci_core_vcn.vcn.dns_label}-sn"
 
   cidr_block = cidrsubnet(oci_core_vcn.vcn.cidr_block, 8, 1)
 
@@ -51,11 +51,11 @@ resource "oci_core_security_list" "sl" {
 
   compartment_id = oci_core_vcn.vcn.compartment_id
 
-  display_name = "${oci_core_vcn.vcn.dns_label}_sl"
+  display_name = "${oci_core_vcn.vcn.dns_label}-sl"
 }
 
 resource "oci_load_balancer" "lb" {
-  display_name = "${oci_core_vcn.vcn.dns_label}_lb"
+  display_name = "${oci_core_vcn.vcn.dns_label}-lb"
 
   shape          = "10Mbps"
   compartment_id = oci_core_vcn.vcn.compartment_id

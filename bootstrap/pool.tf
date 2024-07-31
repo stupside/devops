@@ -1,20 +1,20 @@
 resource "oci_identity_dynamic_group" "dyng" {
   compartment_id = var.compartment_id
 
-  name        = var.dynamic_group_name
-  description = var.dynamic_group_name
+  name        = "${var.name}-dyng"
+  description = "${var.name} identity dynamic group"
 
   matching_rule = "ALL {instance.compartment.id = '${var.compartment_id}'}"
 }
 
 resource "oci_core_instance_pool" "server_ipool" {
-  display_name = var.server_pool_name
+  display_name = "${var.name}-sip"
 
   instance_configuration_id = module.compute.server_ic_id
 
   compartment_id            = oci_identity_dynamic_group.dyng.compartment_id
 
-  size = 1
+  size = var.server_pool_size
 
   depends_on = [oci_identity_dynamic_group.dyng]
 
@@ -31,7 +31,7 @@ resource "oci_core_instance_pool" "server_ipool" {
 }
 
 resource "oci_core_instance_pool" "agent_ipool" {
-  display_name = var.server_pool_name
+  display_name = "${var.name}-aip"
 
   instance_configuration_id = module.compute.agent_ic_id
 
