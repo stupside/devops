@@ -7,24 +7,24 @@ resource "oci_core_vcn" "vcn" {
   compartment_id = var.compartment_id
 }
 
-resource "oci_core_internet_gateway" "igw" {
+resource "oci_core_internet_gateway" "internet_gateway" {
   vcn_id = oci_core_vcn.vcn.id
 
   compartment_id = oci_core_vcn.vcn.compartment_id
 
-  display_name = "${oci_core_vcn.vcn.dns_label}-igw"
+  display_name = "${oci_core_vcn.vcn.dns_label}-internet-gateway"
 }
 
-resource "oci_core_route_table" "rt" {
+resource "oci_core_route_table" "route_table" {
   vcn_id = oci_core_vcn.vcn.id
 
-  display_name = "${oci_core_vcn.vcn.dns_label}-rt"
-  
   compartment_id = oci_core_vcn.vcn.compartment_id
+  
+  display_name = "${oci_core_vcn.vcn.dns_label}-route-table"
 
   route_rules {
     description = "0.0.0.0/0"
-    network_entity_id = oci_core_internet_gateway.igw.id
+    network_entity_id = oci_core_internet_gateway.internet_gateway.id
   }
 }
 
@@ -35,11 +35,11 @@ resource "oci_core_subnet" "subnet" {
 
   dns_label = oci_core_vcn.vcn.dns_label
 
-  route_table_id = oci_core_route_table.rt.id
+  route_table_id = oci_core_route_table.route_table.id
 
   compartment_id = oci_core_vcn.vcn.compartment_id
   
-  display_name = "${oci_core_vcn.vcn.dns_label}-sn"
+  display_name = "${oci_core_vcn.vcn.dns_label}-subnet"
 
   cidr_block = cidrsubnet(oci_core_vcn.vcn.cidr_block, 8, 1)
 

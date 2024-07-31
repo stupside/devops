@@ -8,7 +8,7 @@ variable "server_shape" {
   type        = string
 }
 
-variable "server_instance_name" {
+variable "server_instance_config_name" {
   description = "The name of the instance config for servers."
   type = string
 }
@@ -28,7 +28,7 @@ variable "agent_instance_volume" {
   type = string
 }
 
-variable "agent_instance_name" {
+variable "agent_instance_config_name" {
   description = "The name of the instance config for agents."
   type = string
 }

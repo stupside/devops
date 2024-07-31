@@ -1,10 +1,10 @@
 # https://docs.oracle.com/en-us/iaas/Content/Compute/References/computeshapes.htm
 # https://docs.oracle.com/en-us/iaas/tools/terraform-provider-oci/5.38/docs/r/core_instance_configuration.html
 
-resource "oci_core_instance_configuration" "server_ic" {
+resource "oci_core_instance_configuration" "instance_configuration_server" {
   compartment_id = var.compartment_id
 
-  display_name = var.server_instance_name
+  display_name = var.server_instance_config_name
 
   instance_details {
     instance_type = "compute"
@@ -25,10 +25,10 @@ resource "oci_core_instance_configuration" "server_ic" {
   }
 }
 
-resource "oci_core_instance_configuration" "agent_ic" {
+resource "oci_core_instance_configuration" "instance_configuration_agent" {
   compartment_id = var.compartment_id
 
-  display_name = var.agent_instance_name
+  display_name = var.agent_instance_config_name
 
   instance_details {
     instance_type = "compute"

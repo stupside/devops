@@ -1,15 +1,15 @@
-resource "oci_core_network_security_group" "secg" {
+resource "oci_core_network_security_group" "network_security_group" {
   vcn_id = oci_core_vcn.vcn.id
 
   compartment_id = var.compartment_id
 
-  display_name = "${var.dns_label}-secg"
+  display_name = "${var.dns_label}-network-security-group"
 }
 
 resource "oci_core_network_security_group_security_rule" "http_in" {
   for_each = toset(["80", "443", "8080"])
 
-  network_security_group_id = oci_core_network_security_group.secg.id
+  network_security_group_id = oci_core_network_security_group.network_security_group.id
 
   description = "Allow HTTP, HTTPS, and HTTP Alt traffic into the k3s security group"
 
@@ -33,7 +33,7 @@ resource "oci_core_network_security_group_security_rule" "http_in" {
 resource "oci_core_network_security_group_security_rule" "http_out" {
   for_each = toset(["80", "443", "8080"])
 
-  network_security_group_id = oci_core_network_security_group.secg.id
+  network_security_group_id = oci_core_network_security_group.network_security_group.id
 
   description = "Allow HTTP, HTTPS, and HTTP Alt traffic out of the k3s security group"
 

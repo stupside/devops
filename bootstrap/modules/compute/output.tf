@@ -1,7 +1,7 @@
-output "server_ic_id" {
-  value = oci_core_instance_configuration.server_ic.id
+output "instance_configuration_server_id" {
+  value = oci_core_instance_configuration.instance_configuration_server.id
 }
 
-output "agent_ic_id" {
-  value = oci_core_instance_configuration.agent_ic.id
+output "instance_configuration_agent_id" {
+  value = oci_core_instance_configuration.instance_configuration_agent.id
 }

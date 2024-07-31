@@ -18,11 +18,11 @@ module "compute" {
 
   agent_instance_volume = "15"
   agent_shape  = "VM.Standard.A1.Flex"
-  agent_instance_name = "${var.name}-iconf-agent"
+  agent_instance_config_name = "${var.name}-instance-config-agent"
 
   server_instance_volume = "15"
   server_shape = "VM.Standard.E2.1.Micro"
-  server_instance_name = "${var.name}-iconf-server"
+  server_instance_config_name = "${var.name}-instance-config-server"
 
   compartment_id = oci_identity_compartment.cmpt.id
 }
