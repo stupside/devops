@@ -7,6 +7,14 @@ resource "oci_core_vcn" "vcn" {
   compartment_id = var.compartment_id
 }
 
+resource "oci_core_internet_gateway" "internet_gateway" {
+  vcn_id = oci_core_vcn.vcn.id
+
+  compartment_id = oci_core_vcn.vcn.compartment_id
+
+  display_name = "${var.name}-internet-gateway"
+}
+
 resource "oci_core_route_table" "route_table" {
   vcn_id = oci_core_vcn.vcn.id
 
@@ -21,16 +29,6 @@ resource "oci_core_route_table" "route_table" {
   }
 }
 
-resource "oci_core_internet_gateway" "internet_gateway" {
-  vcn_id = oci_core_vcn.vcn.id
-
-  compartment_id = oci_core_vcn.vcn.compartment_id
-
-  display_name = "${var.name}-internet-gateway"
-
-  route_table_id = oci_core_route_table.route_table.id
-}
-
 resource "oci_core_subnet" "subnet" {
   availability_domain = var.availability_domain
 
@@ -41,6 +39,8 @@ resource "oci_core_subnet" "subnet" {
   display_name = "${var.name} subnet"
 
   compartment_id = oci_core_vcn.vcn.compartment_id
+
+  route_table_id = oci_core_route_table.route_table.id
 
   cidr_block = cidrsubnet(oci_core_vcn.vcn.cidr_block, 8, 1)
 
