@@ -11,6 +11,19 @@ metadata:
   name: tenant
   namespace: xonery-ns
 rules:
+  # Permissions for managing core Kubernetes resources
+  - apiGroups:
+      - ""
+    resources:
+      - "secrets"
+    verbs:
+      - get
+      - list
+      - watch
+      - patch
+      - create
+      - update
+      - delete
   # Permissions for managing network resources
   - apiGroups:
       - "networking.k8s.io" # API group for Ingress
@@ -51,6 +64,7 @@ rules:
       - create
       - update
       - delete
+  # Permissions for managing cert-manager resources
   - apiGroups:
       - "cert-manager.io"
     resources:
