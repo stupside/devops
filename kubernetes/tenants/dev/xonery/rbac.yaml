@@ -25,6 +25,18 @@ rules:
       - create
       - update
       - delete
+  # Permissions for managing workloads
+  - apiGroups:
+      - "apps"
+    resources:
+      - "deployments"
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - delete
   # Permissions for managing network resources
   - apiGroups:
       - "networking.k8s.io" # API group for Ingress
