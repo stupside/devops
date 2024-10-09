@@ -31,7 +31,7 @@ spec:
       service:
         enabled: true
         type: LoadBalancer # Ensures service is exposed outside the cluster
-        externalTrafficPolicy: Local # Keep client IP, reduces cross-node traffic
+        externalTrafficPolicy: Cluster # Keep client IP, reduces cross-node traffic
         ports:
           http: 80 # Standard HTTP port
           https: 443 # Standard HTTPS port
