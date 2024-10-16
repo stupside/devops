@@ -1,13 +1,15 @@
+# K3S_NODE_NAME=server1 K3S_CLUSTER_INIT=true INSTALL_K3S_VERSION=v1.31.1+k3s1 ./k3s-install.sh server --disable=traefik --write-kubeconfig-mode=644
 - name: Run k3s install script
   become: true
-  ansible.builtin.shell: "{{ k3s_installer }}"
+  ansible.builtin.shell: "{{ k3s_installer_path }}"
   environment:
     # Server configuration
     K3S_NODE_NAME: "{{ inventory_hostname }}"
-    # K3S_AGENT_TOKEN: "{{ k3s_agent_token }}"
+    # K3S_AGENT_TOKEN: "{{ k3s_agent_token | default('') }}"  # Optional, define only if available
     K3S_CLUSTER_INIT: "true"
     # k3s configuration
-    INSTALL_K3S_EXEC: "server --tls-san={{ inventory_hostname }} {{ k3s_server_install_arguments | join(' ') }}"
+    INSTALL_K3S_EXEC: "server {{ k3s_server_install_arguments | default([]) | join(' ') }}" # Provide default empty list if not defined
+    # INSTALL_K3S_EXEC: "server --tls-san={{ inventory_hostname }} {{ k3s_server_install_arguments | join(' ') }}"
     INSTALL_K3S_VERSION: "{{ k3s_version }}"
   changed_when: true
 
@@ -21,25 +23,42 @@
         timeout: 300
         state: started
 
-    # - name: Copy k3s server kubeconfig to user home
+    - name: Verify k3s installation
+      command: k3s --version
+      register: k3s_version
+
+    - name: Show k3s version
+      debug:
+        var: k3s_version.stdout
+
+    # - name: Create .kube directory
+    #   ansible.builtin.file:
+    #     path: "{{ k8s_server_config | dirname }}"
+    #     state: directory
+    #     owner: "{{ ansible_user }}"
+    #     group: "{{ ansible_user }}"
+    #     mode: 0755
+
+    # - name: Copy k3s kubeconfig to home
     #   ansible.builtin.copy:
-    #     src: /etc/rancher/k3s/k3s.yaml
-    #     dest: "/home/{{ ansible_user }}/.kube/config"
+    #     src: "{{ k3s_server_config }}"
+    #     dest: "{{ k8s_server_config }}"
+    #     remote_src: true
     #     owner: "{{ ansible_user }}"
     #     group: "{{ ansible_user }}"
     #     mode: 0600
 
 - name: Setup k9s
   block:
-    - name: Check whether k9s is installed
-      ansible.builtin.command: "k9s version"
-      register: k9s_installed
-      become: false
-      ignore_errors: true
-      changed_when: false
-
     - name: Install k9s
-      when: k9s_installed.rc != 0
-      ansible.builtin.shell: "curl -sS {{ k9s_install_script }} | bash"
+      ansible.builtin.shell: "curl -sS {{ k9s_installer_link }} | bash"
       args:
         creates: /usr/local/bin/k9s
+
+    - name: Verify k9s installation
+      command: k9s version
+      register: k9s_version
+
+    - name: Show k9s version
+      debug:
+        var: k9s_version.stdout

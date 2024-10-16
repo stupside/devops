@@ -18,5 +18,5 @@
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     timeout: 120
-    url: https://get.k3s.io/
-    dest: "{{ k3s_installer }}"
+    url: "{{ k3s_installer_link }}"
+    dest: "{{ k3s_installer_path }}"

@@ -14,7 +14,7 @@ spec:
   tls:
     - hosts:
         - podinfo.xonery.dev
-      secretName: xonery-tls
+      secretName: podinfo-tls
   rules:
     - host: podinfo.xonery.dev
       http:
