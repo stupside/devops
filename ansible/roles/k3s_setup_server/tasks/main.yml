@@ -8,8 +8,8 @@
     # K3S_AGENT_TOKEN: "{{ k3s_agent_token | default('') }}"  # Optional, define only if available
     K3S_CLUSTER_INIT: "true"
     # k3s configuration
-    INSTALL_K3S_EXEC: "server {{ k3s_server_install_arguments | default([]) | join(' ') }}" # Provide default empty list if not defined
-    # INSTALL_K3S_EXEC: "server --tls-san={{ inventory_hostname }} {{ k3s_server_install_arguments | join(' ') }}"
+    INSTALL_K3S_EXEC: "server {{ k3s_server_install_arguments | join(' ') }}"
+    # INSTALL_K3S_EXEC: "server --tls-san={{ ansible_host }} {{ k3s_server_install_arguments | join(' ') }}"
     INSTALL_K3S_VERSION: "{{ k3s_version }}"
   changed_when: true
 

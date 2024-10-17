@@ -7,4 +7,6 @@ k9s_installer_link: https://webi.sh/k9s
 
 k3s_server_install_arguments:
   - "--disable=traefik"
+  - "--disable=servicelb"
   - "--write-kubeconfig-mode=644"
+  - "--kube-proxy-arg proxy-mode=ipvs"
