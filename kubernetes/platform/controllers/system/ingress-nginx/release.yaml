@@ -31,7 +31,7 @@ spec:
       service:
         enabled: true
         type: LoadBalancer # Ensures service is exposed outside the cluster
-        # externalTrafficPolicy: Cluster # Keep client IP, reduces cross-node traffic
+        externalTrafficPolicy: Local # Keeps client IP
         ports:
           http: 80 # Standard HTTP port
           https: 443 # Standard HTTPS port
@@ -47,5 +47,5 @@ spec:
 
     # Tuning DNS settings and other optional configurations
     dnsPolicy: ClusterFirst
-    replicaCount: 2 # Recommended to ensure redundancy and availability
+    replicaCount: 2 # Adjust based on your redundancy needs
     controllerClass: nginx
