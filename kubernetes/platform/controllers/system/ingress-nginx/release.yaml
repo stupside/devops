@@ -26,15 +26,14 @@ spec:
       strategy: rollback
   values:
     controller:
+      replicaCount: 2
+      dnsPolicy: ClusterFirst
       publishService:
         enabled: true
       service:
         enabled: true
-        type: LoadBalancer # Ensures service is exposed outside the cluster
-        externalTrafficPolicy: Local # Keeps client IP
-        ports:
-          http: 80 # Standard HTTP port
-          https: 443 # Standard HTTPS port
+        type: LoadBalancer
+        externalTrafficPolicy: Local
       admissionWebhooks:
         enabled: true
       allowSnippetAnnotations: true
@@ -46,6 +45,3 @@ spec:
         forwarded-for-header: "X-Forwarded-For"
 
     # Tuning DNS settings and other optional configurations
-    dnsPolicy: ClusterFirst
-    replicaCount: 2 # Adjust based on your redundancy needs
-    controllerClass: nginx
