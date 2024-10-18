@@ -34,6 +34,8 @@ spec:
         enabled: true
         type: LoadBalancer
         externalTrafficPolicy: Local
+        externalIPs:
+          - 209.38.181.89
       admissionWebhooks:
         enabled: true
       allowSnippetAnnotations: true
