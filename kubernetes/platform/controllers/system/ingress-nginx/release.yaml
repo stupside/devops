@@ -27,7 +27,7 @@ spec:
   values:
     controller:
       replicaCount: 2
-      dnsPolicy: ClusterFirst
+      dnsPolicy: ClusterFirstWithHostNet
       publishService:
         enabled: true
       service:
