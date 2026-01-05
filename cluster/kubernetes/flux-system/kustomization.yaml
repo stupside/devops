@@ -29,14 +29,6 @@ patches:
     target:
       kind: Deployment
       name: "(kustomize-controller|helm-controller)"
-  # SOPS Age decryption support
-  - patch: |
-      - op: add
-        path: /spec/template/spec/containers/0/args/-
-        value: --feature-gates=DecryptionAESARM64=true
-    target:
-      kind: Deployment
-      name: "kustomize-controller"
   - patch: |
       - op: add
         path: /spec/serviceAccountName
