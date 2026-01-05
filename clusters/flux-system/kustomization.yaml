@@ -20,8 +20,8 @@ patches:
       name: "kustomize-controller"
   - patch: |
       - op: add
-        path: /spec/template/spec/containers/0/args/-
-        value: --default-service-account=default
+        path: /spec/serviceAccountName
+        value: kustomize-controller
     target:
-      kind: Deployment
-      name: "(kustomize-controller|helm-controller)"
+      kind: Kustomization
+      name: "flux-system"
