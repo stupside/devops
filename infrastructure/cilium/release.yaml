@@ -1,4 +1,4 @@
-# Cilium - eBPF CNI
+# Cilium - eBPF networking (Gateway API only, kindnet handles CNI)
 ---
 apiVersion: v1
 kind: Namespace
@@ -11,8 +11,7 @@ metadata:
   name: cilium
   namespace: cilium
 spec:
-  type: oci
-  url: oci://quay.io/cilium-charts
+  url: https://helm.cilium.io/
   interval: 24h
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
@@ -39,17 +38,18 @@ spec:
     remediation:
       retries: 3
   values:
-    kubeProxyReplacement: true
-    k8sServiceHost: devops-control-plane
-    k8sServicePort: 6443
+    # Run alongside kindnet - only for Gateway API
+    cni:
+      chainingMode: none
+      exclusive: false
+    routingMode: native
+    kubeProxyReplacement: false
     gatewayAPI:
       enabled: true
     l2announcements:
       enabled: true
     externalIPs:
       enabled: true
-    bpf:
-      masquerade: true
     ipam:
       mode: kubernetes
     operator:

@@ -2,8 +2,9 @@ kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 name: devops
 networking:
-  disableDefaultCNI: true   # Cilium will be installed as CNI
-  kubeProxyMode: none       # Cilium replaces kube-proxy
+  # Use default kindnet CNI - Flux will deploy Cilium alongside
+  podSubnet: "10.244.0.0/16"
+  serviceSubnet: "10.96.0.0/12"
 nodes:
   - role: control-plane
     extraPortMappings:

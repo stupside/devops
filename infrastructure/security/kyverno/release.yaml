@@ -11,8 +11,7 @@ metadata:
   name: kyverno
   namespace: kyverno
 spec:
-  type: oci
-  url: oci://ghcr.io/kyverno/charts
+  url: https://kyverno.github.io/kyverno/
   interval: 24h
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
