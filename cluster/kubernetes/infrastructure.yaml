@@ -8,6 +8,7 @@ metadata:
   name: network
   namespace: flux-system
 spec:
+  serviceAccountName: kustomize-controller
   sourceRef:
     kind: GitRepository
     name: flux-system
@@ -30,6 +31,7 @@ metadata:
   name: security
   namespace: flux-system
 spec:
+  serviceAccountName: kustomize-controller
   sourceRef:
     kind: GitRepository
     name: flux-system
@@ -58,6 +60,7 @@ metadata:
   name: tenants
   namespace: flux-system
 spec:
+  serviceAccountName: kustomize-controller
   sourceRef:
     kind: GitRepository
     name: flux-system
