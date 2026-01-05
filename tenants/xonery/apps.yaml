@@ -28,5 +28,3 @@ spec:
   timeout: 10m
   prune: true
   wait: false
-  dependsOn:
-    - name: tenants
