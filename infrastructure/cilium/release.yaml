@@ -62,14 +62,16 @@ spec:
     cni:
       chainingMode: none
       exclusive: false
-    routingMode: native
+    # Tunnel mode works better with kind
+    routingMode: tunnel
+    tunnelProtocol: vxlan
     kubeProxyReplacement: false
     gatewayAPI:
       enabled: true
     l2announcements:
-      enabled: true
+      enabled: false  # Not needed in kind
     externalIPs:
-      enabled: true
+      enabled: false  # Not needed in kind
     ipam:
       mode: kubernetes
     operator:
