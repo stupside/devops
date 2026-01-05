@@ -4,4 +4,4 @@ resources:
   - release.yaml
   # Configs
   - ./configs/01-issuers.yaml
-  - ./configs/02-certificates.yaml
+  - ./configs/02-certificate.yaml
