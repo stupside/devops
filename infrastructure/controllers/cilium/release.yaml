@@ -43,7 +43,7 @@ spec:
   chart:
     spec:
       chart: cilium
-      version: "1.16.x"
+      version: "1.17.x"
       sourceRef:
         kind: HelmRepository
         name: cilium
