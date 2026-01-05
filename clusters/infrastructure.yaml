@@ -1,8 +1,7 @@
 # Infrastructure Orchestration
-# 
+#
 # Dependency flow:
-#   crds → cilium ─┬→ gateway → capsule → configs → tenants
-#                  └→ cert-manager ─┘
+#   crds → controllers → networking → tenants
 #
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
@@ -15,7 +14,7 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: ./infrastructure/crds
+  path: ./infrastructure/01-crds
   interval: 24h
   timeout: 5m
   prune: false
@@ -24,14 +23,14 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: cilium
+  name: controllers
   namespace: flux-system
 spec:
   serviceAccountName: kustomize-controller
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: ./infrastructure/controllers/cilium
+  path: ./infrastructure/02-controllers
   interval: 1h
   timeout: 15m
   prune: true
@@ -42,75 +41,17 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: cert-manager
+  name: networking
   namespace: flux-system
 spec:
   serviceAccountName: kustomize-controller
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: ./infrastructure/controllers/cert-manager
+  path: ./infrastructure/03-networking
   interval: 1h
   timeout: 10m
   prune: true
   wait: true
   dependsOn:
-    - name: cilium
----
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
-  name: gateway
-  namespace: flux-system
-spec:
-  serviceAccountName: kustomize-controller
-  sourceRef:
-    kind: GitRepository
-    name: flux-system
-  path: ./infrastructure/gateway
-  interval: 1h
-  timeout: 5m
-  prune: true
-  wait: true
-  dependsOn:
-    - name: cert-manager
----
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
-  name: capsule
-  namespace: flux-system
-spec:
-  serviceAccountName: kustomize-controller
-  sourceRef:
-    kind: GitRepository
-    name: flux-system
-  path: ./infrastructure/controllers/capsule
-  interval: 1h
-  timeout: 10m
-  prune: true
-  wait: true
-  dependsOn:
-    - name: gateway
----
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
-  name: configs
-  namespace: flux-system
-spec:
-  serviceAccountName: kustomize-controller
-  sourceRef:
-    kind: GitRepository
-    name: flux-system
-  path: ./infrastructure/configs
-  interval: 1h
-  timeout: 10m
-  prune: true
-  wait: true
-  dependsOn:
-    - name: capsule
-  decryption:
-    provider: sops
-    secretRef:
-      name: sops-age
+    - name: controllers

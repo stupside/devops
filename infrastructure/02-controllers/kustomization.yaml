@@ -1,6 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - secrets
-  - network-policies
-  - notifications
+  - 01-cilium
+  - 02-cert-manager
+  - 03-capsule

@@ -17,7 +17,7 @@ spec:
   prune: true
   wait: false
   dependsOn:
-    - name: configs
+    - name: networking
   decryption:
     provider: sops
     secretRef:
