@@ -4,25 +4,6 @@ kind: Namespace
 metadata:
   name: cert-manager
 ---
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: helm-controller
-  namespace: cert-manager
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: helm-controller-cert-manager
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: helm-controller-cert-manager
-subjects:
-  - kind: ServiceAccount
-    name: helm-controller
-    namespace: cert-manager
----
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
@@ -38,7 +19,6 @@ metadata:
   name: cert-manager
   namespace: cert-manager
 spec:
-  serviceAccountName: helm-controller
   interval: 1h
   chart:
     spec:
@@ -60,5 +40,3 @@ spec:
     crds:
       enabled: true
       keep: true
-    prometheus:
-      enabled: true

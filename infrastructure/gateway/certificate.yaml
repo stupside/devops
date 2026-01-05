@@ -8,5 +8,6 @@ spec:
   secretName: infrastructure-tls
   issuerRef:
     name: selfsigned
+    kind: ClusterIssuer
   dnsNames:
     - "*.devops.local"

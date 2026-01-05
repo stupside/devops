@@ -1,6 +1,6 @@
 # Infrastructure Orchestration - Layered Dependencies
 ---
-# Layer 0: CRDs (Gateway API)
+# Layer 0: Gateway API CRDs
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
@@ -13,36 +13,88 @@ spec:
     name: flux-system
   path: ./infrastructure/crds
   interval: 24h
-  retryInterval: 1m
   timeout: 5m
   prune: false
   wait: true
 ---
-# Layer 1: Controllers (Cilium, cert-manager, Capsule)
+# Layer 1a: Cilium CNI (HelmRelease installs its own CRDs)
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: controllers
+  name: cilium
   namespace: flux-system
 spec:
   serviceAccountName: kustomize-controller
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: ./infrastructure/controllers
+  path: ./infrastructure/controllers/cilium
   interval: 1h
-  retryInterval: 1m
   timeout: 15m
   prune: true
   wait: true
   dependsOn:
     - name: crds
-  decryption:
-    provider: sops
-    secretRef:
-      name: sops-age
 ---
-# Layer 2: Configs (Secrets, NetPol, Notifications)
+# Layer 1b: cert-manager (HelmRelease installs its own CRDs)
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: cert-manager
+  namespace: flux-system
+spec:
+  serviceAccountName: kustomize-controller
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ./infrastructure/controllers/cert-manager
+  interval: 1h
+  timeout: 10m
+  prune: true
+  wait: true
+  dependsOn:
+    - name: crds
+---
+# Layer 2: Gateway + TLS (needs Cilium Gateway API + cert-manager CRDs)
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: gateway
+  namespace: flux-system
+spec:
+  serviceAccountName: kustomize-controller
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ./infrastructure/gateway
+  interval: 1h
+  timeout: 5m
+  prune: true
+  wait: true
+  dependsOn:
+    - name: cilium
+    - name: cert-manager
+---
+# Layer 3: Capsule (multi-tenancy)
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: capsule
+  namespace: flux-system
+spec:
+  serviceAccountName: kustomize-controller
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ./infrastructure/controllers/capsule
+  interval: 1h
+  timeout: 10m
+  prune: true
+  wait: true
+  dependsOn:
+    - name: gateway
+---
+# Layer 4: Configs (secrets, network policies, notifications)
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
@@ -55,12 +107,11 @@ spec:
     name: flux-system
   path: ./infrastructure/configs
   interval: 1h
-  retryInterval: 1m
   timeout: 10m
   prune: true
   wait: true
   dependsOn:
-    - name: controllers
+    - name: capsule
   decryption:
     provider: sops
     secretRef:
