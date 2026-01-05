@@ -1,8 +1,0 @@
-# Tenant namespace with Capsule label
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: ${TENANT}
-  labels:
-    capsule.clastix.io/tenant: developers

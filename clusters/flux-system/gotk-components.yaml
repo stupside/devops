@@ -1,0 +1,2 @@
+# This file is managed by flux bootstrap - DO NOT EDIT manually
+# Run: flux install --export > clusters/flux-system/gotk-components.yaml

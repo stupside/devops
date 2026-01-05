@@ -1,0 +1,40 @@
+# Tenants Orchestration
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: tenants
+  namespace: flux-system
+spec:
+  serviceAccountName: kustomize-controller
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ./tenants
+  interval: 30m
+  retryInterval: 2m
+  timeout: 10m
+  prune: true
+  wait: true
+  dependsOn:
+    - name: configs
+---
+# Apps (depends on tenants)
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: apps
+  namespace: flux-system
+spec:
+  serviceAccountName: kustomize-controller
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ./apps
+  interval: 30m
+  retryInterval: 2m
+  timeout: 10m
+  prune: true
+  wait: false
+  dependsOn:
+    - name: tenants

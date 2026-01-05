@@ -1,0 +1,59 @@
+# Infrastructure Orchestration - Layered Dependencies
+---
+# Layer 0: CRDs (Gateway API)
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: crds
+  namespace: flux-system
+spec:
+  serviceAccountName: kustomize-controller
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ./infrastructure/crds
+  interval: 24h
+  retryInterval: 1m
+  timeout: 5m
+  prune: false
+  wait: true
+---
+# Layer 1: Controllers (Cilium, cert-manager, Capsule, Kyverno)
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: controllers
+  namespace: flux-system
+spec:
+  serviceAccountName: kustomize-controller
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ./infrastructure/controllers
+  interval: 1h
+  retryInterval: 1m
+  timeout: 15m
+  prune: true
+  wait: true
+  dependsOn:
+    - name: crds
+---
+# Layer 2: Configs (Gateway, Certificates)
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: configs
+  namespace: flux-system
+spec:
+  serviceAccountName: kustomize-controller
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ./infrastructure/configs
+  interval: 1h
+  retryInterval: 1m
+  timeout: 10m
+  prune: true
+  wait: true
+  dependsOn:
+    - name: controllers

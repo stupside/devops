@@ -1,0 +1,54 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: xonery-gateway
+  labels:
+    capsule.clastix.io/tenant: xonery
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: xonery
+  namespace: xonery-gateway
+  annotations:
+    cert-manager.io/cluster-issuer: selfsigned
+spec:
+  gatewayClassName: cilium
+  listeners:
+    - name: http
+      protocol: HTTP
+      port: 80
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchLabels:
+              capsule.clastix.io/tenant: xonery
+    - name: https
+      protocol: HTTPS
+      port: 443
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: xonery-tls
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchLabels:
+              capsule.clastix.io/tenant: xonery
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: xonery-tls
+  namespace: xonery-gateway
+spec:
+  secretName: xonery-tls
+  issuerRef:
+    name: selfsigned
+    kind: ClusterIssuer
+  dnsNames:
+    - "*.xonery.local"
+    - "xonery.local"
