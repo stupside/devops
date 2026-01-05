@@ -22,6 +22,7 @@ curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server \
 mkdir -p ~/.kube
 sudo cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
 sudo chown $(id -u):$(id -g) ~/.kube/config
+
 export KUBECONFIG=~/.kube/config
 ```
 
@@ -37,13 +38,11 @@ helm upgrade --install cilium cilium/cilium \
   --namespace cilium \
   --create-namespace \
   --version 1.17.2 \
-  --set k8sServiceHost=127.0.0.1 \
-  --set k8sServicePort=6443 \
-  --set kubeProxyReplacement=true \
+  --set routingMode=tunnel \
   --set operator.replicas=1 \
   --set ipam.mode=kubernetes \
-  --set bpf.masquerade=true \
-  --set gatewayAPI.enabled=true
+  --set gatewayAPI.enabled=true \
+  --set enableIPv4Masquerade=true \
 ```
 
 ## 3. Setup Secrets (SOPS + Age)
