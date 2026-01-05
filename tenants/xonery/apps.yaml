@@ -1,20 +1,19 @@
-# Tenants Orchestration
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: tenants
+  name: xonery-apps
   namespace: flux-system
 spec:
   serviceAccountName: kustomize-controller
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: ./tenants
+  path: ./apps/xonery
   interval: 30m
   retryInterval: 2m
   timeout: 10m
   prune: true
-  wait: true
+  wait: false
   dependsOn:
-    - name: configs
+    - name: tenants
