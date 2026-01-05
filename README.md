@@ -1,59 +1,72 @@
 # DevOps GitOps Infrastructure
 
-Minimal instructions to bootstrap this repository: install Cilium for networking, deploy Flux, and enable SOPS-encrypted secrets.
+Minimal instructions to bootstrap the Raspberry Pi cluster with Cilium, FluxCD, and SOPS.
 
-## Requirements
+## 1. Provision K3s (Hardcore Mode)
 
-- macOS or Linux workstation with `kubectl`, `flux`, `sops`, `age`, and (`helm` or `cilium` CLI) installed. On macOS: `brew install kubectl flux sops age helm`.
-- Kubernetes 1.28+ cluster (k3s recommended) with cluster-admin access.
-- GitHub repository with personal access token.
-
-Repository layout (trimmed):
-
-```
-clusters/                 # Flux entrypoint
-infrastructure/
-  controllers/01-cilium/  # Flux-managed Cilium HelmRelease
-  configs/01-secrets/     # SOPS-encrypted platform secrets
-tenants/                  # Tenant examples
-.sops.yaml                # Encryption rules
-```
-
-## Quick Start
-
-### 1. Provision k3s (no CNI)
+Install K3s without CNI, kube-proxy, or Traefik to let Cilium handle everything.
 
 ```bash
 curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server \
+  --data-dir /data/k3s \
   --flannel-backend=none \
   --disable-network-policy \
   --disable-kube-proxy \
   --disable=traefik \
-  --disable=servicelb" \
+  --disable=servicelb \
+  --tls-san=citroen \
+  --tls-san=citroen.local" \
   sh -
 
-export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+# Setup Kubeconfig
+mkdir -p ~/.kube
+sudo cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
+sudo chown $(id -u):$(id -g) ~/.kube/config
+export KUBECONFIG=~/.kube/config
 ```
 
-### 2. Install a bootstrap Cilium
+## 2. Bootstrap Cilium
 
-A working CNI must exist before Flux controllers can schedule. Install Cilium once out-of-band, matching the namespace and chart version managed in this repo:
+A working CNI must exist before Flux can schedule pods. Install Cilium manually once; Flux will take over management later.
 
 ```bash
-helm repo add cilium https://helm.cilium.io
+helm repo add cilium https://helm.cilium.io/
+helm repo update
+
 helm upgrade --install cilium cilium/cilium \
   --namespace cilium \
   --create-namespace \
-  --version 1.17.2
+  --version 1.17.2 \
+  --set k8sServiceHost=127.0.0.1 \
+  --set k8sServicePort=6443 \
+  --set kubeProxyReplacement=true \
+  --set operator.replicas=1 \
+  --set ipam.mode=kubernetes \
+  --set bpf.masquerade=true \
+  --set gatewayAPI.enabled=true
 ```
 
-When Flux comes online it will reconcile the HelmRelease in [infrastructure/controllers/01-cilium/release.yaml](infrastructure/controllers/01-cilium/release.yaml) using the same release name, so no manual cleanup is required.
+## 3. Setup Secrets (SOPS + Age)
 
-### 3. Bootstrap Flux
+Restore your private key and create the Flux decryption secret.
 
 ```bash
-export GITHUB_TOKEN=<github-token>
-export GITHUB_USER=<github-username>
+# Create namespace
+kubectl create namespace flux-system
+
+# Create the secret from your local age.agekey
+kubectl create secret generic sops-age \
+  --namespace=flux-system \
+  --from-file=age.agekey=age.agekey
+```
+
+## 4. Bootstrap FluxCD
+
+Initialize the GitOps engine.
+
+```bash
+export GITHUB_TOKEN=<your-token>
+export GITHUB_USER=stupside
 export GITHUB_REPO=devops
 
 flux bootstrap github \
@@ -65,39 +78,11 @@ flux bootstrap github \
   --private=false
 ```
 
-Verify controllers:
+## 5. Monitor
 
 ```bash
-flux get kustomizations
+flux get kustomizations --watch
 flux get helmreleases -A
+kubectl get pods -A
 ```
 
-### 4. Configure SOPS
-
-Generate an age key and record the public key in `.sops.yaml` (replace the placeholder value):
-
-```bash
-age-keygen -o age.agekey
-```
-
-Create the Flux decryption secret and remove the local private key after backup:
-
-```bash
-kubectl create secret generic sops-age \
-  --namespace=flux-system \
-  --from-file=age.agekey=age.agekey
-
-rm age.agekey
-```
-
-Flux will decrypt every secret listed in [infrastructure/configs/01-secrets/kustomization.yaml](infrastructure/configs/01-secrets/kustomization.yaml) and any tenant secret under `tenants/*/secrets/`.
-
-## Day 2 Basics
-
-- Reconcile everything: `flux reconcile kustomization flux-system --with-source`
-- Check Helm status: `flux get helmreleases -A`
-- Add new encrypted secret: create YAML, run `sops --encrypt --in-place <file>`, commit, and Flux applies automatically.
-
-## Recovering a Cluster
-
-If the cluster is rebuilt, repeat steps 1–3, restore the age private key, recreate the `sops-age` secret, and Flux will repave the platform from Git.
