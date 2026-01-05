@@ -3,4 +3,5 @@ kind: Kustomization
 resources:
   - tenant.yaml
   - gateway.yaml
+  - rbac.yaml
   - apps.yaml

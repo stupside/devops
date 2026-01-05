@@ -1,0 +1,80 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: helm-controller-cert-manager
+rules:
+  # Core resources for certificate management
+  - apiGroups: [""]
+    resources: [secrets, configmaps, serviceaccounts, services]
+    verbs: [create, get, list, watch, update, patch, delete]
+
+  # Namespaces (read-only for certificate issuance)
+  - apiGroups: [""]
+    resources: [namespaces]
+    verbs: [get, list, watch]
+
+  # Deployments for cert-manager components
+  - apiGroups: [apps]
+    resources: [deployments, statefulsets, daemonsets, replicasets]
+    verbs: [create, get, list, watch, update, patch, delete]
+
+  # cert-manager CRDs (full control)
+  - apiGroups: [cert-manager.io]
+    resources: ["*"]
+    verbs: ["*"]
+
+  # ACME CRDs (full control)
+  - apiGroups: [acme.cert-manager.io]
+    resources: ["*"]
+    verbs: ["*"]
+
+  # Ingress resources (for certificate automation)
+  - apiGroups: [networking.k8s.io]
+    resources: [ingresses, ingressclasses]
+    verbs: [get, list, watch, update, patch]
+
+  # Gateway API resources (for certificate automation)
+  - apiGroups: [gateway.networking.k8s.io]
+    resources: [gateways, httproutes, grpcroutes]
+    verbs: [get, list, watch, update, patch]
+
+  # RBAC for cert-manager components
+  - apiGroups: [rbac.authorization.k8s.io]
+    resources: [clusterroles, clusterrolebindings, roles, rolebindings]
+    verbs: ["*"]
+
+  # CRDs (for cert-manager CRD installation)
+  - apiGroups: [apiextensions.k8s.io]
+    resources: [customresourcedefinitions]
+    verbs: [create, get, list, watch, update, patch]
+
+  # Admission webhooks (for certificate validation)
+  - apiGroups: [admissionregistration.k8s.io]
+    resources: [mutatingwebhookconfigurations, validatingwebhookconfigurations]
+    verbs: ["*"]
+
+  # API services (for webhook server)
+  - apiGroups: [apiregistration.k8s.io]
+    resources: [apiservices]
+    verbs: [get, list, watch, update, patch]
+
+  # Monitoring with Prometheus
+  - apiGroups: [monitoring.coreos.com]
+    resources: [servicemonitors, podmonitors]
+    verbs: ["*"]
+
+  # Events for diagnostics
+  - apiGroups: [""]
+    resources: [events]
+    verbs: [create, patch]
+
+  # Leases for leader election
+  - apiGroups: [coordination.k8s.io]
+    resources: [leases]
+    verbs: [create, get, update, patch]
+
+  # Pods (read-only for webhook pod discovery)
+  - apiGroups: [""]
+    resources: [pods]
+    verbs: [get, list, watch]
