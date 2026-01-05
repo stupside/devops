@@ -29,7 +29,8 @@ spec:
             type: Container
   networkPolicies:
     items:
-      - policyTypes:
+      - podSelector: {}
+        policyTypes:
           - Ingress
           - Egress
         egress:
