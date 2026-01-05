@@ -4,3 +4,7 @@
 .DS_Store
 
 ./cluster/ansible/inventory/*.yml
+
+# SOPS age keys (NEVER commit private keys)
+*.agekey
+age.txt

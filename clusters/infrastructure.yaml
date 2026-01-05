@@ -57,3 +57,7 @@ spec:
   wait: true
   dependsOn:
     - name: controllers
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-age
