@@ -18,7 +18,7 @@ spec:
   prune: false
   wait: true
 ---
-# Layer 1: Controllers (Cilium, cert-manager, Capsule, Kyverno)
+# Layer 1: Controllers (Cilium, cert-manager, Capsule)
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
@@ -37,8 +37,12 @@ spec:
   wait: true
   dependsOn:
     - name: crds
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-age
 ---
-# Layer 2: Configs (Gateway, Certificates)
+# Layer 2: Configs (Secrets, NetPol, Notifications)
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:

@@ -9,7 +9,7 @@ metadata:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: tenant-kustomize-controller-cluster-access
+  name: xonery-kustomize-controller-cluster
 rules:
   # Read FluxCD resources (for GitOps operations)
   - apiGroups: [source.toolkit.fluxcd.io, kustomize.toolkit.fluxcd.io, helm.toolkit.fluxcd.io]
@@ -45,7 +45,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: tenant-kustomize-controller-namespace-access
+  name: xonery-kustomize-controller-namespace
 rules:
   # Core workload resources
   - apiGroups: [apps]
@@ -101,26 +101,26 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: xonery-kustomize-controller-cluster-access
+  name: xonery-kustomize-controller-cluster
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: tenant-kustomize-controller-cluster-access
+  name: xonery-kustomize-controller-cluster
 subjects:
   - kind: ServiceAccount
     name: xonery-kustomize-controller
     namespace: flux-system
 ---
-# Bind namespace access to xonery-gateway
+# Bind namespace access to tenant namespace
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: xonery-kustomize-controller
-  namespace: xonery-gateway
+  namespace: xonery
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: tenant-kustomize-controller-namespace-access
+  name: xonery-kustomize-controller-namespace
 subjects:
   - kind: ServiceAccount
     name: xonery-kustomize-controller

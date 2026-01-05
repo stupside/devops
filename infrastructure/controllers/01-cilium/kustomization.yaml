@@ -3,3 +3,6 @@ kind: Kustomization
 resources:
   - release.yaml
   - rbac.yaml
+  - gateway.yaml
+  - tls.yaml
+  - hubble-route.yaml

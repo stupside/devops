@@ -10,7 +10,6 @@ This repository manages a complete Kubernetes infrastructure using GitOps princi
 - **Cluster**: k3s with Cilium CNI
 - **Secret Management**: Mozilla SOPS with age encryption
 - **Multi-Tenancy**: Capsule v0.8.x
-- **Policy Enforcement**: Kyverno v3.4.x
 - **Certificate Management**: cert-manager v1.17.x
 - **Networking**: Cilium v1.17.x + Gateway API v1.2.1
 
@@ -36,19 +35,19 @@ devops/
 │   ├── crds/                          # Custom Resource Definitions
 │   │   └── gateway-api/               # Gateway API v1.2.1 CRDs
 │   ├── controllers/                   # Platform controllers
-│   │   ├── cilium/                    # CNI + Gateway controller
-│   │   ├── cert-manager/              # Certificate automation
-│   │   ├── capsule/                   # Multi-tenancy controller
-│   │   └── kyverno/                   # Policy engine
+│   │   ├── 01-cilium/                 # CNI + Gateway + Certs
+│   │   ├── 02-cert-manager/           # Certificate automation + Issuers
+│   │   ├── 03-capsule/                # Multi-tenancy controller
 │   └── configs/                       # Platform configuration
-│       ├── gateway/                   # GatewayClass definitions
-│       ├── certificates/              # ClusterIssuers
-│       └── secrets/                   # Encrypted secrets (SOPS)
+│       ├── 01-secrets/                # Encrypted secrets (SOPS)
+│       ├── 04-network-policies/       # Global security rules
+│       └── 05-notifications/          # FluxCD alerts
 │
 └── tenants/                           # Tenant workloads
     └── xonery/                        # Example tenant
         ├── tenant.yaml                # Capsule Tenant definition
-        ├── gateway.yaml               # Gateway + TLS certificate
+        ├── namespace.yaml             # Pre-provisioned tenant namespace
+        ├── route.yaml                 # HTTPRoute (Shared Gateway)
         ├── apps.yaml                  # External GitRepository
         └── secrets/                   # Tenant encrypted secrets
 ```
@@ -58,9 +57,9 @@ devops/
 ```
 Layer 0: CRDs (Gateway API)
     ↓ dependsOn
-Layer 1: Controllers (Cilium, cert-manager, Capsule, Kyverno)
+Layer 1: Controllers (Cilium + Gateway, cert-manager, Capsule)
     ↓ dependsOn
-Layer 2: Configs (Gateway, Certificates, Secrets)
+Layer 2: Configs (Secrets, NetPol, Alerts)
     ↓ dependsOn
 Layer 3: Tenants (Capsule Tenants + Apps)
 ```
@@ -177,7 +176,7 @@ The `.sops.yaml` file is already configured with encryption rules:
 ```yaml
 creation_rules:
   # Infrastructure secrets
-  - path_regex: infrastructure/configs/secrets/.*\.yaml
+  - path_regex: infrastructure/configs/01-secrets/.*\.yaml
     encrypted_regex: ^(data|stringData)$
     age: age1xxxxxxxxx...  # Your public key
 
@@ -210,7 +209,7 @@ kubectl get secret test-secret -n default -o jsonpath='{.data.test-key}' | base6
 
 ```bash
 # 1. Create plain secret file
-cat > infrastructure/configs/secrets/my-secret.yaml <<EOF
+cat > infrastructure/configs/01-secrets/my-secret.yaml <<EOF
 apiVersion: v1
 kind: Secret
 metadata:
@@ -223,14 +222,14 @@ stringData:
 EOF
 
 # 2. Encrypt with SOPS (uses .sops.yaml rules)
-sops --encrypt --in-place infrastructure/configs/secrets/my-secret.yaml
+sops --encrypt --in-place infrastructure/configs/01-secrets/my-secret.yaml
 
 # 3. Add to kustomization
-echo "  - my-secret.yaml" >> infrastructure/configs/secrets/kustomization.yaml
+echo "  - my-secret.yaml" >> infrastructure/configs/01-secrets/kustomization.yaml
 
 # 4. Commit encrypted secret
-git add infrastructure/configs/secrets/my-secret.yaml
-git add infrastructure/configs/secrets/kustomization.yaml
+git add infrastructure/configs/01-secrets/my-secret.yaml
+git add infrastructure/configs/01-secrets/kustomization.yaml
 git commit -m "Add encrypted secret for my-app"
 git push
 ```
@@ -239,13 +238,13 @@ git push
 
 ```bash
 # Edit secret (SOPS automatically decrypts in editor)
-sops infrastructure/configs/secrets/my-secret.yaml
+sops infrastructure/configs/01-secrets/my-secret.yaml
 
 # Make changes, save, and exit
 # SOPS automatically re-encrypts on save
 
 # Commit changes
-git add infrastructure/configs/secrets/my-secret.yaml
+git add infrastructure/configs/01-secrets/my-secret.yaml
 git commit -m "Update my-secret credentials"
 git push
 ```
@@ -254,11 +253,11 @@ git push
 
 ```bash
 # View decrypted content (doesn't modify file)
-sops --decrypt infrastructure/configs/secrets/my-secret.yaml
+sops --decrypt infrastructure/configs/01-secrets/my-secret.yaml
 
 # Extract specific value
 sops --decrypt --extract '["stringData"]["password"]' \
-  infrastructure/configs/secrets/my-secret.yaml
+  infrastructure/configs/01-secrets/my-secret.yaml
 ```
 
 ---
@@ -282,13 +281,13 @@ sops --decrypt --extract '["stringData"]["password"]' \
   - Gateway API implementation
   - Hubble observability (UI enabled)
   - Network policies
-- **Configuration**: `infrastructure/controllers/cilium/release.yaml`
+- **Configuration**: `infrastructure/controllers/01-cilium/release.yaml`
 
 #### cert-manager
 - **Version**: 1.17.x
 - **Namespace**: `cert-manager`
 - **Features**: Automated certificate management
-- **Issuers**: ClusterIssuer for self-signed certificates (see `infrastructure/configs/certificates/`)
+- **Issuers**: ClusterIssuer for self-signed certificates (see `infrastructure/controllers/02-cert-manager/`)
 
 #### Capsule (Multi-tenancy)
 - **Version**: 0.8.x
@@ -300,17 +299,11 @@ sops --decrypt --extract '["stringData"]["password"]' \
   - RBAC scoping
 - **Tenant example**: `tenants/xonery/tenant.yaml`
 
-#### Kyverno (Policy Engine)
-- **Version**: 3.4.x
-- **Namespace**: `kyverno`
-- **Features**: Pod security policies, admission control, validation
-- **Policies**: `infrastructure/controllers/kyverno/policies/` (to be added)
-
 ### Layer 2: Configs
 
-- **GatewayClass**: Cilium-based gateway configuration
-- **ClusterIssuers**: Self-signed certificate issuer
 - **Secrets**: SOPS-encrypted secrets with automatic decryption
+- **Network Policies**: Global security rules (CiliumClusterwideNetworkPolicy)
+- **Notifications**: FluxCD alerts (Discord/Slack)
 
 ---
 
@@ -319,10 +312,11 @@ sops --decrypt --extract '["stringData"]["password"]' \
 ### Tenant Architecture
 
 Each tenant gets:
-1. **Capsule Tenant resource** - Defines quotas, limits, network policies
-2. **Dedicated Gateway** - Isolated ingress with TLS
-3. **External Git repository** - Tenant manages their own apps
-4. **Network isolation** - Default-deny policies, ingress from same tenant only
+1. **Capsule Tenant resource** - Defines quotas, limits, and Pod Security posture
+2. **Dedicated namespace(s)** - Labeled by Capsule, pre-provisioned with PSA labels
+3. **Shared Gateway access** - Tenants attach `HTTPRoute` objects to the platform gateway
+4. **External Git repository** - Tenant-managed application manifests
+5. **Network isolation** - Default-deny policies with Capsule tenant scoping
 
 ### Example Tenant: xonery
 
@@ -336,11 +330,14 @@ Each tenant gets:
 - Egress: Allow all (except cloud metadata: `169.254.169.254/32`)
 - Ingress: Only from same tenant (`capsule.clastix.io/tenant: xonery`)
 
-**Gateway** (`tenants/xonery/gateway.yaml`):
-- Namespace: `xonery-gateway`
-- Listeners: HTTP (80), HTTPS (443)
-- TLS: Wildcard certificate `*.xonery.local` (cert-manager)
-- Routes: Scoped to tenant namespaces only
+**Namespace** (`tenants/xonery/namespace.yaml`):
+- Namespace: `xonery`
+- Labels: Capsule tenant assignment + Pod Security Standards
+
+**HTTPRoute** (`tenants/xonery/route.yaml`):
+- Hostname: `xonery.devops.local`
+- Parent: Shared gateway `infrastructure` in namespace `cilium`
+- Backend: Forwards to the `podinfo` service
 
 **Apps** (`tenants/xonery/apps.yaml`):
 - External repo: `https://github.com/stupside/apps`
@@ -360,31 +357,45 @@ Each tenant gets:
    # Edit: Update tenant name, quotas, owners
    ```
 
-3. **Create Gateway** (optional):
-   ```bash
-   cp tenants/xonery/gateway.yaml tenants/newtenant/gateway.yaml
-   # Edit: Update namespace, hostname, tenant label
-   ```
+3. **Create tenant namespace** (or rely on Capsule automation):
+  ```bash
+  cp tenants/xonery/namespace.yaml tenants/newtenant/namespace.yaml
+  # Edit: Update name, ensure labels keep capsule.clastix.io/tenant
+  ```
 
-4. **Create apps GitRepository**:
+4. **Create HTTPRoute**:
+  ```bash
+  cp tenants/xonery/route.yaml tenants/newtenant/route.yaml
+  # Edit: Update hostname, backend Service name/port
+  ```
+
+5. **Copy RBAC**:
+  ```bash
+  cp tenants/xonery/rbac.yaml tenants/newtenant/rbac.yaml
+  # Edit: Update ServiceAccount & ClusterRole names to stay tenant-unique
+  ```
+
+6. **Create apps GitRepository**:
    ```bash
    cp tenants/xonery/apps.yaml tenants/newtenant/apps.yaml
    # Edit: Update GitRepository URL, serviceAccountName
    ```
 
-5. **Create kustomization**:
+7. **Create kustomization**:
    ```bash
    cat > tenants/newtenant/kustomization.yaml <<EOF
    apiVersion: kustomize.config.k8s.io/v1beta1
    kind: Kustomization
    resources:
      - tenant.yaml
-     - gateway.yaml
+    - namespace.yaml
+    - route.yaml
+    - rbac.yaml
      - apps.yaml
    EOF
    ```
 
-6. **Update tenants kustomization**:
+8. **Update tenants kustomization**:
    ```bash
    # Edit tenants/kustomization.yaml, add:
    # - newtenant
@@ -479,34 +490,27 @@ To update to a new major/minor version:
 | Feature | Status | Implementation |
 |---------|--------|----------------|
 | Secret Encryption | ✅ Enabled | SOPS with age |
-| RBAC | ⚠️ Permissive | cluster-admin used (improvement planned) |
-| Network Policies | ⚠️ Partial | Tenant isolation only (infrastructure planned) |
-| Pod Security | ❌ Not enforced | Kyverno policies planned |
+| RBAC | ✅ Hardened | Scoped ClusterRoles (No cluster-admin) |
+| Network Policies | ✅ Enforced | Default Deny + CiliumClusterwideNetworkPolicy |
+| Pod Security | ✅ Enforced | Native PSA (Restricted) via Capsule |
 | Image Scanning | ❌ Not configured | Planned |
 | Audit Logging | ❓ Unknown | Depends on cluster |
 
 ### Security Roadmap
 
-**Phase 2 (Planned): RBAC Hardening**
-- Replace cluster-admin with least-privilege ClusterRoles
-- Create tenant-scoped ServiceAccounts
-- Scope infrastructure controller permissions
+**Phase 2 (Completed): RBAC Hardening**
+- Replaced cluster-admin with least-privilege ClusterRoles
+- Created tenant-scoped ServiceAccounts
+- Scoped infrastructure controller permissions
 
-**Phase 3 (Planned): Kyverno Security Policies**
-- Block privileged containers
-- Enforce security contexts
-- Restrict allowed registries
-- Require resource limits
-- Validate tenant isolation
+**Phase 3 (Completed): Pod Security**
+- Enforced "Restricted" Pod Security Standard via Capsule
+- Removed complex Kyverno policies
 
-**Phase 4 (Planned): Network Policies**
-- Add NetworkPolicies to all infrastructure namespaces
-- Restrict lateral movement
-- Block cloud metadata access everywhere
-
-### Secrets Management Best Practices
-
-1. **Never commit unencrypted secrets** - Always use SOPS
+**Phase 4 (Completed): Network Policies**
+- Implemented Default Deny for all tenants
+- Allowed core DNS/API access globally
+- Restricted internet access to specific infra components- Always use SOPS
 2. **Backup age private key** - Store in multiple secure locations
 3. **Rotate keys periodically** - Re-encrypt with new age key
 4. **Limit age key access** - Only platform administrators
@@ -552,6 +556,8 @@ kubectl exec -n cilium ds/cilium -- cilium status
 kubectl exec -n cilium ds/cilium -- cilium connectivity test
 
 # View Hubble flows
+# Access via Gateway: https://hubble.devops.local
+# Or via port-forward:
 kubectl port-forward -n cilium svc/hubble-ui 12000:80
 # Open http://localhost:12000
 ```
@@ -594,7 +600,7 @@ Use Velero for cluster-wide backups:
 velero backup create cluster-backup
 
 # Backup specific namespace
-velero backup create tenant-backup --include-namespaces=xonery-gateway
+velero backup create tenant-backup --include-namespaces=xonery
 ```
 
 ### Disaster Recovery
@@ -634,7 +640,7 @@ Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
 ```
 
 **Types**: `feat`, `fix`, `docs`, `refactor`, `chore`, `security`
-**Scopes**: `flux`, `cilium`, `cert-manager`, `capsule`, `kyverno`, `tenants`, `secrets`, `rbac`, `network`
+**Scopes**: `flux`, `cilium`, `cert-manager`, `capsule`, `tenants`, `secrets`, `rbac`, `network`
 
 ---
 

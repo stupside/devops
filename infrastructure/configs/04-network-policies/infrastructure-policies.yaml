@@ -1,0 +1,93 @@
+---
+apiVersion: cilium.io/v2
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  name: infra-allow-ingress
+spec:
+  description: "Allow ingress for infrastructure components"
+  endpointSelector:
+    matchExpressions:
+      - key: io.kubernetes.pod.namespace
+        operator: In
+        values: [cilium, cert-manager, capsule-system, flux-system]
+  ingress:
+    # Allow Monitoring
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: monitoring
+    # Allow Ingress Controller
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: ingress-nginx
+    # Allow Flux to reconcile
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: flux-system
+    # Allow Intra-Infrastructure (Gateway -> Service)
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: cilium
+    # Allow API Server (Webhooks)
+    - fromEntities:
+        - kube-apiserver
+        - host
+        - remote-node
+---
+apiVersion: cilium.io/v2
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  name: infra-allow-egress-internet
+spec:
+  description: "Allow internet access for infrastructure components (Registries, ACME)"
+  endpointSelector:
+    matchExpressions:
+      - key: io.kubernetes.pod.namespace
+        operator: In
+        values: [cert-manager, flux-system]
+  egress:
+    - toEntities:
+        - world
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
+            - port: "443"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  name: gateway-allow-external
+spec:
+  description: "Allow external access to Gateways"
+  endpointSelector:
+    matchExpressions:
+      - key: gateway.networking.k8s.io/gateway-name
+        operator: Exists
+  ingress:
+    - fromEntities:
+        - world
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
+            - port: "443"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  name: gateway-allow-routing
+spec:
+  description: "Allow Gateways to route traffic to backends"
+  endpointSelector:
+    matchExpressions:
+      - key: gateway.networking.k8s.io/gateway-name
+        operator: Exists
+  egress:
+    # Allow routing to cluster (backends)
+    - toEntities:
+        - cluster
+    # Allow replying to client
+    - toEntities:
+        - world

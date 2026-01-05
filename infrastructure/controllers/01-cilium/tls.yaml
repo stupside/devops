@@ -1,0 +1,12 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: infrastructure-tls
+  namespace: cilium
+spec:
+  secretName: infrastructure-tls
+  issuerRef:
+    name: selfsigned
+  dnsNames:
+    - "*.devops.local"

@@ -9,6 +9,12 @@ spec:
       kind: User
   namespaceOptions:
     quota: 10
+    additionalMetadata:
+      labels:
+        pod-security.kubernetes.io/enforce: restricted
+        pod-security.kubernetes.io/enforce-version: latest
+        pod-security.kubernetes.io/warn: restricted
+        pod-security.kubernetes.io/warn-version: latest
   resourceQuotas:
     scope: Tenant
     items:
