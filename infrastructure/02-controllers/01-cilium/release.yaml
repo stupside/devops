@@ -43,6 +43,12 @@ spec:
     k8sServiceHost: "127.0.0.1"
     k8sServicePort: 6443
 
+    extraEnv:
+      - name: KUBERNETES_SERVICE_HOST
+        value: "127.0.0.1"
+      - name: KUBERNETES_SERVICE_PORT
+        value: "6443"
+
     ipam:
       mode: kubernetes
     routingMode: native
