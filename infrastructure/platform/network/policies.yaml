@@ -7,12 +7,24 @@ spec:
   description: "Core Connectivity & World Egress"
   endpointSelector: {}
   egress:
-    - toEndpoints: # Internal DNS
-        - matchLabels: {"k8s:io.kubernetes.pod.namespace": kube-system, "k8s:k8s-app": kube-dns}
-      toPorts: [{ports: [{port: "53", protocol: ANY}]}]
-    - toEntities: [kube-apiserver, host, remote-node] # Management
+    - toEndpoints: # Correction du sélecteur DNS
+        - matchLabels:
+            io.kubernetes.pod.namespace: kube-system
+            k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toEntities: 
+        - host
+        - cluster
+        - remote-node
+        - kube-apiserver
   ingress:
-    - fromEntities: [host, remote-node] # Health Probes
+    - fromEntities: [host, remote-node, cluster]
 ---
 # CoreDNS Upstream DNS Resolution
 apiVersion: cilium.io/v2
@@ -23,8 +35,8 @@ spec:
   description: "Allow CoreDNS to forward DNS queries to external resolvers"
   endpointSelector:
     matchLabels:
-      k8s:io.kubernetes.pod.namespace: kube-system
-      k8s:k8s-app: kube-dns
+      k8s-app: kube-dns
+      io.kubernetes.pod.namespace: kube-system
   egress:
     - toEntities: [world]
       toPorts: [{ports: [{port: "53", protocol: ANY}]}]
