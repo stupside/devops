@@ -41,7 +41,14 @@ rm cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
 
 kubectl create namespace cilium-system
 
-cilium install --version 1.16.5 --namespace cilium-system
+# Install with flags that match our GitOps config to prevent network flaps later
+cilium install \
+  --version 1.16.5 \
+  --namespace cilium-system \
+  --set routingMode=tunnel \
+  --set tunnelProtocol=vxlan \
+  --set kubeProxyReplacement=true \
+  --set operator.replicas=1
 
 cilium status --wait
 ```
