@@ -16,7 +16,7 @@ curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server \
   --tls-san citroen \
   --tls-san citroen.local \
   --cluster-cidr 10.42.0.0/16 \
-  --write-kubeconfig-mode 644 \
+  --write-kubeconfig-mode 644" \
   sh -
 
 # Setup Kubeconfig
@@ -72,9 +72,6 @@ cilium status -n cilium-system --wait
 
 kubectl run debug --image=curlimages/curl --rm -it --restart=Never -- curl -Iv https://github.com
 ```
-
-
-
 
 ## 3. Setup Secrets (SOPS + Age)
 
