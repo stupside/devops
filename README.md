@@ -9,13 +9,14 @@ Install K3s without CNI, kube-proxy, or Traefik to let Cilium handle everything.
 ```bash
 curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server \
   --data-dir /data/k3s \
+  --disable-kube-proxy \
   --flannel-backend=none \
   --disable-network-policy \
-  --disable-kube-proxy \
-  --disable=traefik \
-  --disable=servicelb \
-  --tls-san=citroen \
-  --tls-san=citroen.local" \
+  --disable traefik,servicelb,local-storage \
+  --tls-san citroen \
+  --tls-san citroen.local \
+  --cluster-cidr 10.42.0.0/16 \
+  --write-kubeconfig-mode 644 \
   sh -
 
 # Setup Kubeconfig
@@ -67,7 +68,7 @@ helm install cilium cilium/cilium --version 1.18.5 \
   --set kubeProxyReplacement=true \
   --set operator.replicas=1
 
-cilium status wait -n cilium-system
+cilium status -n cilium-system --wait
 
 kubectl run debug --image=curlimages/curl --rm -it --restart=Never -- curl -Iv https://github.com
 ```

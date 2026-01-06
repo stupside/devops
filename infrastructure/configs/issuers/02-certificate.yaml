@@ -10,4 +10,4 @@ spec:
     name: selfsigned
     kind: ClusterIssuer
   dnsNames:
-    - "*.devops.local"
+    - "*.${cluster_domain}"
