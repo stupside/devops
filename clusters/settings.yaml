@@ -4,7 +4,7 @@ kind: ConfigMap
 metadata:
   name: cluster-settings
   namespace: flux-system
-spec:
+data:
   # API
   k8s_api_port: "6443"
   k8s_api_server: "127.0.0.1"
@@ -15,5 +15,5 @@ spec:
   cluster_domain: "devops.local"
   cluster_issuer_email: "admin@devops.local"
   # Load balancer IP pool
-  lb_ip_pool_start: "192.168.1.240"
   lb_ip_pool_stop: "192.168.1.250"
+  lb_ip_pool_start: "192.168.1.240"
