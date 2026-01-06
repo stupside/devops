@@ -76,6 +76,17 @@ values:
         enabled: true
       ui:
         enabled: true
+        service:
+          type: LoadBalancer
+      tls:
+        enabled: true
+        auto:
+          method: certmanager
+          certValidityDuration: 8760h # 1 year
+          certManagerIssuerRef:
+            group: cert-manager.io
+            name: selfsigned
+            kind: ClusterIssuer
       metrics:
         enabled:
           - dns
@@ -84,9 +95,7 @@ values:
           - flow
           - port-distribution
           - icmp
-          # Cleaned up syntax for Hubble metrics
           - "httpV2:exemplars=true;labelsContext=source_ip,source_namespace,source_workload,destination_ip,destination_namespace,destination_workload,traffic_direction"
-
 ---
 apiVersion: "cilium.io/v2alpha1"
 kind: CiliumLoadBalancerIPPool
