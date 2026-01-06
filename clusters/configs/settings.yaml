@@ -13,7 +13,7 @@ data:
   cluster_cidr: 10.42.0.0/16
   # Domain
   cluster_domain: devops.local
-  cluster_issuer_email: admin@devops.local
+  cluster_issuer_email: kilian.houpeurt@gmail.com
   # Load balancer IP pool
   lb_ip_pool_stop: 192.168.1.250
   lb_ip_pool_start: 192.168.1.240
