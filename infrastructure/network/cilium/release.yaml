@@ -1,18 +1,3 @@
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: cilium-system
----
-apiVersion: source.toolkit.fluxcd.io/v1beta2
-kind: HelmRepository
-metadata:
-  name: cilium
-  namespace: cilium-system
-spec:
-  interval: 1h
-  url: https://helm.cilium.io/
----
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -23,7 +8,7 @@ spec:
   chart:
     spec:
       chart: cilium
-      version: "1.18.x" 
+      version: "1.18.5"
       sourceRef:
         kind: HelmRepository
         name: cilium
@@ -32,27 +17,24 @@ spec:
   upgrade:
     crds: CreateReplace
     cleanupOnFail: true
-  valuesFrom:
-    - kind: ConfigMap
-      name: cilium-hubble-settings
-      optional: true
   values:
     # --- K3s Integration ---
-    k8sServicePort: 443 # K3s service port
-    k8sServiceHost: 10.43.0.1 # K3s service IP
+    k8sServiceHost: 10.43.0.1
+    k8sServicePort: 443
     kubeProxyReplacement: true
-
     ipv6:
-      enabled: false # Disable IPv6
+      enabled: false
 
-    # --- Robust Network Mode (VXLAN Tunnel) ---
-    # This eliminates "unable to determine direct routing device" errors.
-    routingMode: tunnel
-    tunnelProtocol: vxlan
-    autoDirectNodeRoutes: false # Disable direct node routes because we use VXLAN tunneling
-    
-    endpointRoutes:
-      enabled: true # Enable endpoint routes for VXLAN tunneling
+    # --- Native Routing (The "Hardcore" Path) ---
+    routingMode: native
+    ipv4NativeRoutingCIDR: "10.42.0.0/16" 
+    autoDirectNodeRoutes: true
+    tunnelProtocol: "" 
+
+    # --- Multiple Device Support ---
+    # This tells Cilium to attach BPF programs to BOTH eth and wlan interfaces.
+    # The '{eth+,wlan+}' syntax handles eth0, eth1, wlan0, etc.
+    devices: "{eth+,wlan+}" 
 
     # --- BPF & IPAM ---
     bpf:
@@ -60,18 +42,24 @@ spec:
     ipam:
       mode: kubernetes
     loadBalancer:
-      mode: snat # SNAT
+      mode: snat
 
-    # --- L2 & LoadBalancer Pool ---
-    externalIPs:
+    # --- Gateway API & L2 Announcements ---
+    gatewayAPI:
       enabled: true
     l2announcements:
       enabled: true
+    externalIPs:
+      enabled: true
+    
+    # Allows Gateway Envoy to bind to host ports 80/443
+    hostNetwork:
+      enabled: true
 
-    # --- Features & UI ---
+    # --- Lean Mode ---
     operator:
       replicas: 1
-    gatewayAPI:
-      enabled: true
+      prometheus:
+        enabled: false
     hubble:
       enabled: false

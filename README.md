@@ -57,11 +57,14 @@ kubectl run debug --image=curlimages/curl --rm -it --restart=Never -- curl -Iv h
 ``` -->
 
 ```bash
-helm repo add cilium https://helm.cilium.io/
+helm repo add cilium https://helm.cilium.io
+helm repo update
+
 helm install cilium cilium/cilium --version 1.18.5 \
   --namespace cilium-system --create-namespace \
-  --set k8sServiceHost=127.0.0.1 --set k8sServicePort=6443 \
-  --set routingMode=tunnel --set kubeProxyReplacement=true \
+  --set k8sServiceHost=127.0.0.1 \
+  --set k8sServicePort=6443 \
+  --set kubeProxyReplacement=true \
   --set operator.replicas=1
 
 kubectl run debug --image=curlimages/curl --rm -it --restart=Never -- curl -Iv https://github.com
