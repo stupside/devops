@@ -53,21 +53,7 @@ cilium install \
 cilium status --wait
 ```
 
-### ⚠️ Important: Hubble TLS Bootstrap Note
 
-The Cilium configuration references cert-manager's `selfsigned` ClusterIssuer for Hubble TLS certificates. This creates a circular dependency during fresh bootstrap:
-
-- Cilium (networking layer) needs the ClusterIssuer
-- cert-manager (security layer) depends on networking
-- ClusterIssuer (configs layer) depends on cert-manager
-
-**Workaround for fresh bootstrap:**
-
-The initial manual Cilium installation (step 2) doesn't include Hubble TLS, so there's no issue. Once FluxCD takes over and all layers are deployed, Cilium will be upgraded with Hubble TLS enabled automatically.
-
-**Alternative solutions:**
-- Use Helm-managed TLS: `hubble.tls.auto.method: helm`
-- Disable Hubble TLS: `hubble.tls.enabled: false`
 
 ## 3. Setup Secrets (SOPS + Age)
 
