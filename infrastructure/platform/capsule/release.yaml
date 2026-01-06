@@ -23,7 +23,7 @@ spec:
   chart:
     spec:
       chart: capsule
-      version: "0.8.x"
+      version: "0.11.x"
       sourceRef:
         kind: HelmRepository
         name: capsule

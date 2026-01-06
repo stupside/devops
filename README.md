@@ -48,9 +48,10 @@ cilium install \
   --set routingMode=tunnel \
   --set tunnelProtocol=vxlan \
   --set kubeProxyReplacement=true \
+  --set ipam.mode=kubernetes \
   --set operator.replicas=1
 
-cilium status --wait
+cilium status -n cilium-system --wait
 ```
 
 
