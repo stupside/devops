@@ -71,6 +71,8 @@ helm install cilium cilium/cilium --version 1.18.5 \
 cilium status -n cilium-system --wait
 
 kubectl run debug --image=curlimages/curl --rm -it --restart=Never -- curl -Iv https://github.com
+
+# cilium uninstall -n cilium-system
 ```
 
 ## 3. Setup Secrets (SOPS + Age)
@@ -103,6 +105,8 @@ flux bootstrap github \
   --path=./clusters \
   --personal \
   --private=false
+
+# flux uninstall
 ```
 
 ## 5. Monitor
