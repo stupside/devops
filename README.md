@@ -67,6 +67,8 @@ helm install cilium cilium/cilium --version 1.18.5 \
   --set kubeProxyReplacement=true \
   --set operator.replicas=1
 
+cilium status wait -n cilium-system
+
 kubectl run debug --image=curlimages/curl --rm -it --restart=Never -- curl -Iv https://github.com
 ```
 

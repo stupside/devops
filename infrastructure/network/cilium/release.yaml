@@ -18,25 +18,25 @@ spec:
     crds: CreateReplace
     cleanupOnFail: true
   values:
-    # --- K3s Integration ---
+    # K3s Integration
     k8sServiceHost: 10.43.0.1
     k8sServicePort: 443
     kubeProxyReplacement: true
     ipv6:
       enabled: false
 
-    # --- Native Routing (The "Hardcore" Path) ---
+    # Native Routing (The "Hardcore" Path)
     routingMode: native
     ipv4NativeRoutingCIDR: "10.42.0.0/16" 
     autoDirectNodeRoutes: true
     tunnelProtocol: "" 
 
-    # --- Multiple Device Support ---
+    # Multiple Device Support
     # This tells Cilium to attach BPF programs to BOTH eth and wlan interfaces.
     # The '{eth+,wlan+}' syntax handles eth0, eth1, wlan0, etc.
     devices: "{eth+,wlan+}" 
 
-    # --- BPF & IPAM ---
+    # BPF & IPAM
     bpf:
       masquerade: true
     ipam:
@@ -44,7 +44,7 @@ spec:
     loadBalancer:
       mode: snat
 
-    # --- Gateway API & L2 Announcements ---
+    # Gateway API & L2 Announcements
     gatewayAPI:
       enabled: true
     l2announcements:
@@ -56,10 +56,14 @@ spec:
     hostNetwork:
       enabled: true
 
-    # --- Lean Mode ---
+    # Lean Mode
     operator:
       replicas: 1
       prometheus:
         enabled: false
     hubble:
       enabled: false
+
+    operator:
+      unmanagedPodWatcher:
+        restart: true
