@@ -61,9 +61,7 @@ spec:
       replicas: 1
       prometheus:
         enabled: false
-    hubble:
-      enabled: false
-
-    operator:
       unmanagedPodWatcher:
         restart: true
+    hubble:
+      enabled: false
