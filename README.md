@@ -42,6 +42,8 @@ rm cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
 kubectl create namespace cilium-system
 
 cilium install --version 1.16.5 --namespace cilium-system
+
+cilium status --wait
 ```
 
 ## 3. Setup Secrets (SOPS + Age)

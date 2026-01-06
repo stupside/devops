@@ -77,7 +77,7 @@ values:
       ui:
         enabled: true
         service:
-          type: LoadBalancer
+          type: ClusterIP
       tls:
         enabled: true
         auto:
@@ -96,25 +96,3 @@ values:
           - port-distribution
           - icmp
           - "httpV2:exemplars=true;labelsContext=source_ip,source_namespace,source_workload,destination_ip,destination_namespace,destination_workload,traffic_direction"
----
-apiVersion: "cilium.io/v2alpha1"
-kind: CiliumLoadBalancerIPPool
-metadata:
-  name: "k8s-co-il-pool"
-  namespace: cilium-system
-spec:
-  blocks:
-    - start: "10.10.10.240"
-      stop: "10.10.10.250"
----
-apiVersion: "cilium.io/v2alpha1"
-kind: CiliumL2AnnouncementPolicy
-metadata:
-  name: "l2-announcement-policy"
-  namespace: cilium-system
-spec:
-  interfaces:
-    - ^eth+
-    - ^wlan+
-  externalIPs: true
-  loadBalancerIPs: true
