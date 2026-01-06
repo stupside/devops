@@ -3,7 +3,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: infrastructure-tls
-  namespace: cilium
+  namespace: cilium-system
 spec:
   secretName: infrastructure-tls
   issuerRef:

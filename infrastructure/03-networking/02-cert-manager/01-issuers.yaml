@@ -21,7 +21,7 @@ spec:
           gatewayHTTPRoute:
             parentRefs:
               - name: infrastructure
-                namespace: cilium
+                namespace: cilium-system
                 kind: Gateway
 ---
 apiVersion: cert-manager.io/v1
@@ -39,5 +39,5 @@ spec:
           gatewayHTTPRoute:
             parentRefs:
               - name: infrastructure
-                namespace: cilium
+                namespace: cilium-system
                 kind: Gateway

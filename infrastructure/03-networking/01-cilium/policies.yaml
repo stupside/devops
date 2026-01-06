@@ -37,6 +37,6 @@ spec:
     matchExpressions:
       - key: io.kubernetes.pod.namespace
         operator: NotIn
-        values: [kube-system, flux-system, cilium, cert-manager, capsule-system]
+        values: [kube-system, flux-system, cilium-system, cert-manager, capsule-system]
   ingress: []
   egress: []

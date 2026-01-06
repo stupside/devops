@@ -1,18 +1,32 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cilium-system
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: cilium
+  namespace: cilium-system
+spec:
+  interval: 1h
+  url: https://helm.cilium.io/
+---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: cilium
-  namespace: cilium
+  namespace: cilium-system
 spec:
   interval: 1h
   chart:
     spec:
       chart: cilium
-      version: "1.17.x"
+      version: "1.16.x" # Stable version highly recommended for ARM64/k3s
       sourceRef:
         kind: HelmRepository
         name: cilium
-
   install:
     crds: CreateReplace
   upgrade:
@@ -20,11 +34,48 @@ spec:
     cleanupOnFail: true
 
   values:
+    # --- K3s Integration ---
+    # Since kube-proxy is disabled, Cilium needs to know the API server address
+    k8sServiceHost: 127.0.0.1
+    k8sServicePort: 6443
+    kubeProxyReplacement: true
+
+    # Native routing avoids VXLAN overhead which causes "Empty reply" errors on WiFi
+    routingMode: native
+    autoDirectNodeRoutes: true
+
+    # Direct routing to Pods without tunnels (cleaner for small clusters)
+    endpointRoutes:
+      enabled: true
+
+    # Specify the physical interfaces for Cilium to attach to
+    devices: '{eth+,wlan+}'
+
+    # Standard MTU is safe in Native mode because there is no 50-byte VXLAN header
+    mtu: 1500
+    
+    # --- IPAM & Outbound Connectivity ---
     ipam:
       mode: kubernetes
-    routingMode: tunnel
+
+    # Use eBPF for masquerading (better performance than iptables)
+    bpf:
+      masquerade: true
     enableIPv4Masquerade: true
-    kubeProxyReplacement: true
+
+    # Prevents k3s default rules from conflicting with Cilium eBPF
+    installIptablesRules: true
+    installNoConntrackIptablesRules: true
+
+    # Fixes the "VLAN traffic disallowed" errors seen in monitor
+    vlanAllowAny: true
+    # Enables L2 announcements (required for LoadBalancer IP pools)
+    l2announcements:
+      enabled: true
+    externalIPs:
+      enabled: true
+
+    # --- Performance & Visibility ---
     operator:
       replicas: 1
     gatewayAPI:
