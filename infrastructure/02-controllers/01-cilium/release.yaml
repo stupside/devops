@@ -42,6 +42,7 @@ spec:
 
     # Native routing avoids VXLAN overhead which causes "Empty reply" errors on WiFi
     routingMode: native
+    ipv4NativeRoutingCIDR: "10.42.0.0/24"
     autoDirectNodeRoutes: true
 
     # Direct routing to Pods without tunnels (cleaner for small clusters)
