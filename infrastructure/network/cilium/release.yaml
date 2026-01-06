@@ -32,6 +32,10 @@ spec:
   upgrade:
     crds: CreateReplace
     cleanupOnFail: true
+  valuesFrom:
+    - kind: ConfigMap
+      name: cilium-hubble-settings
+      optional: true
   values:
     # --- K3s Integration ---
     k8sServiceHost: 127.0.0.1
@@ -71,28 +75,4 @@ spec:
     gatewayAPI:
       enabled: true
     hubble:
-      enabled: true
-      relay:
-        enabled: true
-      ui:
-        enabled: true
-        service:
-          type: ClusterIP
-      tls:
-        enabled: true
-        auto:
-          method: certmanager
-          certValidityDuration: 365 # 1 year
-          certManagerIssuerRef:
-            group: cert-manager.io
-            name: selfsigned
-            kind: ClusterIssuer
-      metrics:
-        enabled:
-          - dns
-          - drop
-          - tcp
-          - flow
-          - port-distribution
-          - icmp
-          - "httpV2:exemplars=true;labelsContext=source_ip,source_namespace,source_workload,destination_ip,destination_namespace,destination_workload,traffic_direction"
+      enabled: false
