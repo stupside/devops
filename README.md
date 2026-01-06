@@ -30,7 +30,7 @@ export KUBECONFIG=~/.kube/config
 
 A working CNI must exist before Flux can schedule pods. Install Cilium manually once; Flux will take over management later.
 
-```bash
+<!-- ```bash
 CILIUM_CLI_VERSION=$(curl -s https://raw.githubusercontent.com/cilium/cilium-cli/main/stable.txt)
 CLI_ARCH=amd64
 if [ "$(uname -m)" = "aarch64" ]; then CLI_ARCH=arm64; fi
@@ -52,7 +52,21 @@ cilium install \
   --set operator.replicas=1
 
 cilium status -n cilium-system --wait
+
+kubectl run debug --image=curlimages/curl --rm -it --restart=Never -- curl -Iv https://github.com
+``` -->
+
+```bash
+helm repo add cilium https://helm.cilium.io/
+helm install cilium cilium/cilium --version 1.18.5 \
+  --namespace cilium-system --create-namespace \
+  --set k8sServiceHost=127.0.0.1 --set k8sServicePort=6443 \
+  --set routingMode=tunnel --set kubeProxyReplacement=true \
+  --set operator.replicas=1
+
+kubectl run debug --image=curlimages/curl --rm -it --restart=Never -- curl -Iv https://github.com
 ```
+
 
 
 

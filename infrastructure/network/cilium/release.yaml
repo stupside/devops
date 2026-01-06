@@ -23,7 +23,7 @@ spec:
   chart:
     spec:
       chart: cilium
-      version: "1.16.x" 
+      version: "1.18.x" 
       sourceRef:
         kind: HelmRepository
         name: cilium
@@ -38,30 +38,29 @@ spec:
       optional: true
   values:
     # --- K3s Integration ---
+    k8sServicePort: 443 # K3s service port
     k8sServiceHost: 10.43.0.1 # K3s service IP
-    k8sServicePort: 443
     kubeProxyReplacement: true
+
+    ipv6:
+      enabled: false # Disable IPv6
 
     # --- Robust Network Mode (VXLAN Tunnel) ---
     # This eliminates "unable to determine direct routing device" errors.
     routingMode: tunnel
     tunnelProtocol: vxlan
-    
-    # Let Cilium auto-detect the active interface (WiFi or Ethernet)
-    autoDirectNodeRoutes: false
+    autoDirectNodeRoutes: false # Disable direct node routes because we use VXLAN tunneling
     
     endpointRoutes:
-      enabled: true
+      enabled: true # Enable endpoint routes for VXLAN tunneling
 
-    # --- Load Balancing ---
-    loadBalancer:
-      mode: snat # SNAT is significantly more stable for home routers than DSR
-
-    # --- IPAM & Outbound ---
-    ipam:
-      mode: kubernetes
+    # --- BPF & IPAM ---
     bpf:
       masquerade: true
+    ipam:
+      mode: kubernetes
+    loadBalancer:
+      mode: snat # SNAT
 
     # --- L2 & LoadBalancer Pool ---
     externalIPs:
