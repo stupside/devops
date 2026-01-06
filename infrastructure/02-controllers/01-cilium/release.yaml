@@ -23,7 +23,7 @@ spec:
   chart:
     spec:
       chart: cilium
-      version: "1.16.x" # Stable version highly recommended for ARM64/k3s
+      version: "1.16.x" 
       sourceRef:
         kind: HelmRepository
         name: cilium
@@ -35,48 +35,44 @@ spec:
 
   values:
     # --- K3s Integration ---
-    # Since kube-proxy is disabled, Cilium needs to know the API server address
     k8sServiceHost: 127.0.0.1
     k8sServicePort: 6443
     kubeProxyReplacement: true
 
-    # Native routing avoids VXLAN overhead which causes "Empty reply" errors on WiFi
+    # --- Native Routing (Optimized for WiFi/Pi) ---
     routingMode: native
     ipv4NativeRoutingCIDR: "10.42.0.0/24"
     autoDirectNodeRoutes: true
-
-    # Direct routing to Pods without tunnels (cleaner for small clusters)
+    
+    # Cleaned up endpointRoutes structure
     endpointRoutes:
       enabled: true
 
-    # Specify the physical interfaces for Cilium to attach to
+    # Dynamic interface detection (covers WiFi and Ethernet)
     devices: '{eth+,wlan+}'
 
-    # Standard MTU is safe in Native mode because there is no 50-byte VXLAN header
+    # High performance load balancing (preserves Client IP)
+    loadBalancer:
+      mode: dsr
+
+    # MTU 1500 is safe since we removed the VXLAN tunnel overhead
     mtu: 1500
     
     # --- IPAM & Outbound Connectivity ---
     ipam:
       mode: kubernetes
-
-    # Use eBPF for masquerading (better performance than iptables)
     bpf:
       masquerade: true
     enableIPv4Masquerade: true
 
-    # Prevents k3s default rules from conflicting with Cilium eBPF
-    installIptablesRules: true
-    installNoConntrackIptablesRules: true
-
-    # Fixes the "VLAN traffic disallowed" errors seen in monitor
+    # --- L2 / VLAN Compatibility ---
     vlanAllowAny: true
-    # Enables L2 announcements (required for LoadBalancer IP pools)
     l2announcements:
       enabled: true
     externalIPs:
       enabled: true
 
-    # --- Performance & Visibility ---
+    # --- Features & UI ---
     operator:
       replicas: 1
     gatewayAPI:
