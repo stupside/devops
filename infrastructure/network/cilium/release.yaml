@@ -82,7 +82,7 @@ spec:
         enabled: true
         auto:
           method: certmanager
-          certValidityDuration: 8760h # 1 year
+          certValidityDuration: 365 # 1 year
           certManagerIssuerRef:
             group: cert-manager.io
             name: selfsigned
