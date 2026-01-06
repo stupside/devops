@@ -39,7 +39,7 @@ spec:
   values:
     # --- K3s Integration ---
     k8sServiceHost: 10.43.0.1 # K3s service IP
-    k8sServicePort: 6443
+    k8sServicePort: 443
     kubeProxyReplacement: true
 
     # --- Robust Network Mode (VXLAN Tunnel) ---
