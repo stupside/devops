@@ -3,7 +3,6 @@ kind: Kustomization
 resources:
   # Core
   - flux-system
-  - configs
   # Infrastructure
-  - settings.yaml
+  - configs
   - infrastructure.yaml

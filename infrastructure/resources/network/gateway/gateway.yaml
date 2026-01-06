@@ -11,8 +11,6 @@ kind: Gateway
 metadata:
   name: infrastructure
   namespace: cilium-system
-  annotations:
-    cert-manager.io/cluster-issuer: selfsigned
 spec:
   gatewayClassName: cilium
   listeners:

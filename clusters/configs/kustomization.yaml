@@ -3,3 +3,5 @@ kind: Kustomization
 resources:
   - 01-secrets
   - 02-notifications
+  
+  - settings.yaml

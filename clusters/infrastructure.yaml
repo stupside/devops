@@ -1,30 +1,47 @@
 # Infrastructure Orchestration
 #
 # Dependency flow:
-#   networking (cilium, gateway-api)
+#   configuration (cluster settings)
 #     ↓
-#   security (cert-manager - depends on networking)
+#   core (cilium, cert-manager HelmReleases)
 #     ↓
-#   configs (issuers - depends on security)
+#   resources (network: cilium-config, gateway | security: issuers, certificates)
 #     ↓
-#   platform (capsule, policies - depends on configs)
+#   platform (capsule, policies)
 #
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: networking
+  name: configuration
   namespace: flux-system
 spec:
   serviceAccountName: kustomize-controller
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: ./infrastructure/network
+  path: ./clusters/configs
   interval: 1h
-  timeout: 5m
   prune: true
   wait: true
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: infrastructure-core
+  namespace: flux-system
+spec:
+  serviceAccountName: kustomize-controller
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ./infrastructure/core
+  interval: 1h
+  timeout: 10m
+  prune: true
+  wait: true
+  dependsOn:
+    - name: configuration
   decryption:
     provider: sops
     secretRef:
@@ -33,24 +50,25 @@ spec:
     substituteFrom:
       - kind: ConfigMap
         name: cluster-settings
+        optional: false
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: security
+  name: infrastructure-resources
   namespace: flux-system
 spec:
   serviceAccountName: kustomize-controller
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: ./infrastructure/security
+  path: ./infrastructure/resources
   interval: 1h
   timeout: 5m
   prune: true
   wait: true
   dependsOn:
-    - name: networking
+    - name: infrastructure-core
   decryption:
     provider: sops
     secretRef:
@@ -59,37 +77,12 @@ spec:
     substituteFrom:
       - kind: ConfigMap
         name: cluster-settings
+        optional: false
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: configs
-  namespace: flux-system
-spec:
-  serviceAccountName: kustomize-controller
-  sourceRef:
-    kind: GitRepository
-    name: flux-system
-  path: ./infrastructure/configs
-  interval: 1h
-  timeout: 5m
-  prune: true
-  wait: true
-  dependsOn:
-    - name: security
-  decryption:
-    provider: sops
-    secretRef:
-      name: sops-age
-  postBuild:
-    substituteFrom:
-      - kind: ConfigMap
-        name: cluster-settings
----
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
-  name: platform
+  name: infrastructure-platform
   namespace: flux-system
 spec:
   serviceAccountName: kustomize-controller
@@ -102,11 +95,12 @@ spec:
   prune: true
   wait: true
   dependsOn:
-    - name: configs
+    - name: infrastructure-resources
   postBuild:
     substituteFrom:
       - kind: ConfigMap
         name: cluster-settings
+        optional: false
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
@@ -125,7 +119,7 @@ spec:
   prune: true
   wait: false
   dependsOn:
-    - name: platform
+    - name: infrastructure-platform
   decryption:
     provider: sops
     secretRef:
@@ -134,3 +128,4 @@ spec:
     substituteFrom:
       - kind: ConfigMap
         name: cluster-settings
+        optional: false
