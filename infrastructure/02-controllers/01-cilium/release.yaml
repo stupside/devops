@@ -32,41 +32,34 @@ spec:
   upgrade:
     crds: CreateReplace
     cleanupOnFail: true
-
-  values:
+values:
     # --- K3s Integration ---
     k8sServiceHost: 127.0.0.1
     k8sServicePort: 6443
     kubeProxyReplacement: true
 
-    # --- Native Routing (Optimized for WiFi/Pi) ---
-    routingMode: native
-    ipv4NativeRoutingCIDR: "10.42.0.0/24"
-    autoDirectNodeRoutes: true
+    # --- Robust Network Mode (VXLAN Tunnel) ---
+    # This eliminates "unable to determine direct routing device" errors.
+    routingMode: tunnel
+    tunnelProtocol: vxlan
     
-    # Cleaned up endpointRoutes structure
+    # Let Cilium auto-detect the active interface (WiFi or Ethernet)
+    autoDirectNodeRoutes: false
+    
     endpointRoutes:
       enabled: true
 
-    # Dynamic interface detection (covers WiFi and Ethernet)
-    devices: '{eth+,wlan+}'
-
-    # High performance load balancing (preserves Client IP)
+    # --- Load Balancing ---
     loadBalancer:
-      mode: dsr
+      mode: snat # SNAT is significantly more stable for home routers than DSR
 
-    # MTU 1500 is safe since we removed the VXLAN tunnel overhead
-    mtu: 1500
-    
-    # --- IPAM & Outbound Connectivity ---
+    # --- IPAM & Outbound ---
     ipam:
       mode: kubernetes
     bpf:
       masquerade: true
-    enableIPv4Masquerade: true
 
-    # --- L2 / VLAN Compatibility ---
-    vlanAllowAny: true
+    # --- L2 & LoadBalancer Pool ---
     externalIPs:
       enabled: true
     l2announcements:
@@ -91,7 +84,9 @@ spec:
           - flow
           - port-distribution
           - icmp
-          - httpV2:exemplars=true;labelsContext=source_ip\,source_namespace\,source_workload\,destination_ip\,destination_namespace\,destination_workload\,traffic_direction
+          # Cleaned up syntax for Hubble metrics
+          - "httpV2:exemplars=true;labelsContext=source_ip,source_namespace,source_workload,destination_ip,destination_namespace,destination_workload,traffic_direction"
+
 ---
 apiVersion: "cilium.io/v2alpha1"
 kind: CiliumLoadBalancerIPPool
