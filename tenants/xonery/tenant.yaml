@@ -10,8 +10,7 @@ spec:
     quota: 10
     additionalMetadata:
       labels:
-        # This label is the ONLY thing Cilium needs to identify the tenant
-        capsule.clastix.io/tenant: xonery 
+        capsule.clastix.io/tenant: xonery
         pod-security.kubernetes.io/enforce: restricted
         pod-security.kubernetes.io/enforce-version: latest
   resourceQuotas:
@@ -30,8 +29,8 @@ spec:
           - from:
               - namespaceSelector:
                   matchLabels:
-                    capsule.clastix.io/tenant: xonery # Isolation stricte
+                    capsule.clastix.io/tenant: xonery
           - from:
               - namespaceSelector:
                   matchLabels:
-                    kubernetes.io/metadata.name: cilium-system # Ingress
+                    kubernetes.io/metadata.name: cilium-system
