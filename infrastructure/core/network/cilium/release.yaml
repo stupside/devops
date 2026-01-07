@@ -32,6 +32,11 @@ spec:
   upgrade:
     crds: CreateReplace
     cleanupOnFail: true
+  valuesFrom:
+    - kind: ConfigMap
+      name: cilium-hubble
+      valuesKey: values.yaml
+      optional: true
   values:
     k8sServicePort: "${k8s_api_port}"
     k8sServiceHost: "${k8s_api_server}"
@@ -59,6 +64,9 @@ spec:
 
     l2announcements:
       enabled: true
+
+    hubble:
+      enabled: false
 
     operator:
       replicas: 1

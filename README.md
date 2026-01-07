@@ -116,4 +116,3 @@ flux get kustomizations --watch
 flux get helmreleases -A
 kubectl get pods -A
 ```
-
