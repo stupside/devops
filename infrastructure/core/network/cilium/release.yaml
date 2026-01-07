@@ -65,8 +65,8 @@ spec:
     l2announcements:
       enabled: true
 
-    hubble:
-      enabled: false
+    # hubble:
+    #   enabled: false
 
     operator:
       replicas: 1
