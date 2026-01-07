@@ -1,13 +1,13 @@
-# infrastructure/network/cilium-global-policy.yaml
 apiVersion: cilium.io/v2
 kind: CiliumClusterwideNetworkPolicy
 metadata:
   name: global-cluster-base-security
 spec:
-  description: "Core Connectivity & World Egress"
+  description: "Core Connectivity: DNS, World Access, and Cluster Management"
   endpointSelector: {}
   egress:
-    - toEndpoints: # Correction du sélecteur DNS
+    # 1. DNS - Allow all pods to query CoreDNS
+    - toEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: kube-system
             k8s-app: kube-dns
@@ -18,15 +18,22 @@ spec:
           rules:
             dns:
               - matchPattern: "*"
-    - toEntities: 
+
+    # 2. World Access - Allow everyone to access the internet
+    - toEntities:
+        - world
+
+    # 3. Management & Cluster - Essential for cluster operation
+    - toEntities:
         - host
         - cluster
         - remote-node
         - kube-apiserver
+
   ingress:
+    # Allow health probes and internal cluster traffic
     - fromEntities: [host, remote-node, cluster]
 ---
-# CoreDNS Upstream DNS Resolution
 apiVersion: cilium.io/v2
 kind: CiliumClusterwideNetworkPolicy
 metadata:
@@ -35,22 +42,8 @@ spec:
   description: "Allow CoreDNS to forward DNS queries to external resolvers"
   endpointSelector:
     matchLabels:
-      k8s-app: kube-dns
       io.kubernetes.pod.namespace: kube-system
+      k8s-app: kube-dns
   egress:
     - toEntities: [world]
       toPorts: [{ports: [{port: "53", protocol: ANY}]}]
----
-# Tenant Internet Access
-apiVersion: cilium.io/v2
-kind: CiliumClusterwideNetworkPolicy
-metadata:
-  name: tenant-internet-access
-spec:
-  description: "Allow tenant pods to access the internet"
-  endpointSelector:
-    matchExpressions:
-      - key: capsule.clastix.io/tenant
-        operator: Exists
-  egress:
-    - toEntities: [world]

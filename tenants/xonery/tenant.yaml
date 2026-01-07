@@ -24,10 +24,15 @@ spec:
           limits.memory: "16Gi"
   networkPolicies:
     items:
-      - policyTypes: [Ingress]
+      - name: "tenant-internal-only"
         podSelector: {}
+        policyTypes: [Ingress]
         ingress:
           - from:
               - namespaceSelector:
                   matchLabels:
-                    capsule.clastix.io/tenant: xonery
+                    capsule.clastix.io/tenant: xonery # Isolation stricte
+          - from:
+              - namespaceSelector:
+                  matchLabels:
+                    kubernetes.io/metadata.name: cilium-system # Ingress
