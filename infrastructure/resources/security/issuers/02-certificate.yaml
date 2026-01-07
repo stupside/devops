@@ -7,7 +7,7 @@ metadata:
 spec:
   secretName: infrastructure-tls
   issuerRef:
-    name: selfsigned
+    name: letsencrypt-staging
     kind: ClusterIssuer
   dnsNames:
     - "*.${cluster_domain}"
