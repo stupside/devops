@@ -24,8 +24,7 @@ spec:
           limits.memory: "16Gi"
   networkPolicies:
     items:
-      - name: "tenant-internal-only"
-        podSelector: {}
+      - podSelector: {}
         policyTypes: [Ingress]
         ingress:
           - from:
