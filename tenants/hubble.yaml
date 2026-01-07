@@ -21,7 +21,7 @@ data:
           certValidityDuration: 365
           certManagerIssuerRef:
             group: cert-manager.io
-            name: letsencrypt-staging
+            name: selfsigned
             kind: ClusterIssuer
       metrics:
         enabled:
