@@ -21,7 +21,7 @@ data:
           certValidityDuration: 365
           certManagerIssuerRef:
             group: cert-manager.io
-            name: selfsigned
+            name: letsencrypt-staging
             kind: ClusterIssuer
       metrics:
         enabled:
@@ -42,7 +42,7 @@ spec:
   parentRefs:
     - name: infrastructure
   hostnames:
-    - "hubble.devops.local"
+    - "hubble.${cluster_domain}"
   rules:
     - matches:
         - path:

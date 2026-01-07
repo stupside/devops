@@ -3,6 +3,5 @@ kind: Kustomization
 resources:
   - tenant.yaml
   - namespace.yaml
-  - route.yaml
   - rbac.yaml
-  - apps.yaml
+  - source.yaml
