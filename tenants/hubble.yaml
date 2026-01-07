@@ -15,14 +15,7 @@ data:
         service:
           type: ClusterIP
       tls:
-        enabled: true
-        auto:
-          method: certmanager
-          certValidityDuration: 365
-          certManagerIssuerRef:
-            group: cert-manager.io
-            name: selfsigned
-            kind: ClusterIssuer
+        enabled: false
       metrics:
         enabled:
           - dns
