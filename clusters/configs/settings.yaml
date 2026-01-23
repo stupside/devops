@@ -12,7 +12,7 @@ data:
   pod_cidr: 10.42.0.0/16
   cluster_cidr: 10.42.0.0/16
   # Domain
-  cluster_domain: citroen.dev
+  cluster_domain: xonery.dev
   # Certificate Management
   cluster_issuer: selfsigned  # Options: selfsigned, letsencrypt-staging, letsencrypt-prod
   cluster_issuer_email: kilian.houpeurt@gmail.com

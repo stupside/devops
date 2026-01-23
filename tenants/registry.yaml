@@ -1,0 +1,19 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: tenant-fa11ba9d
+  namespace: flux-system
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: ./tenants/charts/tenant
+      sourceRef:
+        kind: GitRepository
+        name: flux-system
+  values:
+    id: fa11ba9d
+    name: xonery
+    admin: xonery-admin
+    repo: https://github.com/stupside/devops

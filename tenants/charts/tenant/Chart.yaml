@@ -1,0 +1,5 @@
+apiVersion: v2
+name: tenant
+description: Capsule tenant template
+version: 1.0.0
+type: application

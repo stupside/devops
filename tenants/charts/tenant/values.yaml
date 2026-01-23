@@ -1,0 +1,14 @@
+id: ""
+name: ""
+admin: ""
+repo: ""
+
+resources:
+  cpu:
+    requests: "4"
+    limits: "8"
+  memory:
+    requests: "8Gi"
+    limits: "16Gi"
+
+namespaceQuota: 10

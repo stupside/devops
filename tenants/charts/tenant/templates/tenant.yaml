@@ -1,0 +1,39 @@
+apiVersion: capsule.clastix.io/v1beta2
+kind: Tenant
+metadata:
+  name: {{ .Values.id }}
+  labels:
+    tenant-display-name: {{ .Values.name }}
+spec:
+  owners:
+    - name: {{ .Values.admin }}
+      kind: User
+  namespaceOptions:
+    quota: {{ .Values.namespaceQuota }}
+    additionalMetadata:
+      labels:
+        capsule.clastix.io/tenant: {{ .Values.id }}
+        pod-security.kubernetes.io/enforce: restricted
+        pod-security.kubernetes.io/enforce-version: latest
+  resourceQuotas:
+    scope: Tenant
+    items:
+      - hard:
+          requests.cpu: {{ .Values.resources.cpu.requests | quote }}
+          requests.memory: {{ .Values.resources.memory.requests | quote }}
+          limits.cpu: {{ .Values.resources.cpu.limits | quote }}
+          limits.memory: {{ .Values.resources.memory.limits | quote }}
+  networkPolicies:
+    items:
+      - podSelector: {}
+        policyTypes:
+          - Ingress
+        ingress:
+          - from:
+              - namespaceSelector:
+                  matchLabels:
+                    capsule.clastix.io/tenant: {{ .Values.id }}
+          - from:
+              - namespaceSelector:
+                  matchLabels:
+                    kubernetes.io/metadata.name: cilium-system

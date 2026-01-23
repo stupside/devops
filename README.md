@@ -14,7 +14,7 @@ curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server \
   --disable-network-policy \
   --disable traefik,servicelb,local-storage \
   --tls-san citroen \
-  --tls-san citroen.dev \
+  --tls-san xonery.dev \
   --cluster-cidr 10.42.0.0/16 \
   --write-kubeconfig-mode 644" \
   sh -
