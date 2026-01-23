@@ -10,5 +10,4 @@ spec:
     name: ${cluster_issuer}
     kind: ClusterIssuer
   dnsNames:
-    - "*.infra.${cluster_domain}"
-    - "*.tenant.${cluster_domain}"
+    - "*.${cluster_domain}"

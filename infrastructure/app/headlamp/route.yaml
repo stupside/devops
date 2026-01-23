@@ -8,7 +8,7 @@ spec:
     - name: cluster
       namespace: cilium-system
   hostnames:
-    - "headlamp.infra.${cluster_domain}"
+    - "headlamp.${cluster_domain}"
   rules:
     - matches:
         - path:

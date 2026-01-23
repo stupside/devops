@@ -64,7 +64,7 @@ spec:
     - name: cluster
       namespace: cilium-system
   hostnames:
-    - "podinfo-fa11ba9d.tenant.${cluster_domain}"
+    - "podinfo-fa11ba9d.${cluster_domain}"
   rules:
     - matches:
         - path:

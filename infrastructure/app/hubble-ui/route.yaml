@@ -8,7 +8,7 @@ spec:
     - name: cluster
       namespace: cilium-system
   hostnames:
-    - "hubble.infra.${cluster_domain}"
+    - "hubble.${cluster_domain}"
   rules:
     - matches:
         - path:

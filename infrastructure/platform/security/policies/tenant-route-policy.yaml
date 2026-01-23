@@ -15,10 +15,10 @@ spec:
     - name: tenant
       expression: namespaceObject.metadata.labels['capsule.clastix.io/tenant']
     - name: pattern
-      expression: "'^[a-z0-9-]+-' + variables.tenant + '\\\\.tenant\\\\..+$'"
+      expression: "'^[a-z0-9-]+-' + variables.tenant + '\\\\..+$'"
   validations:
     - expression: object.spec.hostnames.all(h, h.matches(variables.pattern))
-      messageExpression: "'Hostname must match <app>-' + variables.tenant + '.tenant.* - got: ' + object.spec.hostnames.join(', ')"
+      messageExpression: "'Hostname must match <app>-' + variables.tenant + '.* - got: ' + object.spec.hostnames.join(', ')"
 ---
 apiVersion: admissionregistration.k8s.io/v1
 kind: ValidatingAdmissionPolicyBinding

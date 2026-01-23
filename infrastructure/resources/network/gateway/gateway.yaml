@@ -23,10 +23,10 @@ spec:
       allowedRoutes:
         namespaces:
           from: All
-    - name: infra-https
+    - name: https
       protocol: HTTPS
       port: 443
-      hostname: "*.infra.${cluster_domain}"
+      hostname: "*.${cluster_domain}"
       tls:
         mode: Terminate
         certificateRefs:
@@ -34,18 +34,3 @@ spec:
       allowedRoutes:
         namespaces:
           from: All
-    - name: tenant-https
-      protocol: HTTPS
-      port: 443
-      hostname: "*.tenant.${cluster_domain}"
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - name: cluster-tls
-      allowedRoutes:
-        namespaces:
-          from: Selector
-          selector:
-            matchExpressions:
-              - key: capsule.clastix.io/tenant
-                operator: Exists
