@@ -12,6 +12,9 @@ metadata:
   name: cluster
   namespace: cilium-system
 spec:
+  addresses:
+    - type: IPAddress
+      value: "{{ .Values.settings.lb_ip_pool_cidr_ip }}"
   gatewayClassName: cilium
   listeners:
     - name: http
