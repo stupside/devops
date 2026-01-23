@@ -20,7 +20,7 @@ spec:
       - http01:
           gatewayHTTPRoute:
             parentRefs:
-              - name: infrastructure
+              - name: cluster
                 namespace: cilium-system
                 kind: Gateway
 ---
@@ -38,6 +38,6 @@ spec:
       - http01:
           gatewayHTTPRoute:
             parentRefs:
-              - name: infrastructure
+              - name: cluster
                 namespace: cilium-system
                 kind: Gateway

@@ -2,12 +2,13 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: infrastructure-tls
+  name: cluster-tls
   namespace: cilium-system
 spec:
-  secretName: infrastructure-tls
+  secretName: cluster-tls
   issuerRef:
     name: ${cluster_issuer}
     kind: ClusterIssuer
   dnsNames:
-    - "*.${cluster_domain}"
+    - "*.infra.${cluster_domain}"
+    - "*.tenant.${cluster_domain}"

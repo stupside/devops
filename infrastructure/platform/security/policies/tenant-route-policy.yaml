@@ -1,0 +1,34 @@
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: tenant-httproute-hostname
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+      - apiGroups: ["gateway.networking.k8s.io"]
+        apiVersions: ["v1"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["httproutes"]
+  variables:
+    - name: tenant
+      expression: namespaceObject.metadata.labels['capsule.clastix.io/tenant']
+    - name: pattern
+      expression: "'^[a-z0-9-]+-' + variables.tenant + '\\\\.tenant\\\\..+$'"
+  validations:
+    - expression: object.spec.hostnames.all(h, h.matches(variables.pattern))
+      messageExpression: "'Hostname must match <app>-' + variables.tenant + '.tenant.* - got: ' + object.spec.hostnames.join(', ')"
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicyBinding
+metadata:
+  name: tenant-httproute-hostname
+spec:
+  policyName: tenant-httproute-hostname
+  validationActions: [Deny]
+  matchResources:
+    namespaceSelector:
+      matchExpressions:
+        - key: capsule.clastix.io/tenant
+          operator: Exists

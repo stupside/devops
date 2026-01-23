@@ -9,7 +9,7 @@ spec:
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
-  name: infrastructure
+  name: cluster
   namespace: cilium-system
 spec:
   gatewayClassName: cilium
@@ -20,14 +20,29 @@ spec:
       allowedRoutes:
         namespaces:
           from: All
-    - name: https
+    - name: infra-https
       protocol: HTTPS
       port: 443
-      hostname: "*.${cluster_domain}"
+      hostname: "*.infra.${cluster_domain}"
       tls:
         mode: Terminate
         certificateRefs:
-          - name: infrastructure-tls
+          - name: cluster-tls
       allowedRoutes:
         namespaces:
           from: All
+    - name: tenant-https
+      protocol: HTTPS
+      port: 443
+      hostname: "*.tenant.${cluster_domain}"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: cluster-tls
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchExpressions:
+              - key: capsule.clastix.io/tenant
+                operator: Exists
