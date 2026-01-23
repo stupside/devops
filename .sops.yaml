@@ -1,15 +1,5 @@
 creation_rules:
-  # Cluster-level secrets (Discord, etc.)
-  - path_regex: clusters/configs/01-secrets/.*\.yaml
-    encrypted_regex: ^(data|stringData)$
-    age: age1rh4am6rddevkvu5wkq4rzev7h7apndycak7zhy3vkryct4awza6qh7t2a2
-
-  # Infrastructure app secrets
-  - path_regex: infrastructure/app/.*/secrets/.*\.yaml
-    encrypted_regex: ^(data|stringData)$
-    age: age1rh4am6rddevkvu5wkq4rzev7h7apndycak7zhy3vkryct4awza6qh7t2a2
-
-  # Tenant secrets
-  - path_regex: tenants/.*/secrets/.*\.yaml
+  # All secret files (matches **/secret.yaml or **/secrets/*.yaml)
+  - path_regex: .*(secret|secrets).*\.yaml$
     encrypted_regex: ^(data|stringData)$
     age: age1rh4am6rddevkvu5wkq4rzev7h7apndycak7zhy3vkryct4awza6qh7t2a2
