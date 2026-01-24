@@ -1,12 +1,11 @@
 apiVersion: cilium.io/v2
 kind: CiliumClusterwideNetworkPolicy
 metadata:
-  name: global-cluster-base-security
+  name: global-dns-access
 spec:
-  description: "Core Connectivity: DNS, World Access, and Cluster Management"
+  description: "Allow all pods to query CoreDNS for DNS resolution"
   endpointSelector: {}
   egress:
-    # 1. DNS - Allow all pods to query CoreDNS
     - toEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: kube-system
@@ -18,21 +17,47 @@ spec:
           rules:
             dns:
               - matchPattern: "*"
-
-    # 2. World Access - Allow everyone to access the internet
-    - toEntities:
-        - world
-
-    # 3. Management & Cluster - Essential for cluster operation
-    - toEntities:
-        - host
-        - cluster
-        - remote-node
-        - kube-apiserver
-
+---
+apiVersion: cilium.io/v2
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  name: global-health-probes
+spec:
+  description: "Allow health probes and kubelet communication for all pods"
+  endpointSelector: {}
   ingress:
-    # Allow health probes and internal cluster traffic
-    - fromEntities: [host, remote-node, cluster]
+    - fromEntities: [host, remote-node]
+---
+apiVersion: cilium.io/v2
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  name: non-tenant-full-access
+spec:
+  description: "Non-tenant namespaces (system components) get full cluster access"
+  endpointSelector:
+    matchExpressions:
+      - key: io.cilium.k8s.namespace.labels.capsule.clastix.io/tenant
+        operator: DoesNotExist
+  egress:
+    - toEntities: [world, host, cluster, remote-node, kube-apiserver]
+  ingress:
+    - fromEntities: [host, cluster, remote-node]
+---
+apiVersion: cilium.io/v2
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  name: tenant-restricted-access
+spec:
+  description: "Tenant workloads can access external services but not API server"
+  endpointSelector:
+    matchExpressions:
+      - key: io.cilium.k8s.namespace.labels.capsule.clastix.io/tenant
+        operator: Exists
+  egress:
+    - toEntities: [world]
+    - toEntities: [cluster]
+  ingress:
+    - fromEntities: [cluster]
 ---
 apiVersion: cilium.io/v2
 kind: CiliumClusterwideNetworkPolicy
@@ -47,3 +72,4 @@ spec:
   egress:
     - toEntities: [world]
       toPorts: [{ports: [{port: "53", protocol: ANY}]}]
+    - toEntities: [kube-apiserver]

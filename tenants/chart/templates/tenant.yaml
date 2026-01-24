@@ -2,12 +2,7 @@ apiVersion: capsule.clastix.io/v1beta2
 kind: Tenant
 metadata:
   name: {{ .Values.id }}
-  labels:
-    tenant-display-name: {{ .Values.name }}
 spec:
-  owners:
-    - name: {{ .Values.admin }}
-      kind: User
   namespaceOptions:
     quota: {{ .Values.namespaceQuota }}
     additionalMetadata:

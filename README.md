@@ -2,7 +2,7 @@
 
 Minimal instructions to bootstrap the Raspberry Pi cluster with Cilium, FluxCD, and SOPS.
 
-## 1. Provision K3s (Hardcore Mode)
+## 1. Provision K3s
 
 Install K3s without CNI, kube-proxy, or Traefik to let Cilium handle everything.
 
@@ -25,37 +25,14 @@ sudo cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
 sudo chown $(id -u):$(id -g) ~/.kube/config
 
 export KUBECONFIG=~/.kube/config
+
+# /usr/local/bin/k3s-uninstall.sh;
 ```
 
 ## 2. Bootstrap Cilium
 
 A working CNI must exist before Flux can schedule pods. Install Cilium manually once; Flux will take over management later.
 
-<!-- ```bash
-CILIUM_CLI_VERSION=$(curl -s https://raw.githubusercontent.com/cilium/cilium-cli/main/stable.txt)
-CLI_ARCH=amd64
-if [ "$(uname -m)" = "aarch64" ]; then CLI_ARCH=arm64; fi
-curl -L --fail --remote-name-all https://github.com/cilium/cilium-cli/releases/download/${CILIUM_CLI_VERSION}/cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
-sha256sum --check cilium-linux-${CLI_ARCH}.tar.gz.sha256sum
-sudo tar xzvfC cilium-linux-${CLI_ARCH}.tar.gz /usr/local/bin
-rm cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
-
-kubectl create namespace cilium-system
-
-# Install with flags that match our GitOps config to prevent network flaps later
-cilium install \
-  --version 1.16.5 \
-  --namespace cilium-system \
-  --set routingMode=tunnel \
-  --set tunnelProtocol=vxlan \
-  --set kubeProxyReplacement=true \
-  --set ipam.mode=kubernetes \
-  --set operator.replicas=1
-
-cilium status -n cilium-system --wait
-
-kubectl run debug --image=curlimages/curl --rm -it --restart=Never -- curl -Iv https://github.com
-``` -->
 
 ```bash
 helm repo add cilium https://helm.cilium.io
@@ -69,6 +46,8 @@ helm install cilium cilium/cilium --version 1.18.5 \
   --set operator.replicas=1
 
 cilium status -n cilium-system --wait
+
+cilium connectivity test -n cilium-system
 
 kubectl run debug --image=curlimages/curl --rm -it --restart=Never -- curl -Iv https://github.com
 
@@ -94,15 +73,14 @@ kubectl create secret generic sops-age \
 Initialize the GitOps engine.
 
 ```bash
-export GITHUB_TOKEN=<your-token>
-export GITHUB_USER=stupside
 export GITHUB_REPO=devops
+export GITHUB_USER=stupside
 
 flux bootstrap github \
   --owner=$GITHUB_USER \
   --repository=$GITHUB_REPO \
   --branch=main \
-  --path=./clusters \
+  --path=./cluster \
   --personal \
   --private=false
 

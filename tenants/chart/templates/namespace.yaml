@@ -4,6 +4,5 @@ metadata:
   name: tenant-{{ .Values.id }}
   labels:
     capsule.clastix.io/tenant: {{ .Values.id }}
-    tenant-display-name: {{ .Values.name }}
     pod-security.kubernetes.io/enforce: restricted
     pod-security.kubernetes.io/enforce-version: latest

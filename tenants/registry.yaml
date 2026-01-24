@@ -14,6 +14,4 @@ spec:
         name: flux-system
   values:
     id: fa11ba9d
-    name: xonery
-    admin: xonery-admin
     repo: https://github.com/stupside/devops
