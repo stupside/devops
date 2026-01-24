@@ -26,7 +26,10 @@ sudo chown $(id -u):$(id -g) ~/.kube/config
 
 export KUBECONFIG=~/.kube/config
 
-# /usr/local/bin/k3s-uninstall.sh;
+# /usr/local/bin/k3s-uninstall.sh
+
+# sudo rm -rf /data/k3s
+# sudo rm -rf /var/lib/rancher/k3s
 ```
 
 ## 2. Bootstrap Cilium
