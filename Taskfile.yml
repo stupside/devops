@@ -2,7 +2,7 @@ version: '3'
 
 vars:
   # Regex to find secret files
-  SECRETS_FIND_CMD: git ls-files | grep -E ".*secret.*\.yaml$"
+  SECRETS_FIND_CMD: git ls-files | grep -E ".*/[^/]*secret[^/]*\.yaml$"
 
 env:
   SOPS_AGE_KEY_FILE: '{{.ROOT_DIR}}/age.agekey'
