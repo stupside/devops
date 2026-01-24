@@ -17,7 +17,6 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: ory
-        namespace: flux-system
   valuesFrom:
     - kind: Secret
       name: hydra-secrets
