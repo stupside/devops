@@ -4,5 +4,4 @@ resources:
   - settings.yaml
   - secrets
   - notifications
-  - namespaces/system.yaml
   
