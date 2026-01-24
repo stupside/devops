@@ -27,11 +27,6 @@ spec:
       name: hydra-secrets
       valuesKey: system-secret
       targetPath: hydra.config.secrets.system
-  healthChecks:
-    - apiVersion: apps/v1
-      kind: Deployment
-      name: hydra
-      namespace: ory-system
   values:
     hydra:
       automigration:

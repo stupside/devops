@@ -23,16 +23,6 @@ spec:
     crds: CreateReplace
   upgrade:
     crds: CreateReplace
-  # FluxCD v2.7+ health checks
-  healthChecks:
-    - apiVersion: apps/v1
-      kind: Deployment
-      name: cert-manager
-      namespace: cert-manager
-    - apiVersion: apps/v1
-      kind: Deployment
-      name: cert-manager-webhook
-      namespace: cert-manager
   values:
     crds:
       enabled: true

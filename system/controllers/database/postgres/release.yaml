@@ -14,12 +14,6 @@ spec:
         kind: HelmRepository
         name: bitnami
         namespace: flux-system
-  # FluxCD v2.7+ health checks
-  healthChecks:
-    - apiVersion: apps/v1
-      kind: StatefulSet
-      name: postgresql
-      namespace: database-system
   valuesFrom:
     - kind: Secret
       name: postgresql-credentials

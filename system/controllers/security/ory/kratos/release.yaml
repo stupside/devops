@@ -39,11 +39,6 @@ spec:
       name: kratos-secrets
       valuesKey: github-client-secret
       targetPath: kratos.config.selfservice.methods.oidc.config.providers[0].client_secret
-  healthChecks:
-    - apiVersion: apps/v1
-      kind: Deployment
-      name: kratos
-      namespace: ory-system
   values:
     kratos:
       automigration:

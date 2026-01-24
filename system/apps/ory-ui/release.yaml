@@ -26,11 +26,6 @@ spec:
     cleanupOnFail: true
     remediation:
       retries: 3
-  healthChecks:
-    - apiVersion: apps/v1
-      kind: Deployment
-      name: kratos-selfservice-ui-node
-      namespace: ory-system
   valuesFrom:
     - kind: Secret
       name: ui-node-secrets

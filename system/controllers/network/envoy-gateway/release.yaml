@@ -23,12 +23,6 @@ spec:
     crds: CreateReplace
   upgrade:
     crds: CreateReplace
-  # FluxCD v2.7+ health checks
-  healthChecks:
-    - apiVersion: apps/v1
-      kind: Deployment
-      name: envoy-gateway
-      namespace: envoy-gateway-system
   values:
     # Default values work for most setups
     config:

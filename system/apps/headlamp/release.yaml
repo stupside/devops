@@ -14,11 +14,6 @@ spec:
         kind: HelmRepository
         name: headlamp
         namespace: flux-system
-  healthChecks:
-    - apiVersion: apps/v1
-      kind: Deployment
-      name: headlamp
-      namespace: headlamp
   values:
     config:
       inCluster: true
