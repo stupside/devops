@@ -83,7 +83,7 @@ flux bootstrap github \
   --owner=$GITHUB_USER \
   --repository=$GITHUB_REPO \
   --branch=main \
-  --path=./cluster/flux-system \
+  --path=./cluster \
   --personal \
   --private=false
 
