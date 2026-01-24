@@ -1,0 +1,15 @@
+#!/bin/sh
+# .github/hooks/post-merge
+# Decrypts all secrets after a successful pull/merge
+
+echo "🔓 [Hook] Post-merge: Decrypting secrets with SOPS..."
+
+# Run Taskfile decryption
+task decrypt
+
+if [ $? -ne 0 ]; then
+  echo "⚠️ Warning: Failed to decrypt some secrets."
+  # Do not exit with error as merge is already done
+fi
+
+echo "✅ Secrets decrypted for editing."

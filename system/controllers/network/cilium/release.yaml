@@ -1,0 +1,76 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cilium-system
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: cilium
+  namespace: cilium-system
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: cilium
+      version: "1.18.5"
+      sourceRef:
+        kind: HelmRepository
+        name: cilium
+        namespace: flux-system
+  install:
+    crds: CreateReplace
+  upgrade:
+    crds: CreateReplace
+  # FluxCD v2.7+ health checks
+  healthChecks:
+    - apiVersion: apps/v1
+      kind: DaemonSet
+      name: cilium
+      namespace: cilium-system
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: cilium-operator
+      namespace: cilium-system
+  valuesFrom:
+    - kind: ConfigMap
+      name: cilium-hubble
+      valuesKey: values.yaml
+      optional: true
+  values:
+    k8sServicePort: "${k8s_api_port}"
+    k8sServiceHost: "${k8s_api_server}"
+    kubeProxyReplacement: true
+
+    routingMode: native
+    tunnelProtocol: ""
+    autoDirectNodeRoutes: true
+    ipv4NativeRoutingCIDR: "${pod_cidr}"
+
+    devices: "eth0 wlan0"
+
+    ipam:
+      mode: cluster-pool
+      operator:
+        clusterPoolIPv4MaskSize: 24
+        clusterPoolIPv4PodCIDRList: ["${cluster_cidr}"]
+
+    bpf:
+      masquerade: true
+
+    gatewayAPI:
+      enabled: true
+      enableSecretsSync: true
+
+    l2announcements:
+      enabled: true
+
+    # hubble:
+    #   enabled: false
+
+    operator:
+      replicas: 1
+      rollOutPods: true
+      unmanagedPodWatcher:
+        restart: true

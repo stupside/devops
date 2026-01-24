@@ -1,0 +1,21 @@
+#!/bin/sh
+# .github/hooks/pre-commit
+# Encrypts all secrets before committing
+
+echo "🔐 [Hook] Pre-commit: Encrypting secrets..."
+
+# Capture output to separate encryption success from staging
+FILES=$(task encrypt)
+
+# Check if encryption failed
+if [ $? -ne 0 ]; then
+  echo "❌ Error: Failed to encrypt secrets."
+  exit 1
+fi
+
+# Stage the encrypted files (if any)
+if [ -n "$FILES" ]; then
+  echo "$FILES" | xargs git add
+fi
+
+echo "✅ Secrets encrypted and staged."

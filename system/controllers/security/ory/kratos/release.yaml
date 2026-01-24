@@ -1,0 +1,112 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kratos
+  namespace: ory-system
+spec:
+  interval: 1h
+  dependsOn:
+    - name: postgresql
+      namespace: database-system
+  chart:
+    spec:
+      chart: kratos
+      version: "0.47.x"
+      sourceRef:
+        kind: HelmRepository
+        name: ory
+        namespace: flux-system
+  valuesFrom:
+    - kind: Secret
+      name: kratos-secrets
+      valuesKey: secrets-cookie
+      targetPath: kratos.config.secrets.cookie
+    - kind: Secret
+      name: kratos-secrets
+      valuesKey: secrets-cipher
+      targetPath: kratos.config.secrets.cipher
+    - kind: Secret
+      name: kratos-secrets
+      valuesKey: dsn
+      targetPath: kratos.config.dsn
+
+    - kind: Secret
+      name: kratos-secrets
+      valuesKey: github-client-id
+      targetPath: kratos.config.selfservice.methods.oidc.config.providers[0].client_id
+    - kind: Secret
+      name: kratos-secrets
+      valuesKey: github-client-secret
+      targetPath: kratos.config.selfservice.methods.oidc.config.providers[0].client_secret
+  values:
+    kratos:
+      automigration:
+        enabled: true
+      config:
+        serve:
+          public:
+            base_url: https://auth.${cluster_domain}/
+            cors:
+              enabled: true
+          admin:
+            base_url: http://kratos-admin:80/
+        selfservice:
+          default_browser_return_url: https://auth.${cluster_domain}/
+          allowed_return_urls:
+            - https://*.${cluster_domain}
+          methods:
+            password:
+              enabled: true
+            oidc:
+              enabled: true
+              config:
+                providers:
+
+                  - id: github
+                    provider: github
+                    mapper_url: base64://bG9jYWwgY2xhaW1zID0gc3RkLmV4dFZhcignY2xhaW1zJyk7Cgp7CiAgaWRlbnRpdHk6IHsKICAgIHRyYWl0czogewogICAgICBlbWFpbDogY2xhaW1zLmVtYWlsLAogICAgICBuYW1lOiB7CiAgICAgICAgZmlyc3Q6IGNsYWltcy5uYW1lLAogICAgICB9LAogICAgfSwKICB9LAp9Cg==
+                    scope:
+                      - user:email
+          flows:
+            error:
+              ui_url: https://auth.${cluster_domain}/error
+            settings:
+              ui_url: https://auth.${cluster_domain}/settings
+              privileged_session_max_age: 15m
+            recovery:
+              enabled: true
+              ui_url: https://auth.${cluster_domain}/recovery
+            verification:
+              enabled: true
+              ui_url: https://auth.${cluster_domain}/verification
+            logout:
+              after:
+                default_browser_return_url: https://auth.${cluster_domain}/login
+            login:
+              ui_url: https://auth.${cluster_domain}/login
+              lifespan: 10m
+            registration:
+              ui_url: https://auth.${cluster_domain}/registration
+              lifespan: 10m
+              after:
+                password:
+                  hooks:
+                    - hook: session
+        log:
+          level: info
+          format: json
+        identity:
+          default_schema_id: default
+          schemas:
+            - id: default
+              url: base64://ewogICIkaWQiOiAiaHR0cHM6Ly9zY2hlbWFzLm9yeS5zaC9wcmVzZXRzL2tyYXRvcy9pZGVudGl0eS5lbWFpbC5zY2hlbWEuanNvbiIsCiAgIiRzY2hlbWEiOiAiaHR0cDovL2pzb24tc2NoZW1hLm9yZy9kcmFmdC0wNy9zY2hlbWEjIiwKICAidGl0bGUiOiAiUGVyc29uIiwKICAidHlwZSI6ICJvYmplY3QiLAogICJwcm9wZXJ0aWVzIjogewogICAgInRyYWl0cyI6IHsKICAgICAgInR5cGUiOiAib2JqZWN0IiwKICAgICAgInByb3BlcnRpZXMiOiB7CiAgICAgICAgImVtYWlsIjogewogICAgICAgICAgInR5cGUiOiAic3RyaW5nIiwKICAgICAgICAgICJmb3JtYXQiOiAiZW1haWwiLAogICAgICAgICAgInRpdGxlIjogIkUtTWFpbCIsCiAgICAgICAgICAib3J5LnNoL2tyYXRvcyI6IHsKICAgICAgICAgICAgImNyZWRlbnRpYWxzIjogewogICAgICAgICAgICAgICJwYXNzd29yZCI6IHsKICAgICAgICAgICAgICAgICJpZGVudGlmaWVyIjogdHJ1ZQogICAgICAgICAgICAgIH0KICAgICAgICAgICAgfSwKICAgICAgICAgICAgInJlY292ZXJ5IjogewogICAgICAgICAgICAgICJ2aWEiOiAiZW1haWwiCiAgICAgICAgICAgIH0sCiAgICAgICAgICAgICJ2ZXJpZmljYXRpb24iOiB7CiAgICAgICAgICAgICAgInZpYSI6ICJlbWFpbCIKICAgICAgICAgICAgfQogICAgICAgICAgfQogICAgICAgIH0sCiAgICAgICAgIm5hbWUiOiB7CiAgICAgICAgICAidHlwZSI6ICJvYmplY3QiLAogICAgICAgICAgInByb3BlcnRpZXMiOiB7CiAgICAgICAgICAgICJmaXJzdCI6IHsKICAgICAgICAgICAgICAidHlwZSI6ICJzdHJpbmciLAogICAgICAgICAgICAgICJ0aXRsZSI6ICJGaXJzdCBOYW1lIgogICAgICAgICAgICB9LAogICAgICAgICAgICAibGFzdCI6IHsKICAgICAgICAgICAgICAidHlwZSI6ICJzdHJpbmciLAogICAgICAgICAgICAgICJ0aXRsZSI6ICJMYXN0IE5hbWUiCiAgICAgICAgICAgIH0KICAgICAgICAgIH0KICAgICAgICB9CiAgICAgIH0sCiAgICAgICJyZXF1aXJlZCI6IFsiZW1haWwiXSwKICAgICAgImFkZGl0aW9uYWxQcm9wZXJ0aWVzIjogZmFsc2UKICAgIH0KICB9Cn0K
+    service:
+      public:
+        enabled: true
+        type: ClusterIP
+        port: 80
+      admin:
+        enabled: true
+        type: ClusterIP
+        port: 80

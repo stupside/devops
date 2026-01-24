@@ -1,5 +1,5 @@
 creation_rules:
   # All secret files (matches **/secret.yaml or **/secrets/*.yaml)
-  - path_regex: .*(secret|secrets).*\.yaml$
+  - path_regex: .*secret.*\.yaml$
     encrypted_regex: ^(data|stringData)$
     age: age1rh4am6rddevkvu5wkq4rzev7h7apndycak7zhy3vkryct4awza6qh7t2a2

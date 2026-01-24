@@ -1,0 +1,24 @@
+---
+apiVersion: hydra.ory.sh/v1alpha1
+kind: OAuth2Client
+metadata:
+  name: envoy-gateway
+  namespace: ory-system
+spec:
+  hydraAdmin:
+    url: http://hydra-admin:4445
+  secretRef:
+    name: envoy-gateway-client-secret
+  grantTypes:
+    - authorization_code
+    - refresh_token
+  responseTypes:
+    - code
+  scope: openid profile email offline_access
+  # Single centralized redirect URI - no per-app configuration needed!
+  # Adding new protected apps requires zero changes here
+  redirectUris:
+    - https://oidc.${cluster_domain}/oauth2/callback
+  postLogoutRedirectUris:
+    - https://auth.${cluster_domain}/
+  tokenEndpointAuthMethod: client_secret_basic

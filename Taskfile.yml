@@ -1,0 +1,22 @@
+version: '3'
+
+vars:
+  # Regex to find secret files
+  SECRETS_FIND_CMD: git ls-files | grep -E ".*secret.*\.yaml$"
+
+env:
+  SOPS_AGE_KEY_FILE: '{{.ROOT_DIR}}/age.agekey'
+
+tasks:
+  encrypt:
+    desc: Encrypt all secrets in the repository using SOPS
+    cmds:
+      - '{{.SECRETS_FIND_CMD}} | xargs -I {} sh -c "grep -q \"^sops:\" {} || sops -e -i {}"'
+      - '{{.SECRETS_FIND_CMD}}' # Print files for consumer
+    silent: true
+
+  decrypt:
+    desc: Decrypt all secrets in the repository using SOPS
+    cmds:
+      - '{{.SECRETS_FIND_CMD}} | xargs -I {} sops -d -i {}'
+    silent: true

@@ -1,0 +1,63 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: hydra
+  namespace: ory-system
+spec:
+  interval: 1h
+  dependsOn:
+    - name: postgresql
+      namespace: database-system
+    - name: kratos
+  chart:
+    spec:
+      chart: hydra
+      version: "0.47.x"
+      sourceRef:
+        kind: HelmRepository
+        name: ory
+        namespace: flux-system
+  valuesFrom:
+    - kind: Secret
+      name: hydra-secrets
+      valuesKey: dsn
+      targetPath: hydra.config.dsn
+    - kind: Secret
+      name: hydra-secrets
+      valuesKey: system-secret
+      targetPath: hydra.config.secrets.system
+  values:
+    hydra:
+      automigration:
+        enabled: true
+      config:
+        serve:
+          public:
+            cors:
+              enabled: true
+          admin:
+            cors:
+              enabled: true
+        urls:
+          self:
+            issuer: https://hydra.${cluster_domain}/
+          consent: https://auth.${cluster_domain}/consent
+          login: https://auth.${cluster_domain}/login
+          logout: https://auth.${cluster_domain}/logout
+        oauth2:
+          expose_internal_errors: false
+        log:
+          level: info
+          format: json
+    maester:
+      enabled: true
+    service:
+      public:
+        enabled: true
+        type: ClusterIP
+        port: 4444
+      admin:
+        enabled: true
+        type: ClusterIP
+        port: 4445

@@ -1,0 +1,48 @@
+---
+# Private Gateway - Envoy Gateway with OIDC authentication
+# Protected apps (hubble, headlamp) route through this gateway
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: private
+  namespace: envoy-gateway-system
+spec:
+  gatewayClassName: envoy-gateway
+  addresses:
+    - type: IPAddress
+      value: "${lb_private_ip}"
+  listeners:
+    # Wildcard listener for protected apps
+    - name: https
+      protocol: HTTPS
+      port: 443
+      hostname: "*.${cluster_domain}"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: cluster-tls
+            namespace: envoy-gateway-system
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchExpressions:
+              - key: capsule.clastix.io/tenant
+                operator: DoesNotExist
+    # Dedicated OIDC callback listener - centralized for all apps
+    - name: https-oidc
+      protocol: HTTPS
+      port: 443
+      hostname: "oidc.${cluster_domain}"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: cluster-tls
+            namespace: envoy-gateway-system
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchExpressions:
+              - key: capsule.clastix.io/tenant
+                operator: DoesNotExist

@@ -1,0 +1,42 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: postgresql
+  namespace: database-system
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: postgresql
+      version: "16.x"
+      sourceRef:
+        kind: HelmRepository
+        name: bitnami
+        namespace: flux-system
+  # FluxCD v2.7+ health checks
+  healthChecks:
+    - apiVersion: apps/v1
+      kind: StatefulSet
+      name: postgresql
+      namespace: database-system
+  valuesFrom:
+    - kind: Secret
+      name: postgresql-credentials
+      valuesKey: postgres-password
+      targetPath: auth.postgresPassword
+  values:
+    auth:
+      # Default database - applications create their own
+      database: postgres
+    primary:
+      persistence:
+        enabled: true
+        size: 1Gi
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits:
+          cpu: 500m
+          memory: 512Mi

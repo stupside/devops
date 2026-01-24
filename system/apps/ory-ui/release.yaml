@@ -1,0 +1,62 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kratos-selfservice-ui-node
+  namespace: ory-system
+spec:
+  interval: 1h
+  dependsOn:
+    - name: kratos
+      namespace: ory-system
+    - name: hydra
+      namespace: ory-system
+  chart:
+    spec:
+      chart: kratos-selfservice-ui-node
+      version: "0.60.x"
+      sourceRef:
+        kind: HelmRepository
+        name: ory
+        namespace: flux-system
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  valuesFrom:
+    - kind: Secret
+      name: ui-node-secrets
+      valuesKey: cookie-secret
+      targetPath: secret.default
+  values:
+    replicaCount: 1
+    # Kratos SDK configuration (internal cluster address)
+    kratosPublicUrl: http://kratos-public.ory-system.svc.cluster.local:80
+    kratosBrowserUrl: https://auth.${cluster_domain}
+    kratosAdminUrl: http://kratos-admin.ory-system.svc.cluster.local:80
+    # Hydra Admin API for consent/login challenge handling
+    hydraAdminUrl: http://hydra-admin.ory-system.svc.cluster.local:4445
+    # Environment variables
+    extraEnv:
+      # Trusted first-party clients that skip consent screen
+      - name: TRUSTED_CLIENT_IDS
+        value: "envoy-gateway"
+      # Cookie settings
+      - name: COOKIE_DOMAIN
+        value: "${cluster_domain}"
+      - name: COOKIE_SECURE
+        value: "true"
+    service:
+      type: ClusterIP
+      port: 80
+      targetPort: 3000
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 200m
+        memory: 128Mi
