@@ -25,21 +25,23 @@ spec:
     cleanupOnFail: true
     remediation:
       retries: 3
-  valuesFrom:
-    - kind: Secret
-      name: ui-node-secrets
-      valuesKey: cookie-secret
-      targetPath: secret.default
   values:
     replicaCount: 1
     # Kratos SDK configuration (internal cluster address)
     kratosPublicUrl: http://kratos-public.ory-system.svc.cluster.local:80
     kratosBrowserUrl: https://auth.${cluster_domain}
     kratosAdminUrl: http://kratos-admin.ory-system.svc.cluster.local:80
-    # Hydra Admin API for consent/login challenge handling
-    hydraAdminUrl: http://hydra-admin.ory-system.svc.cluster.local:4445
     # Environment variables
     extraEnv:
+      # Required: Cookie secret for session signing
+      - name: COOKIE_SECRET
+        valueFrom:
+          secretKeyRef:
+            name: ui-node-secrets
+            key: cookie-secret
+      # Hydra Admin API for OAuth2 consent/login flows
+      - name: HYDRA_ADMIN_URL
+        value: "http://hydra-admin.ory-system.svc.cluster.local:4445"
       # Trusted first-party clients that skip consent screen
       - name: TRUSTED_CLIENT_IDS
         value: "envoy-gateway"
@@ -48,6 +50,13 @@ spec:
         value: "${cluster_domain}"
       - name: COOKIE_SECURE
         value: "true"
+      - name: CSRF_COOKIE_NAME
+        value: "__HOST-ory_csrf"
+      - name: CSRF_COOKIE_SECRET
+        valueFrom:
+          secretKeyRef:
+            name: ui-node-secrets
+            key: csrf-cookie-secret
     service:
       type: ClusterIP
       port: 80
