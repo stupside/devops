@@ -9,7 +9,7 @@ spec:
     - name: public
       namespace: cilium-system
   hostnames:
-    - "httpbin.${cluster_domain}"
+    - "httpbin-fa11ba9d.${cluster_domain}"
   rules:
     - matches:
         - path:

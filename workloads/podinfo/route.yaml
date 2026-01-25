@@ -9,7 +9,7 @@ spec:
     - name: public
       namespace: cilium-system
   hostnames:
-    - "podinfo.${cluster_domain}"
+    - "podinfo-fa11ba9d.${cluster_domain}"
   rules:
     - matches:
         - path:

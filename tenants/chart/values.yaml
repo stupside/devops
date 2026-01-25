@@ -1,6 +1,8 @@
 id: ""
 repo: ""
 
+apps: "apps"
+
 resources:
   cpu:
     requests: "4"
