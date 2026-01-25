@@ -25,23 +25,26 @@ spec:
     cleanupOnFail: true
     remediation:
       retries: 3
+  valuesFrom:
+    - kind: Secret
+      name: ui-node-secrets
+      valuesKey: cookie-secret
+      targetPath: config.secrets.cookie
+    - kind: Secret
+      name: ui-node-secrets
+      valuesKey: csrf-cookie-secret
+      targetPath: config.secrets.csrf_cookie
   values:
-    # Disable Helm chart's auto-generated secret (we manage our own)
-    secret:
-      enabled: false
     replicaCount: 1
     # Kratos SDK configuration (internal cluster address)
     kratosPublicUrl: http://kratos-public.ory-system.svc.cluster.local:80
     kratosBrowserUrl: https://auth.${cluster_domain}
     kratosAdminUrl: http://kratos-admin.ory-system.svc.cluster.local:80
+    # Application configuration
+    config:
+      csrfCookieName: "__HOST-ory_csrf"
     # Environment variables
     extraEnv:
-      # Required: Cookie secret for session signing
-      - name: COOKIE_SECRET
-        valueFrom:
-          secretKeyRef:
-            name: ui-node-secrets
-            key: cookie-secret
       # Hydra Admin API for OAuth2 consent/login flows
       - name: HYDRA_ADMIN_URL
         value: "http://hydra-admin.ory-system.svc.cluster.local:4445"
@@ -53,13 +56,6 @@ spec:
         value: "${cluster_domain}"
       - name: COOKIE_SECURE
         value: "true"
-      - name: CSRF_COOKIE_NAME
-        value: "__HOST-ory_csrf"
-      - name: CSRF_COOKIE_SECRET
-        valueFrom:
-          secretKeyRef:
-            name: ui-node-secrets
-            key: csrf-cookie-secret
     service:
       type: ClusterIP
       port: 80
