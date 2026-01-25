@@ -9,7 +9,6 @@ spec:
   parentRefs:
     - name: unified
       namespace: envoy-gateway-system
-      sectionName: public  # Public access (OIDC provider must be public)
   hostnames:
     - "hydra.${cluster_domain}"
   rules:

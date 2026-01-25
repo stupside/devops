@@ -9,7 +9,6 @@ spec:
   parentRefs:
     - name: unified
       namespace: envoy-gateway-system
-      sectionName: public  # Public access (no OIDC)
   hostnames:
     - "auth.${cluster_domain}"
   rules:

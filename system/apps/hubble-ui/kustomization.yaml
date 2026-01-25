@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
   - route.yaml
   - config.yaml
+  - security-policy.yaml

@@ -7,3 +7,4 @@ resources:
   - secret.yaml
   - release.yaml
   - route.yaml
+  - security-policy.yaml

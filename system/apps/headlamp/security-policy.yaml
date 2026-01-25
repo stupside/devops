@@ -2,26 +2,23 @@
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: SecurityPolicy
 metadata:
-  name: protected-listener-oidc
-  namespace: envoy-gateway-system
+  name: headlamp-oidc
+  namespace: headlamp
 spec:
   targetRefs:
     - group: gateway.networking.k8s.io
-      kind: Gateway
-      name: unified
-      sectionName: protected  # TARGETS ONLY THE PROTECTED LISTENER
+      kind: HTTPRoute
+      name: headlamp
   oidc:
     provider:
       issuer: "https://hydra.${cluster_domain}/"
     clientID: envoy-gateway
     clientSecret:
       name: oidc-client-secret
-    # Centralized callback - no per-app configuration needed
+      namespace: envoy-gateway-system
     redirectURL: "https://oidc.${cluster_domain}/oauth2/callback"
     logoutPath: "/oauth2/logout"
-    # Cookie domain enables SSO across all subdomains
     cookieDomain: "${cluster_domain}"
-    # Forward access token to backend services
     forwardAccessToken: true
     scopes:
       - openid

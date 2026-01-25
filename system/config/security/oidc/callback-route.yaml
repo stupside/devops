@@ -10,7 +10,6 @@ spec:
   parentRefs:
     - name: unified
       namespace: envoy-gateway-system
-      sectionName: oidc-callback  # Dedicated listener (no auth loop)
   hostnames:
     - "oidc.${cluster_domain}"
   rules:

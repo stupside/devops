@@ -7,7 +7,6 @@ spec:
   parentRefs:
     - name: unified
       namespace: envoy-gateway-system
-      sectionName: protected  # OIDC protection via protected listener
   hostnames:
     - "headlamp.${cluster_domain}"
   rules:
