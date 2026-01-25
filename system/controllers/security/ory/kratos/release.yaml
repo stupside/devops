@@ -16,19 +16,6 @@ spec:
   valuesFrom:
     - kind: Secret
       name: kratos-secrets
-      valuesKey: secrets-cookie
-      targetPath: kratos.config.secrets.cookie
-    - kind: Secret
-      name: kratos-secrets
-      valuesKey: secrets-cipher
-      targetPath: kratos.config.secrets.cipher
-    - kind: Secret
-      name: kratos-secrets
-      valuesKey: dsn
-      targetPath: kratos.config.dsn
-
-    - kind: Secret
-      name: kratos-secrets
       valuesKey: github-client-id
       targetPath: kratos.config.selfservice.methods.oidc.config.providers[0].client_id
     - kind: Secret
@@ -36,6 +23,25 @@ spec:
       valuesKey: github-client-secret
       targetPath: kratos.config.selfservice.methods.oidc.config.providers[0].client_secret
   values:
+    secret:
+      enabled: false
+    deployment:
+      extraEnv:
+        - name: SECRETS_COOKIE
+          valueFrom:
+            secretKeyRef:
+              name: kratos-secrets
+              key: secrets-cookie
+        - name: SECRETS_CIPHER
+          valueFrom:
+            secretKeyRef:
+              name: kratos-secrets
+              key: secrets-cipher
+        - name: DSN
+          valueFrom:
+            secretKeyRef:
+              name: kratos-secrets
+              key: dsn
     kratos:
       automigration:
         enabled: true
