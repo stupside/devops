@@ -15,16 +15,21 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: ory
-  valuesFrom:
-    - kind: Secret
-      name: hydra-secrets
-      valuesKey: dsn
-      targetPath: hydra.config.dsn
-    - kind: Secret
-      name: hydra-secrets
-      valuesKey: system-secret
-      targetPath: hydra.config.secrets.system
   values:
+    secret:
+      enabled: false
+    deployment:
+      extraEnv:
+        - name: DSN
+          valueFrom:
+            secretKeyRef:
+              name: hydra-secrets
+              key: dsn
+        - name: SECRETS_SYSTEM
+          valueFrom:
+            secretKeyRef:
+              name: hydra-secrets
+              key: system-secret
     hydra:
       automigration:
         enabled: true
