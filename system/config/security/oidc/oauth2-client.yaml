@@ -6,7 +6,7 @@ metadata:
   namespace: ory-system
 spec:
   hydraAdmin:
-    url: http://hydra-admin:4445
+    url: http://hydra-admin
   secretName: envoy-gateway-client-secret
   grantTypes:
     - authorization_code
