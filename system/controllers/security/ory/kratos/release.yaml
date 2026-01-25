@@ -25,23 +25,7 @@ spec:
   values:
     secret:
       enabled: false
-    deployment:
-      extraEnv:
-        - name: SECRETS_COOKIE
-          valueFrom:
-            secretKeyRef:
-              name: kratos-secrets
-              key: secrets-cookie
-        - name: SECRETS_CIPHER
-          valueFrom:
-            secretKeyRef:
-              name: kratos-secrets
-              key: secrets-cipher
-        - name: DSN
-          valueFrom:
-            secretKeyRef:
-              name: kratos-secrets
-              key: dsn
+      nameOverride: kratos-secrets
     kratos:
       automigration:
         enabled: true
@@ -103,12 +87,3 @@ spec:
           schemas:
             - id: default
               url: base64://ewogICIkaWQiOiAiaHR0cHM6Ly9zY2hlbWFzLm9yeS5zaC9wcmVzZXRzL2tyYXRvcy9pZGVudGl0eS5lbWFpbC5zY2hlbWEuanNvbiIsCiAgIiRzY2hlbWEiOiAiaHR0cDovL2pzb24tc2NoZW1hLm9yZy9kcmFmdC0wNy9zY2hlbWEjIiwKICAidGl0bGUiOiAiUGVyc29uIiwKICAidHlwZSI6ICJvYmplY3QiLAogICJwcm9wZXJ0aWVzIjogewogICAgInRyYWl0cyI6IHsKICAgICAgInR5cGUiOiAib2JqZWN0IiwKICAgICAgInByb3BlcnRpZXMiOiB7CiAgICAgICAgImVtYWlsIjogewogICAgICAgICAgInR5cGUiOiAic3RyaW5nIiwKICAgICAgICAgICJmb3JtYXQiOiAiZW1haWwiLAogICAgICAgICAgInRpdGxlIjogIkUtTWFpbCIsCiAgICAgICAgICAib3J5LnNoL2tyYXRvcyI6IHsKICAgICAgICAgICAgImNyZWRlbnRpYWxzIjogewogICAgICAgICAgICAgICJwYXNzd29yZCI6IHsKICAgICAgICAgICAgICAgICJpZGVudGlmaWVyIjogdHJ1ZQogICAgICAgICAgICAgIH0KICAgICAgICAgICAgfSwKICAgICAgICAgICAgInJlY292ZXJ5IjogewogICAgICAgICAgICAgICJ2aWEiOiAiZW1haWwiCiAgICAgICAgICAgIH0sCiAgICAgICAgICAgICJ2ZXJpZmljYXRpb24iOiB7CiAgICAgICAgICAgICAgInZpYSI6ICJlbWFpbCIKICAgICAgICAgICAgfQogICAgICAgICAgfQogICAgICAgIH0sCiAgICAgICAgIm5hbWUiOiB7CiAgICAgICAgICAidHlwZSI6ICJvYmplY3QiLAogICAgICAgICAgInByb3BlcnRpZXMiOiB7CiAgICAgICAgICAgICJmaXJzdCI6IHsKICAgICAgICAgICAgICAidHlwZSI6ICJzdHJpbmciLAogICAgICAgICAgICAgICJ0aXRsZSI6ICJGaXJzdCBOYW1lIgogICAgICAgICAgICB9LAogICAgICAgICAgICAibGFzdCI6IHsKICAgICAgICAgICAgICAidHlwZSI6ICJzdHJpbmciLAogICAgICAgICAgICAgICJ0aXRsZSI6ICJMYXN0IE5hbWUiCiAgICAgICAgICAgIH0KICAgICAgICAgIH0KICAgICAgICB9CiAgICAgIH0sCiAgICAgICJyZXF1aXJlZCI6IFsiZW1haWwiXSwKICAgICAgImFkZGl0aW9uYWxQcm9wZXJ0aWVzIjogZmFsc2UKICAgIH0KICB9Cn0K
-    service:
-      public:
-        enabled: true
-        type: ClusterIP
-        port: 80
-      admin:
-        enabled: true
-        type: ClusterIP
-        port: 80

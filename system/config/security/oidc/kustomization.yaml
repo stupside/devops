@@ -4,6 +4,5 @@ resources:
   - security-policy.yaml
   - callback-route.yaml
   - hydra-route.yaml
-  - auth-route.yaml
   - oauth2-client.yaml
   - oauth2-client-secret.yaml

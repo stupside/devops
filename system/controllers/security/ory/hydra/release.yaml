@@ -18,18 +18,7 @@ spec:
   values:
     secret:
       enabled: false
-    deployment:
-      extraEnv:
-        - name: DSN
-          valueFrom:
-            secretKeyRef:
-              name: hydra-secrets
-              key: dsn
-        - name: SECRETS_SYSTEM
-          valueFrom:
-            secretKeyRef:
-              name: hydra-secrets
-              key: system-secret
+      nameOverride: hydra-secrets
     hydra:
       automigration:
         enabled: true
@@ -52,14 +41,3 @@ spec:
         log:
           level: info
           format: json
-    maester:
-      enabled: true
-    service:
-      public:
-        enabled: true
-        type: ClusterIP
-        port: 4444
-      admin:
-        enabled: true
-        type: ClusterIP
-        port: 4445
