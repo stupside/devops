@@ -24,7 +24,7 @@ spec:
   sourceRef:
     kind: GitRepository
     name: tenant-{{ .Values.id }}-source
-  path: ./${ .Values.apps }
+  path: ./${{ .Values.apps }}
   prune: true
   wait: true
   serviceAccountName: tenant-{{ .Values.id }}-kustomize-controller
