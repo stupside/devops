@@ -26,6 +26,9 @@ spec:
     remediation:
       retries: 3
   values:
+    # Disable Helm chart's auto-generated secret (we manage our own)
+    secret:
+      enabled: false
     replicaCount: 1
     # Kratos SDK configuration (internal cluster address)
     kratosPublicUrl: http://kratos-public.ory-system.svc.cluster.local:80
