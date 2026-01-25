@@ -6,9 +6,6 @@ metadata:
   namespace: ory-system
 spec:
   interval: 1h
-  dependsOn:
-    - name: postgresql
-      namespace: database-system
   chart:
     spec:
       chart: kratos

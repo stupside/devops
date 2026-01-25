@@ -7,8 +7,6 @@ metadata:
 spec:
   interval: 1h
   dependsOn:
-    - name: postgresql
-      namespace: database-system
     - name: kratos
   chart:
     spec:
