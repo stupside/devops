@@ -7,8 +7,7 @@ metadata:
 spec:
   hydraAdmin:
     url: http://hydra-admin:4445
-  secretRef:
-    name: envoy-gateway-client-secret
+  secretName: envoy-gateway-client-secret
   grantTypes:
     - authorization_code
     - refresh_token
