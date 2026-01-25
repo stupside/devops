@@ -1,9 +1,9 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - gotk-components.yaml
+  # Base Flux components
   - gotk-sync.yaml
-  - infrastructure.yaml
+  - gotk-components.yaml
 patches:
   - patch: |
       - op: add
