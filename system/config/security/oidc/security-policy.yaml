@@ -2,13 +2,14 @@
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: SecurityPolicy
 metadata:
-  name: private-oidc
+  name: protected-listener-oidc
   namespace: envoy-gateway-system
 spec:
   targetRefs:
     - group: gateway.networking.k8s.io
       kind: Gateway
-      name: private
+      name: unified
+      sectionName: protected  # TARGETS ONLY THE PROTECTED LISTENER
   oidc:
     provider:
       issuer: "https://hydra.${cluster_domain}/"

@@ -22,12 +22,17 @@ spec:
               protocol: UDP
             - port: "443"
               protocol: TCP
-    # Forward traffic to Cilium Gateway (HTTP)
-    - toCIDR:
-        - "${lb_ip_pool_cidr_ip}/${lb_ip_pool_cidr_prefix}"
+    # Forward traffic to Gateways (HTTP/HTTPS) - using toEntities: host for LoadBalancer IPs
+    # toCIDR doesn't work for cluster-managed IPs (both sides managed by Cilium)
+    # Public gateway (Cilium): 192.168.1.240:80/443
+    # Private gateway (Envoy): 192.168.1.241:443
+    - toEntities:
+        - host
       toPorts:
         - ports:
             - port: "80"
+              protocol: TCP
+            - port: "443"
               protocol: TCP
     # DNS resolution
     - toEndpoints:

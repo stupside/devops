@@ -1,19 +1,20 @@
 ---
-# Private Gateway - Envoy Gateway with OIDC authentication
-# Protected apps (hubble, headlamp) route through this gateway
+# Unified Gateway - Single Envoy Gateway with dual listeners for automatic security
+# Protected listener: OIDC enforced (headlamp, hubble)
+# Public listener: No authentication (auth, hydra, tenant apps)
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
-  name: private
+  name: unified
   namespace: envoy-gateway-system
 spec:
   gatewayClassName: envoy-gateway
   addresses:
     - type: IPAddress
-      value: "${lb_private_ip}"
+      value: "${lb_private_ip}"  # 192.168.1.241
   listeners:
-    # Wildcard listener for protected apps
-    - name: https
+    # Protected listener - OIDC enforced via SecurityPolicy
+    - name: protected
       protocol: HTTPS
       port: 443
       hostname: "*.${cluster_domain}"
@@ -24,13 +25,22 @@ spec:
             namespace: envoy-gateway-system
       allowedRoutes:
         namespaces:
-          from: Selector
-          selector:
-            matchExpressions:
-              - key: capsule.clastix.io/tenant
-                operator: DoesNotExist
-    # Dedicated OIDC callback listener - centralized for all apps
-    - name: https-oidc
+          from: All
+    # Public listener - No authentication
+    - name: public
+      protocol: HTTPS
+      port: 443
+      hostname: "*.${cluster_domain}"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: cluster-tls
+            namespace: envoy-gateway-system
+      allowedRoutes:
+        namespaces:
+          from: All
+    # OIDC callback listener - Must be public (no auth loop)
+    - name: oidc-callback
       protocol: HTTPS
       port: 443
       hostname: "oidc.${cluster_domain}"
@@ -41,8 +51,4 @@ spec:
             namespace: envoy-gateway-system
       allowedRoutes:
         namespaces:
-          from: Selector
-          selector:
-            matchExpressions:
-              - key: capsule.clastix.io/tenant
-                operator: DoesNotExist
+          from: All

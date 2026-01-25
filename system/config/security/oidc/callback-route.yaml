@@ -8,9 +8,9 @@ metadata:
   namespace: envoy-gateway-system
 spec:
   parentRefs:
-    - name: private
+    - name: unified
       namespace: envoy-gateway-system
-      sectionName: https-oidc
+      sectionName: oidc-callback  # Dedicated listener (no auth loop)
   hostnames:
     - "oidc.${cluster_domain}"
   rules:

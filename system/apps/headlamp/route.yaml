@@ -5,8 +5,9 @@ metadata:
   namespace: headlamp
 spec:
   parentRefs:
-    - name: private
+    - name: unified
       namespace: envoy-gateway-system
+      sectionName: protected  # OIDC protection via protected listener
   hostnames:
     - "headlamp.${cluster_domain}"
   rules:
