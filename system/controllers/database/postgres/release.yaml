@@ -7,8 +7,8 @@ metadata:
 spec:
   interval: 1h
   dependsOn:
-    - name: rook-ceph-cluster
-      namespace: rook-ceph
+    - name: local-path-provisioner
+      namespace: storage-system
   chart:
     spec:
       chart: postgresql
@@ -28,7 +28,7 @@ spec:
     primary:
       persistence:
         enabled: true
-        storageClass: ceph-block
+        storageClass: local-path
         size: 1Gi
       resources:
         requests:
