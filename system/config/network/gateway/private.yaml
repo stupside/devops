@@ -17,7 +17,6 @@ spec:
     - name: protected
       protocol: HTTPS
       port: 443
-      hostname: "*.${cluster_domain}"
       tls:
         mode: Terminate
         certificateRefs:
@@ -30,7 +29,6 @@ spec:
     - name: public
       protocol: HTTPS
       port: 443
-      hostname: "*.${cluster_domain}"
       tls:
         mode: Terminate
         certificateRefs:
