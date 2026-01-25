@@ -8,6 +8,7 @@ spec:
   hydraAdmin:
     url: http://hydra-admin
     port: 4445
+    endpoint: /clients
   secretName: envoy-gateway-client-secret
   grantTypes:
     - authorization_code
