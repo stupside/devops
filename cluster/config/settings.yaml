@@ -25,3 +25,7 @@ data:
   # Gateway IPs (2 gateways)
   lb_public_ip: 192.168.1.240   # Cilium Gateway - Public apps
   lb_private_ip: 192.168.1.241  # Envoy Gateway - Protected apps (OIDC)
+
+  # Storage (Rook-Ceph)
+  ceph_data_dir: /data/rook/data            # Rook metadata/config
+  ceph_storage_path: /data/rook/storage     # OSD storage directory

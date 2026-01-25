@@ -6,6 +6,9 @@ metadata:
   namespace: database-system
 spec:
   interval: 1h
+  dependsOn:
+    - name: rook-ceph-cluster
+      namespace: rook-ceph
   chart:
     spec:
       chart: postgresql
@@ -25,6 +28,7 @@ spec:
     primary:
       persistence:
         enabled: true
+        storageClass: ceph-block
         size: 1Gi
       resources:
         requests:

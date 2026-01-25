@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - crds
   - network
+  - storage
   - database
   - security
   - platform
