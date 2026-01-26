@@ -36,6 +36,9 @@ spec:
       targetPath: config.secrets.csrf_cookie
   values:
     replicaCount: 1
+    # Disable chart secret generation - we provide our own SOPS-encrypted secret
+    secret:
+      enabled: false
     # Kratos SDK configuration (internal cluster address)
     kratosPublicUrl: http://kratos-public.ory-system.svc.cluster.local:80
     kratosBrowserUrl: https://auth.${cluster_domain}

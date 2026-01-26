@@ -8,8 +8,8 @@ metadata:
   namespace: envoy-gateway-system
 spec:
   parentRefs:
-    - name: unified
-      namespace: envoy-gateway-system
+    - name: public
+      namespace: cilium-system
   hostnames:
     - "oidc.${cluster_domain}"
   rules:

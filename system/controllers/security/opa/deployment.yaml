@@ -1,0 +1,72 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opa
+  namespace: opa
+  labels:
+    app: opa
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: opa
+  template:
+    metadata:
+      labels:
+        app: opa
+    spec:
+      serviceAccountName: opa
+      containers:
+        - name: opa
+          image: openpolicyagent/opa:0.70.0-envoy
+          args:
+            - "run"
+            - "--server"
+            - "--addr=0.0.0.0:8181"
+            - "--diagnostic-addr=0.0.0.0:8282"
+            - "--set=plugins.envoy_ext_authz_grpc.addr=:9191"
+            - "--set=plugins.envoy_ext_authz_grpc.path=envoy/authz/allow"
+            - "--set=decision_logs.console=true"
+            - "--ignore=.*"
+            - "/policies/authz.rego"
+          ports:
+            - name: grpc
+              containerPort: 9191
+              protocol: TCP
+            - name: http
+              containerPort: 8181
+              protocol: TCP
+            - name: metrics
+              containerPort: 8282
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health?plugins
+              port: 8282
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health?plugins
+              port: 8282
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          volumeMounts:
+            - name: rego-policy
+              mountPath: /policies
+            - name: config
+              mountPath: /config
+      volumes:
+        - name: rego-policy
+          configMap:
+            name: opa-policy
+        - name: config
+          emptyDir: {}

@@ -1,0 +1,14 @@
+---
+# Backend resource for Hydra OIDC provider
+# Tells Envoy Gateway how to connect to Hydra for provider validation
+# Uses internal cluster service instead of external hostname
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: Backend
+metadata:
+  name: hydra-provider
+  namespace: envoy-gateway-system
+spec:
+  endpoints:
+    - fqdn:
+        hostname: hydra-public.ory-system.svc.cluster.local
+        port: 4444

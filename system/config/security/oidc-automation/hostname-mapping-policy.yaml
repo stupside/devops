@@ -1,0 +1,49 @@
+---
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: oidc-hostname-mapper
+  annotations:
+    policies.kyverno.io/title: OIDC Hostname to Profile Mapper
+    policies.kyverno.io/description: |
+      Maintains a ConfigMap mapping hostnames to OIDC profiles
+      for authorization decisions
+spec:
+  background: true
+  schemaValidation: false
+  rules:
+    - name: build-hostname-mappings
+      match:
+        any:
+          - resources:
+              kinds:
+                - HTTPRoute
+              selector:
+                matchLabels:
+                  oidc.security/enabled: "true"
+
+      context:
+        - name: allRoutes
+          apiCall:
+            urlPath: "/apis/gateway.networking.k8s.io/v1/httproutes"
+            jmesPath: "items[?metadata.labels.\"oidc.security/enabled\" == 'true']"
+
+      generate:
+        synchronize: true
+        apiVersion: v1
+        kind: ConfigMap
+        name: oidc-hostname-profiles
+        namespace: envoy-gateway-system
+        data:
+          data:
+            mappings.json: |
+              {{- $mappings := dict -}}
+              {{- range .allRoutes -}}
+                {{- $profile := index .metadata.labels "oidc.security/profile" -}}
+                {{- if and .spec.hostnames $profile -}}
+                  {{- range .spec.hostnames -}}
+                    {{- $_ := set $mappings . $profile -}}
+                  {{- end -}}
+                {{- end -}}
+              {{- end -}}
+              {{ toJson $mappings }}

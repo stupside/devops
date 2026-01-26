@@ -1,0 +1,10 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: oidc-hostname-profiles
+  namespace: envoy-gateway-system
+  labels:
+    app.kubernetes.io/name: oidc-automation
+data:
+  mappings.json: "{}"

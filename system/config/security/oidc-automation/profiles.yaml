@@ -1,0 +1,37 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: oidc-profiles
+  namespace: envoy-gateway-system
+  labels:
+    app.kubernetes.io/name: oidc-automation
+data:
+  profiles.json: |
+    {
+      "admin-tools": {
+        "description": "Administrative dashboards (headlamp, etc.)",
+        "allowedEmails": [
+          "admin@example.com",
+          "ops@example.com"
+        ],
+        "scopes": ["openid", "profile", "email"]
+      },
+      "monitoring": {
+        "description": "Monitoring tools (Hubble UI, Grafana)",
+        "allowedEmails": [
+          "devops@example.com",
+          "sre@example.com",
+          "admin@example.com"
+        ],
+        "scopes": ["openid", "profile", "email"]
+      },
+      "platform": {
+        "description": "Platform engineering tools",
+        "allowedEmails": [
+          "platform-team@example.com",
+          "admin@example.com"
+        ],
+        "scopes": ["openid", "profile", "email", "groups"]
+      }
+    }

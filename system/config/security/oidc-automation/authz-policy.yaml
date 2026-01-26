@@ -1,0 +1,93 @@
+---
+apiVersion: json.kyverno.io/v1alpha1
+kind: ValidatingPolicy
+metadata:
+  name: oidc-email-authz
+  namespace: kyverno
+  labels:
+    app.kubernetes.io/name: oidc-automation
+spec:
+  failurePolicy: Fail
+
+  # Context: Load profile mappings
+  variables:
+    - name: hostname
+      expression: |
+        object.attributes.request.http.headers[?":authority"].orValue("")
+
+    - name: profileMapping
+      expression: |
+        resource.Get("v1", "ConfigMap", "envoy-gateway-system/oidc-hostname-profiles")
+
+    - name: mappings
+      expression: |
+        has(variables.profileMapping.data) &&
+        has(variables.profileMapping.data["mappings.json"]) ?
+        json.Decode(variables.profileMapping.data["mappings.json"]) : {}
+
+    - name: activeProfile
+      expression: |
+        has(variables.mappings[variables.hostname]) ?
+        variables.mappings[variables.hostname] : "unknown"
+
+    - name: profilesConfig
+      expression: |
+        resource.Get("v1", "ConfigMap", "envoy-gateway-system/oidc-profiles")
+
+    - name: profiles
+      expression: |
+        has(variables.profilesConfig.data) &&
+        has(variables.profilesConfig.data["profiles.json"]) ?
+        json.Decode(variables.profilesConfig.data["profiles.json"]) : {}
+
+    - name: allowedEmails
+      expression: |
+        variables.activeProfile != "unknown" &&
+        has(variables.profiles[variables.activeProfile]) ?
+        variables.profiles[variables.activeProfile].allowedEmails : []
+
+    # Extract JWT token and email
+    - name: authorization
+      expression: |
+        object.attributes.request.http.headers[?"authorization"].orValue("").split(" ")
+
+    - name: token
+      expression: |
+        size(variables.authorization) == 2 &&
+        variables.authorization[0].lowerAscii() == "bearer" ?
+        jwt.Decode(variables.authorization[1], "") : null
+
+    - name: email
+      expression: |
+        variables.token != null && has(variables.token.Claims) ?
+        variables.token.Claims.?email.orValue("") : ""
+
+    - name: isAuthorized
+      expression: |
+        variables.email != "" &&
+        variables.allowedEmails.exists(e, e == variables.email)
+
+  # Validation rules
+  validations:
+    - expression: |
+        variables.token == null ?
+        envoy.Denied(401).WithBody("Authentication required").Response() : null
+      message: "No valid JWT token found"
+
+    - expression: |
+        variables.activeProfile == "unknown" ?
+        envoy.Denied(500).WithBody("Profile mapping not found for hostname").Response() : null
+      message: "Hostname not mapped to OIDC profile"
+
+    - expression: |
+        !variables.isAuthorized ?
+        envoy.Denied(403).WithBody("Access denied: " + variables.email + " not authorized").Response() : null
+      message: "Email not in allowlist"
+
+    - expression: |
+        envoy.Allowed()
+          .WithHeader("x-authorized-by", "kyverno")
+          .WithHeader("x-user-email", variables.email)
+          .WithHeader("x-profile", variables.activeProfile)
+          .Response()
+      message: "Authorization successful"

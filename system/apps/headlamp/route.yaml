@@ -3,9 +3,12 @@ kind: HTTPRoute
 metadata:
   name: headlamp
   namespace: headlamp
+  labels:
+    oidc.security/enabled: "true"
+    oidc.security/profile: "admin-tools"
 spec:
   parentRefs:
-    - name: unified
+    - name: private
       namespace: envoy-gateway-system
   hostnames:
     - "headlamp.${cluster_domain}"

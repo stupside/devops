@@ -1,0 +1,15 @@
+---
+# Allow Cilium public gateway to access ory-system services
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: ReferenceGrant
+metadata:
+  name: cilium-gateway-to-ory-system
+  namespace: ory-system
+spec:
+  from:
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      namespace: ory-system
+  to:
+    - group: ""
+      kind: Service

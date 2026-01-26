@@ -1,11 +1,10 @@
 ---
-# Unified Gateway - Single HTTPS listener with route-level OIDC policies
+# Private Gateway - Single HTTPS listener with route-level OIDC policies
 # Protected apps (headlamp, hubble) use route-level SecurityPolicy
-# Public apps (auth, hydra, tenants) have no SecurityPolicy
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
-  name: unified
+  name: private
   namespace: envoy-gateway-system
 spec:
   gatewayClassName: envoy-gateway

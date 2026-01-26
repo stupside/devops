@@ -7,8 +7,8 @@ metadata:
   namespace: ory-system
 spec:
   parentRefs:
-    - name: unified
-      namespace: envoy-gateway-system
+    - name: public
+      namespace: cilium-system
   hostnames:
     - "auth.${cluster_domain}"
   rules:

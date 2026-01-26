@@ -3,9 +3,12 @@ kind: HTTPRoute
 metadata:
   name: hubble-ui
   namespace: cilium-system
+  labels:
+    oidc.security/enabled: "true"
+    oidc.security/profile: "monitoring"
 spec:
   parentRefs:
-    - name: unified
+    - name: private
       namespace: envoy-gateway-system
   hostnames:
     - "hubble.${cluster_domain}"

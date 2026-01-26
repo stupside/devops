@@ -1,0 +1,21 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: opa
+  namespace: opa
+  labels:
+    app: opa
+spec:
+  type: ClusterIP
+  selector:
+    app: opa
+  ports:
+    - name: grpc
+      port: 9191
+      protocol: TCP
+      targetPort: 9191
+    - name: http
+      port: 8181
+      protocol: TCP
+      targetPort: 8181
