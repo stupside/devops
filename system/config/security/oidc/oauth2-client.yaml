@@ -15,15 +15,11 @@ spec:
     - refresh_token
   responseTypes:
     - code
-  scopeArray:
-    - openid
-    - profile
-    - email
-    - offline_access
+  scope: openid profile email offline_access
   # Single centralized redirect URI - no per-app configuration needed!
   # Adding new protected apps requires zero changes here
   redirectUris:
     - https://oidc.${cluster_domain}/oauth2/callback
   postLogoutRedirectUris:
-    - https://auth.${cluster_domain}/
+    - https://oidc.${cluster_domain}/
   tokenEndpointAuthMethod: client_secret_basic
