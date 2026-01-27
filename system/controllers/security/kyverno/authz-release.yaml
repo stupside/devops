@@ -22,7 +22,7 @@ spec:
   values:
     authzServer:
       enabled: true
-      replicas: 2
+      replicas: 1
       service:
         type: ClusterIP
         port: 9081

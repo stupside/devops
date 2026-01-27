@@ -17,7 +17,7 @@ spec:
 
   values:
     admissionController:
-      replicas: 3
+      replicas: 1
       resources:
         limits:
           memory: 512Mi
@@ -30,7 +30,7 @@ spec:
 
     backgroundController:
       enabled: true
-      replicas: 2
+      replicas: 1
 
     cleanupController:
       enabled: true
