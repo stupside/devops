@@ -15,7 +15,11 @@ spec:
     - refresh_token
   responseTypes:
     - code
-  scope: openid profile email offline_access
+  scopeArray:
+    - openid
+    - profile
+    - email
+    - offline_access
   # Single centralized redirect URI - no per-app configuration needed!
   # Adding new protected apps requires zero changes here
   redirectUris:
