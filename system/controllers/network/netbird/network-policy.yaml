@@ -9,17 +9,21 @@ spec:
     matchLabels:
       app.kubernetes.io/name: netbird
   egress:
-    # WireGuard + Netbird management
+    # Netbird management (HTTPS, STUN/TURN)
     - toEntities:
         - world
       toPorts:
         - ports:
-            - port: "51820"
-              protocol: UDP
             - port: "443"
               protocol: TCP
             - port: "3478"
               protocol: UDP
+    # WireGuard + ICE (needs all UDP for hole punching)
+    - toEntities:
+        - world
+      toPorts:
+        - ports:
+            - protocol: UDP
     # Gateway access (192.168.1.240/30)
     - toCIDR:
         - 192.168.1.240/30
@@ -39,9 +43,9 @@ spec:
             - port: "53"
               protocol: UDP
   ingress:
+    # WireGuard + ICE (needs all UDP for hole punching)
     - fromEntities:
         - world
       toPorts:
         - ports:
-            - port: "51820"
-              protocol: UDP
+            - protocol: UDP
