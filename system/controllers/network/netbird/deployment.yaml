@@ -15,10 +15,6 @@ spec:
         app.kubernetes.io/name: netbird
     spec:
       automountServiceAccountToken: false
-      securityContext:
-        sysctls:
-          - name: net.ipv4.ip_forward
-            value: "1"
       containers:
         - name: netbird
           image: netbirdio/netbird:0.64.3
