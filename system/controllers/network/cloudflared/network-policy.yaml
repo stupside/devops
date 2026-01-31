@@ -2,38 +2,33 @@
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: netbird
-  namespace: netbird
+  name: cloudflared-policy
+  namespace: cloudflared
+  labels:
+    app.kubernetes.io/name: cloudflared
 spec:
   endpointSelector:
     matchLabels:
-      app.kubernetes.io/name: netbird
+      app.kubernetes.io/name: cloudflared
   egress:
-    # Netbird management (HTTPS, STUN/TURN)
     - toEntities:
         - world
       toPorts:
         - ports:
+            - port: "7844"
+              protocol: TCP
+            - port: "7844"
+              protocol: UDP
             - port: "443"
               protocol: TCP
-            - port: "3478"
-              protocol: UDP
-    # WireGuard + ICE (needs all UDP for hole punching)
     - toEntities:
-        - world
-      toPorts:
-        - ports:
-            - protocol: UDP
-    # Gateway access (192.168.1.240/30)
-    - toCIDR:
-        - 192.168.1.240/30
+        - host
       toPorts:
         - ports:
             - port: "80"
               protocol: TCP
             - port: "443"
               protocol: TCP
-    # DNS
     - toEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: kube-system
@@ -42,10 +37,12 @@ spec:
         - ports:
             - port: "53"
               protocol: UDP
+            - port: "53"
+              protocol: TCP
   ingress:
-    # WireGuard + ICE (needs all UDP for hole punching)
     - fromEntities:
-        - world
+        - cluster
       toPorts:
         - ports:
-            - protocol: UDP
+            - port: "2000"
+              protocol: TCP
