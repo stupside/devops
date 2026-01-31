@@ -1,6 +1,5 @@
 ---
-# Private Gateway - Single HTTPS listener with route-level OIDC policies
-# Protected apps (headlamp, hubble) use route-level SecurityPolicy
+# Private Gateway - Single HTTPS listener for protected apps
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
