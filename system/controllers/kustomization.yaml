@@ -4,9 +4,7 @@ resources:
   - crds
   - network
   - storage
-  - database
   - security
-  - platform
 
 # Apply common defaults to all HelmReleases (FluxCD v2.7+)
 # Using strategic merge patch for proper nested field handling

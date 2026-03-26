@@ -13,7 +13,7 @@ spec:
         resources: ["httproutes"]
   variables:
     - name: tenant
-      expression: namespaceObject.metadata.labels['capsule.clastix.io/tenant']
+      expression: namespaceObject.metadata.labels['flag/tenant']
     - name: pattern
       expression: "'^[a-z0-9-]+-' + variables.tenant + '\\\\..+$'"
   validations:
@@ -30,5 +30,5 @@ spec:
   matchResources:
     namespaceSelector:
       matchExpressions:
-        - key: capsule.clastix.io/tenant
+        - key: flag/tenant
           operator: Exists

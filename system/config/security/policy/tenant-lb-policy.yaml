@@ -25,5 +25,5 @@ spec:
   matchResources:
     namespaceSelector:
       matchExpressions:
-        - key: capsule.clastix.io/tenant
+        - key: flag/tenant
           operator: Exists

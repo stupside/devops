@@ -36,7 +36,7 @@ spec:
   description: "Non-tenant namespaces (system components) get full cluster access"
   endpointSelector:
     matchExpressions:
-      - key: io.cilium.k8s.namespace.labels.capsule.clastix.io/tenant
+      - key: io.cilium.k8s.namespace.labels.flag/tenant
         operator: DoesNotExist
   egress:
     - toEntities: [world, host, cluster, remote-node, kube-apiserver]
@@ -51,13 +51,20 @@ spec:
   description: "Tenant workloads can access external services but not API server"
   endpointSelector:
     matchExpressions:
-      - key: io.cilium.k8s.namespace.labels.capsule.clastix.io/tenant
+      - key: io.cilium.k8s.namespace.labels.flag/tenant
         operator: Exists
   egress:
     - toEntities: [world]
-    - toEntities: [cluster]
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: cilium-system
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: envoy-gateway-system
   ingress:
-    - fromEntities: [cluster]
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: cilium-system
 ---
 apiVersion: cilium.io/v2
 kind: CiliumClusterwideNetworkPolicy

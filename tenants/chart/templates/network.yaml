@@ -1,0 +1,16 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: tenant-{{ .Values.id }}-intra
+  namespace: tenant-{{ .Values.id }}
+spec:
+  description: "Tenant intra-namespace traffic"
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: tenant-{{ .Values.id }}
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: tenant-{{ .Values.id }}

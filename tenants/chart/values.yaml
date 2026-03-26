@@ -5,10 +5,8 @@ apps: "apps"
 
 resources:
   cpu:
-    requests: "4"
     limits: "8"
+    requests: "4"
   memory:
-    requests: "8Gi"
     limits: "16Gi"
-
-namespaceQuota: 10
+    requests: "8Gi"

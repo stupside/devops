@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: tenant-{{ .Values.id }}
+  namespace: tenant-{{ .Values.id }}
+spec:
+  hard:
+    limits.cpu: {{ .Values.resources.cpu.limits | quote }}
+    requests.cpu: {{ .Values.resources.cpu.requests | quote }}
+    limits.memory: {{ .Values.resources.memory.limits | quote }}
+    requests.memory: {{ .Values.resources.memory.requests | quote }}

@@ -4,14 +4,14 @@ metadata:
   name: tenant-{{ .Values.id }}-kustomize-controller
   namespace: flux-system
   labels:
-    capsule.clastix.io/tenant: {{ .Values.id }}
+    flag/tenant: {{ .Values.id }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: tenant-{{ .Values.id }}-cluster-reader
   labels:
-    capsule.clastix.io/tenant: {{ .Values.id }}
+    flag/tenant: {{ .Values.id }}
 rules:
   - apiGroups: ["kustomize.toolkit.fluxcd.io", "source.toolkit.fluxcd.io"]
     resources: ["*"]
@@ -31,7 +31,7 @@ kind: ClusterRole
 metadata:
   name: tenant-{{ .Values.id }}-namespace-admin
   labels:
-    capsule.clastix.io/tenant: {{ .Values.id }}
+    flag/tenant: {{ .Values.id }}
 rules:
   - apiGroups: [""]
     resources: ["configmaps", "secrets", "services", "serviceaccounts", "persistentvolumeclaims", "pods", "pods/log", "pods/portforward"]
@@ -63,7 +63,7 @@ kind: ClusterRoleBinding
 metadata:
   name: tenant-{{ .Values.id }}-cluster-reader
   labels:
-    capsule.clastix.io/tenant: {{ .Values.id }}
+    flag/tenant: {{ .Values.id }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -79,7 +79,7 @@ metadata:
   name: tenant-{{ .Values.id }}-namespace-admin
   namespace: tenant-{{ .Values.id }}
   labels:
-    capsule.clastix.io/tenant: {{ .Values.id }}
+    flag/tenant: {{ .Values.id }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole

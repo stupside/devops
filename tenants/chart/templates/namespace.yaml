@@ -3,6 +3,6 @@ kind: Namespace
 metadata:
   name: tenant-{{ .Values.id }}
   labels:
-    capsule.clastix.io/tenant: {{ .Values.id }}
+    flag/tenant: {{ .Values.id }}
     pod-security.kubernetes.io/enforce: restricted
     pod-security.kubernetes.io/enforce-version: latest

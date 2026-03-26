@@ -4,7 +4,7 @@ metadata:
   name: tenant-{{ .Values.id }}-source
   namespace: flux-system
   labels:
-    capsule.clastix.io/tenant: {{ .Values.id }}
+    flag/tenant: {{ .Values.id }}
 spec:
   interval: 1m
   url: {{ .Values.repo }}
@@ -17,7 +17,7 @@ metadata:
   name: tenant-{{ .Values.id }}-source
   namespace: flux-system
   labels:
-    capsule.clastix.io/tenant: {{ .Values.id }}
+    flag/tenant: {{ .Values.id }}
 spec:
   interval: 10m
   targetNamespace: tenant-{{ .Values.id }}
