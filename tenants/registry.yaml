@@ -15,4 +15,4 @@ spec:
   values:
     id: fa11ba9d
     repo: https://github.com/stupside/devops
-    apps: "workloads"
+    apps: "apps"

@@ -10,3 +10,4 @@ resources:
   memory:
     limits: "16Gi"
     requests: "8Gi"
+
