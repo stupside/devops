@@ -2,7 +2,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: mirador-io
+  name: limboai
   namespace: arc-runners
 spec:
   interval: 1h
@@ -14,19 +14,15 @@ spec:
         kind: HelmRepository
         name: actions-runner-controller
   values:
-    ## TODO: Set your GitHub organization or repository URL
-    githubConfigUrl: "https://github.com/mirador-io"
+    githubConfigUrl: "https://github.com/limboai"
 
-    ## Reference to the pre-created Kubernetes Secret
-    githubConfigSecret: arc-github-token
+    githubConfigSecret: arc-github-token-limboai
 
-    ## Runner scale set name (use in workflow: runs-on: arc-xonery)
-    runnerScaleSetName: arc-mirador-io
+    runnerScaleSetName: arc-limboai
 
     minRunners: 0
     maxRunners: 5
 
-    ## Runner pod template
     template:
       spec:
         containers:
@@ -41,7 +37,6 @@ spec:
                 cpu: "2"
                 memory: 4Gi
 
-    ## Listener pod template
     listenerTemplate:
       spec:
         containers:

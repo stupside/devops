@@ -1,10 +1,10 @@
+# Ignore IDE/editor specific files
 .vscode
-
-
 .DS_Store
 
-./cluster/ansible/inventory/*.yml
-
 # SOPS age keys (NEVER commit private keys)
-*.agekey
 age.txt
+*.agekey
+
+# Kubeconfig files (NEVER commit kubeconfigs with credentials)
+kube.config.yaml
