@@ -26,7 +26,11 @@ spec:
     minRunners: 0
     maxRunners: 5
 
-    ## Runner pod template
+    ## Enable Docker-in-Docker sidecar (auto-injected by the chart)
+    containerMode:
+      type: "dind"
+
+    ## Runner pod template (dind sidecar is auto-added when containerMode.type=dind)
     template:
       spec:
         containers:
