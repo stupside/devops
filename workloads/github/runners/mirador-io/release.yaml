@@ -18,7 +18,7 @@ spec:
     githubConfigUrl: "https://github.com/mirador-io"
 
     ## Reference to the pre-created Kubernetes Secret
-    githubConfigSecret: arc-github-token
+    githubConfigSecret: arc-github-token-mirador-io
 
     ## Runner scale set name (use in workflow: runs-on: arc-xonery)
     runnerScaleSetName: arc-mirador-io
