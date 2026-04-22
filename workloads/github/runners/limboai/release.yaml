@@ -20,7 +20,7 @@ spec:
 
     runnerScaleSetName: arc-limboai
 
-    minRunners: 0
+    minRunners: 1
     maxRunners: 5
 
     containerMode:
@@ -30,15 +30,16 @@ spec:
       spec:
         containers:
           - name: runner
-            image: ghcr.io/actions/actions-runner:latest
+            image: ghcr.io/actions/actions-runner:2.334.0
+            imagePullPolicy: IfNotPresent
             command: ["/home/runner/run.sh"]
             resources:
               requests:
-                cpu: 500m
-                memory: 512Mi
+                cpu: "1"
+                memory: 2Gi
               limits:
-                cpu: "2"
-                memory: 4Gi
+                cpu: "4"
+                memory: 8Gi
 
     listenerTemplate:
       spec:
